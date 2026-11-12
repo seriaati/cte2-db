@@ -1,0 +1,30 @@
+{
+  "name": "cte2-db",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "bunx --bun astro dev",
+    "build": "bunx --bun astro build",
+    "preview": "bunx --bun astro preview",
+    "astro": "bunx --bun astro",
+    "extract": "bun scripts/extract.ts"
+  },
+  "dependencies": {
+    "@astrojs/react": "^7.1.8",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "astro": "^7.4.11",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.6.0",
+    "@types/node": "^26.6.6",
+    "@types/pngjs": "^6.0.5",
+    "adm-zip": "^0.6.1",
+    "pngjs": "^7.0.0"
+  }
+}
