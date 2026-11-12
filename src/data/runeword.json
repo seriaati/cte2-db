@@ -1,0 +1,2696 @@
+{
+  "abyssal_depths": {
+    "id": "abyssal_depths",
+    "runes": [
+      "ano",
+      "net",
+      "mos"
+    ],
+    "slots": [
+      "chest"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 12.5,
+        "min": 10,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 5,
+        "stat": "health"
+      },
+      {
+        "type": "FLAT",
+        "max": 12,
+        "min": 6,
+        "stat": "energy"
+      },
+      {
+        "type": "FLAT",
+        "max": 25,
+        "min": 10,
+        "stat": "summon_damage"
+      }
+    ]
+  },
+  "ancients_pledge": {
+    "id": "ancients_pledge",
+    "runes": [
+      "cen",
+      "mos",
+      "dos"
+    ],
+    "slots": [
+      "shield",
+      "tome",
+      "totem"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 12.5,
+        "min": 10,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 22,
+        "min": 22,
+        "stat": "elemental_resist"
+      },
+      {
+        "type": "FLAT",
+        "max": 27,
+        "min": 27,
+        "stat": "chaos_resist"
+      },
+      {
+        "type": "PERCENT",
+        "max": 20,
+        "min": 15,
+        "stat": "mana_regen"
+      }
+    ]
+  },
+  "arcane": {
+    "id": "arcane",
+    "runes": [
+      "mos",
+      "bri"
+    ],
+    "slots": [
+      "pants"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 11.25,
+        "min": 8.75,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 6,
+        "min": 4,
+        "stat": "magic_shield"
+      },
+      {
+        "type": "PERCENT",
+        "max": 6,
+        "min": 4,
+        "stat": "mana"
+      },
+      {
+        "type": "FLAT",
+        "max": 6,
+        "min": 4,
+        "stat": "spell_mssteal"
+      },
+      {
+        "type": "FLAT",
+        "max": 6,
+        "min": 4,
+        "stat": "spell_manasteal"
+      },
+      {
+        "type": "FLAT",
+        "max": -5,
+        "min": -5,
+        "stat": "mana_cost"
+      }
+    ]
+  },
+  "ballista": {
+    "id": "ballista",
+    "runes": [
+      "sid",
+      "toq",
+      "end",
+      "dos",
+      "ano"
+    ],
+    "slots": [
+      "crossbow"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 12.5,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "MORE",
+        "max": 60,
+        "min": 50,
+        "stat": "projectile_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 6,
+        "min": 4,
+        "stat": "armor_penetration"
+      },
+      {
+        "type": "MORE",
+        "max": -100,
+        "min": -100,
+        "stat": "projectile_count"
+      },
+      {
+        "type": "FLAT",
+        "max": -40,
+        "min": -50,
+        "stat": "projectile_cast_time"
+      },
+      {
+        "type": "FLAT",
+        "max": -40,
+        "min": -50,
+        "stat": "attack_speed"
+      }
+    ]
+  },
+  "bramble": {
+    "id": "bramble",
+    "runes": [
+      "wir",
+      "mos",
+      "ano",
+      "cen"
+    ],
+    "slots": [
+      "chest"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 12.5,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 1,
+        "min": 1,
+        "stat": "plus_lvl_physical_spells"
+      },
+      {
+        "type": "FLAT",
+        "max": 25,
+        "min": 15,
+        "stat": "thorns_spell_dmg"
+      },
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 5,
+        "stat": "health"
+      },
+      {
+        "type": "PERCENT",
+        "max": 7,
+        "min": 5,
+        "stat": "energy"
+      }
+    ]
+  },
+  "breath_of_the_dying": {
+    "id": "breath_of_the_dying",
+    "runes": [
+      "owd",
+      "nos",
+      "oru",
+      "fey",
+      "daw",
+      "ano"
+    ],
+    "slots": [
+      "sword",
+      "staff",
+      "dagger",
+      "hammer",
+      "spear",
+      "axe",
+      "gauntlet",
+      "scythe",
+      "greatsword"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 17.5,
+        "min": 15,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 50,
+        "min": 50,
+        "stat": "proc_putrid_breath_on_kill"
+      },
+      {
+        "type": "FLAT",
+        "max": 100,
+        "min": 100,
+        "stat": "phys_to_chaos"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "poison_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 30,
+        "min": 20,
+        "stat": "dmg_to_undead"
+      },
+      {
+        "type": "FLAT",
+        "max": 4,
+        "min": 2,
+        "stat": "lifesteal"
+      },
+      {
+        "type": "FLAT",
+        "max": 4,
+        "min": 2,
+        "stat": "manasteal"
+      },
+      {
+        "type": "FLAT",
+        "max": 60,
+        "min": 40,
+        "stat": "attack_speed"
+      }
+    ]
+  },
+  "call_to_arms": {
+    "id": "call_to_arms",
+    "runes": [
+      "dos",
+      "owd",
+      "yun",
+      "wir",
+      "end"
+    ],
+    "slots": [
+      "hammer",
+      "spear",
+      "scythe"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 17.5,
+        "min": 15,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 1,
+        "min": 1,
+        "stat": "plus_lvl_all_spells"
+      },
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 10,
+        "stat": "health_regen"
+      },
+      {
+        "type": "FLAT",
+        "max": 20.9,
+        "min": 12,
+        "stat": "learn_battle_orders"
+      },
+      {
+        "type": "FLAT",
+        "max": 12,
+        "min": 12,
+        "stat": "magic_find"
+      }
+    ]
+  },
+  "carpe_noctem": {
+    "id": "carpe_noctem",
+    "runes": [
+      "yun",
+      "fey",
+      "und",
+      "ano"
+    ],
+    "slots": [
+      "axe",
+      "sword",
+      "greatsword",
+      "hammer",
+      "scythe"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 16.25,
+        "min": 13.75,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 2,
+        "min": 2,
+        "stat": "plus_lvl_cold_spells"
+      },
+      {
+        "type": "FLAT",
+        "max": 25,
+        "min": 25,
+        "stat": "phys_to_water"
+      },
+      {
+        "type": "FLAT",
+        "max": 30,
+        "min": 20,
+        "stat": "all_water_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 4,
+        "min": 2,
+        "stat": "lifesteal"
+      },
+      {
+        "type": "FLAT",
+        "max": 30,
+        "min": 20,
+        "stat": "attack_speed"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 10,
+        "stat": "move_speed"
+      }
+    ]
+  },
+  "chains_of_honor": {
+    "id": "chains_of_honor",
+    "runes": [
+      "ano",
+      "wir",
+      "sid",
+      "yun",
+      "ita"
+    ],
+    "slots": [
+      "chest"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 12.5,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 1,
+        "min": 1,
+        "stat": "plus_lvl_all_spells"
+      },
+      {
+        "type": "FLAT",
+        "max": 2,
+        "min": 2,
+        "stat": "lifesteal"
+      },
+      {
+        "type": "FLAT",
+        "max": 20,
+        "min": 15,
+        "stat": "elemental_resist"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 3,
+        "stat": "dmg_reduction"
+      },
+      {
+        "type": "FLAT",
+        "max": 8,
+        "min": 8,
+        "stat": "magic_find"
+      }
+    ]
+  },
+  "choosen_of_azuna": {
+    "id": "choosen_of_azuna",
+    "runes": [
+      "mos",
+      "nos",
+      "ita"
+    ],
+    "slots": [
+      "ring"
+    ],
+    "stats": [
+      {
+        "type": "FLAT",
+        "max": 12,
+        "min": 8,
+        "stat": "total_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 2,
+        "min": 0,
+        "stat": "intelligence"
+      },
+      {
+        "type": "FLAT",
+        "max": 2,
+        "min": 0,
+        "stat": "strength"
+      },
+      {
+        "type": "FLAT",
+        "max": 2,
+        "min": 0,
+        "stat": "dexterity"
+      }
+    ]
+  },
+  "concentrate": {
+    "id": "concentrate",
+    "runes": [
+      "eno",
+      "owd",
+      "yun"
+    ],
+    "slots": [
+      "staff",
+      "dagger"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 12.5,
+        "min": 10,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 35,
+        "min": 30,
+        "stat": "area_dmg"
+      },
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 3,
+        "stat": "accuracy"
+      },
+      {
+        "type": "FLAT",
+        "max": -20,
+        "min": -25,
+        "stat": "inc_aoe"
+      }
+    ]
+  },
+  "crater": {
+    "id": "crater",
+    "runes": [
+      "daw",
+      "und",
+      "net",
+      "bri"
+    ],
+    "slots": [
+      "dagger",
+      "spear",
+      "gauntlet",
+      "bow",
+      "crossbow"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 17.5,
+        "min": 15,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 1,
+        "min": 1,
+        "stat": "instant_traps"
+      },
+      {
+        "type": "FLAT",
+        "max": 20,
+        "min": 10,
+        "stat": "charge_recovery_rate"
+      },
+      {
+        "type": "FLAT",
+        "max": -30,
+        "min": -40,
+        "stat": "trap_spell_dmg"
+      },
+      {
+        "type": "FLAT",
+        "max": 8,
+        "min": 6,
+        "stat": "inc_aoe"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "fire_resist"
+      }
+    ]
+  },
+  "cure": {
+    "id": "cure",
+    "runes": [
+      "fey",
+      "nos",
+      "har"
+    ],
+    "slots": [
+      "helmet"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 12.5,
+        "min": 10,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 30,
+        "min": 20,
+        "stat": "increase_healing"
+      },
+      {
+        "type": "FLAT",
+        "max": -10,
+        "min": -10,
+        "stat": "mana_cost"
+      },
+      {
+        "type": "FLAT",
+        "max": 16,
+        "min": 12,
+        "stat": "skill_speed"
+      }
+    ]
+  },
+  "dead_shot": {
+    "id": "dead_shot",
+    "runes": [
+      "fey",
+      "dos"
+    ],
+    "slots": [
+      "bow"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 7.5,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 20,
+        "min": 15,
+        "stat": "projectile_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 10,
+        "stat": "faster_projectiles"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 3,
+        "stat": "critical_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 3,
+        "stat": "accuracy"
+      }
+    ]
+  },
+  "destruction": {
+    "id": "destruction",
+    "runes": [
+      "net",
+      "und",
+      "bri",
+      "daw",
+      "end"
+    ],
+    "slots": [
+      "ring"
+    ],
+    "stats": [
+      {
+        "type": "FLAT",
+        "max": 8,
+        "min": 8,
+        "stat": "proc_fan_of_knives_on_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 15,
+        "stat": "proc_chain_lightning_on_attack_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": 25,
+        "min": 25,
+        "stat": "proc_cyclone_when_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": 25,
+        "min": 25,
+        "stat": "proc_frost_nova_when_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": 33,
+        "min": 33,
+        "stat": "proc_putrid_breath_on_kill"
+      },
+      {
+        "type": "FLAT",
+        "max": 33,
+        "min": 33,
+        "stat": "proc_steam_cloud_on_kill"
+      },
+      {
+        "type": "FLAT",
+        "max": 4,
+        "min": 4,
+        "stat": "elemental_resist"
+      }
+    ]
+  },
+  "empty": {
+    "id": "empty",
+    "runes": [
+      "mos",
+      "net",
+      "ita",
+      "xer",
+      "har"
+    ],
+    "slots": [
+      "staff"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 1,
+        "min": 1,
+        "stat": "gear_weapon_damage"
+      }
+    ]
+  },
+  "exile": {
+    "id": "exile",
+    "runes": [
+      "und",
+      "wir",
+      "net",
+      "nos",
+      "yun"
+    ],
+    "slots": [
+      "shield"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 12.5,
+        "min": 10,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 2,
+        "min": 2,
+        "stat": "block_chance"
+      },
+      {
+        "type": "FLAT",
+        "max": 8,
+        "min": 8,
+        "stat": "lifesteal"
+      },
+      {
+        "type": "FLAT",
+        "max": 6,
+        "min": 3,
+        "stat": "inc_effect_of_offensive_buff_given"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 1,
+        "stat": "max_water_resist"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 1,
+        "stat": "max_fire_resist"
+      }
+    ]
+  },
+  "flickering_flame": {
+    "id": "flickering_flame",
+    "runes": [
+      "eno",
+      "mos",
+      "ano",
+      "xer",
+      "har"
+    ],
+    "slots": [
+      "pants"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 17.5,
+        "min": 15,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 1,
+        "min": 1,
+        "stat": "plus_lvl_fire_spells"
+      },
+      {
+        "type": "FLAT",
+        "max": -50,
+        "min": -25,
+        "stat": "fire_res_aura_cost"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "fire_penetration"
+      },
+      {
+        "type": "FLAT",
+        "max": 25,
+        "min": 15,
+        "stat": "chaos_resist"
+      }
+    ]
+  },
+  "flourish": {
+    "id": "flourish",
+    "runes": [
+      "ita",
+      "owd",
+      "mos"
+    ],
+    "slots": [
+      "staff",
+      "dagger",
+      "scythe",
+      "hammer"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 12.5,
+        "min": 10,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "int_dmg"
+      },
+      {
+        "type": "FLAT",
+        "max": 12,
+        "min": 8,
+        "stat": "cast_speed"
+      },
+      {
+        "type": "FLAT",
+        "max": 1,
+        "min": 1,
+        "stat": "mana_regen"
+      },
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 10,
+        "stat": "critical_hit"
+      }
+    ]
+  },
+  "fortitude": {
+    "id": "fortitude",
+    "runes": [
+      "end",
+      "ita",
+      "cen",
+      "nos"
+    ],
+    "slots": [
+      "chest"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 37.5,
+        "min": 37.5,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 8,
+        "min": 8,
+        "stat": "cast_speed"
+      },
+      {
+        "type": "FLAT",
+        "max": 8,
+        "min": 4,
+        "stat": "health"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "elemental_resist"
+      }
+    ]
+  },
+  "grief": {
+    "id": "grief",
+    "runes": [
+      "cen",
+      "fey",
+      "nos",
+      "ven",
+      "daw"
+    ],
+    "slots": [
+      "axe",
+      "sword",
+      "greatsword",
+      "scythe",
+      "hammer"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 17.5,
+        "min": 15,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 30,
+        "min": 20,
+        "stat": "attack_speed"
+      },
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 3,
+        "stat": "armor_penetration"
+      },
+      {
+        "type": "FLAT",
+        "max": 4,
+        "min": 2,
+        "stat": "critical_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": 20,
+        "min": 15,
+        "stat": "chaos_penetration"
+      },
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 3,
+        "stat": "health_on_kill"
+      }
+    ]
+  },
+  "hailstorm": {
+    "id": "hailstorm",
+    "runes": [
+      "dos",
+      "und",
+      "ano",
+      "fey"
+    ],
+    "slots": [
+      "pants"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 12.5,
+        "min": 10,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 12,
+        "min": 12,
+        "stat": "learn_hailstorm"
+      },
+      {
+        "type": "FLAT",
+        "max": 50,
+        "min": 50,
+        "stat": "phys_to_water"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 5,
+        "stat": "elemental_attack_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 12,
+        "min": 8,
+        "stat": "magic_shield"
+      },
+      {
+        "type": "FLAT",
+        "max": 20,
+        "min": 15,
+        "stat": "water_resist"
+      }
+    ]
+  },
+  "heart_of_the_oak": {
+    "id": "heart_of_the_oak",
+    "runes": [
+      "wir",
+      "mos",
+      "har",
+      "fey"
+    ],
+    "slots": [
+      "hammer"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 12.5,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 2.9,
+        "min": 1,
+        "stat": "plus_lvl_all_spells"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 2,
+        "stat": "accuracy"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 2,
+        "stat": "manasteal"
+      },
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 5,
+        "stat": "mana"
+      },
+      {
+        "type": "FLAT",
+        "max": 30,
+        "min": 20,
+        "stat": "elemental_resist"
+      }
+    ]
+  },
+  "heavenly_tear": {
+    "id": "heavenly_tear",
+    "runes": [
+      "toq",
+      "dos",
+      "yun",
+      "wir"
+    ],
+    "slots": [
+      "necklace"
+    ],
+    "stats": [
+      {
+        "type": "FLAT",
+        "max": 2,
+        "min": 2,
+        "stat": "plus_lvl_all_spells"
+      },
+      {
+        "type": "FLAT",
+        "max": 30,
+        "min": 20,
+        "stat": "increase_healing"
+      },
+      {
+        "type": "FLAT",
+        "max": 25,
+        "min": 20,
+        "stat": "spell_damage_per_perc_of_increase_healing"
+      }
+    ]
+  },
+  "hurricane": {
+    "id": "hurricane",
+    "runes": [
+      "dos",
+      "bri",
+      "und",
+      "fey"
+    ],
+    "slots": [
+      "sword",
+      "gauntlet",
+      "greatsword"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 12.5,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 1,
+        "min": 1,
+        "stat": "learn_whirlwind"
+      },
+      {
+        "type": "MORE",
+        "max": 20,
+        "min": 15,
+        "stat": "area_dmg"
+      },
+      {
+        "type": "FLAT",
+        "max": 30,
+        "min": 25,
+        "stat": "inc_aoe"
+      },
+      {
+        "type": "FLAT",
+        "max": 50,
+        "min": 50,
+        "stat": "phys_to_water"
+      },
+      {
+        "type": "FLAT",
+        "max": 50,
+        "min": 50,
+        "stat": "phys_to_lightning"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 2,
+        "stat": "accuracy"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "attack_speed"
+      }
+    ]
+  },
+  "impedement": {
+    "id": "impedement",
+    "runes": [
+      "owd",
+      "ita"
+    ],
+    "slots": [
+      "necklace"
+    ],
+    "stats": [
+      {
+        "type": "FLAT",
+        "max": -10,
+        "min": -5,
+        "stat": "bonus_exp"
+      },
+      {
+        "type": "FLAT",
+        "max": 1,
+        "min": 1,
+        "stat": "missing_hp_health_regen_per_2"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 5,
+        "stat": "increase_healing"
+      }
+    ]
+  },
+  "infinity": {
+    "id": "infinity",
+    "runes": [
+      "eno",
+      "toq",
+      "mos",
+      "ita"
+    ],
+    "slots": [
+      "spear"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 12.5,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "move_speed"
+      },
+      {
+        "type": "FLAT",
+        "max": 50,
+        "min": 30,
+        "stat": "lightning_penetration"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 6,
+        "stat": "magic_find"
+      }
+    ]
+  },
+  "insight": {
+    "id": "insight",
+    "runes": [
+      "ita",
+      "dos",
+      "toq"
+    ],
+    "slots": [
+      "bow",
+      "crossbow",
+      "spear",
+      "scythe"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 12.5,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 18,
+        "min": 12,
+        "stat": "cast_speed"
+      },
+      {
+        "type": "MORE",
+        "max": 40,
+        "min": 30,
+        "stat": "mana_regen"
+      },
+      {
+        "type": "FLAT",
+        "max": 12,
+        "min": 8,
+        "stat": "magic_find"
+      }
+    ]
+  },
+  "kinesis": {
+    "id": "kinesis",
+    "runes": [
+      "fey",
+      "oru",
+      "owd",
+      "end",
+      "yun",
+      "dos"
+    ],
+    "slots": [
+      "hammer",
+      "spear",
+      "axe",
+      "gauntlet",
+      "scythe",
+      "greatsword"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 17.5,
+        "min": 15,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 100,
+        "min": 100,
+        "stat": "proc_focus_on_basic_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": -35,
+        "min": -35,
+        "stat": "skill_speed"
+      },
+      {
+        "type": "MORE",
+        "max": -50,
+        "min": -50,
+        "stat": "attack_speed"
+      },
+      {
+        "type": "FLAT",
+        "max": 20,
+        "min": 20,
+        "stat": "move_speed"
+      },
+      {
+        "type": "FLAT",
+        "max": 80,
+        "min": 60,
+        "stat": "basic_attack_dmg_per_move_speed"
+      },
+      {
+        "type": "FLAT",
+        "max": 40,
+        "min": 30,
+        "stat": "skill_damage_per_move_speed"
+      }
+    ]
+  },
+  "lavaspur": {
+    "id": "lavaspur",
+    "runes": [
+      "wir",
+      "ano",
+      "owd",
+      "net"
+    ],
+    "slots": [
+      "boots"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 12.5,
+        "min": 10,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 1,
+        "min": 1,
+        "stat": "max_fire_resist"
+      },
+      {
+        "type": "FLAT",
+        "max": 20,
+        "min": 15,
+        "stat": "fire_dmg_reduction"
+      },
+      {
+        "type": "FLAT",
+        "max": 35,
+        "min": 25,
+        "stat": "fire_resist"
+      },
+      {
+        "type": "FLAT",
+        "max": 20,
+        "min": 15,
+        "stat": "move_speed"
+      }
+    ]
+  },
+  "leaf": {
+    "id": "leaf",
+    "runes": [
+      "net",
+      "mos"
+    ],
+    "slots": [
+      "staff",
+      "dagger"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 7.5,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 2.9,
+        "min": 1,
+        "stat": "plus_lvl_fire_spells"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "all_fire_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 2,
+        "min": 2,
+        "stat": "mana_on_kill"
+      },
+      {
+        "type": "FLAT",
+        "max": 25,
+        "min": 25,
+        "stat": "water_resist"
+      }
+    ]
+  },
+  "lore": {
+    "id": "lore",
+    "runes": [
+      "mos",
+      "ano"
+    ],
+    "slots": [
+      "helmet"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 7.5,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 1,
+        "min": 1,
+        "stat": "plus_lvl_all_spells"
+      },
+      {
+        "type": "FLAT",
+        "max": 4,
+        "min": 3,
+        "stat": "magic_shield_regen"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 5,
+        "stat": "lightning_resist"
+      }
+    ]
+  },
+  "malice": {
+    "id": "malice",
+    "runes": [
+      "end",
+      "toq"
+    ],
+    "slots": [
+      "sword",
+      "axe",
+      "dagger",
+      "gauntlet",
+      "greatsword"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 12.5,
+        "min": 10,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 3,
+        "stat": "armor_penetration"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "attack_speed"
+      },
+      {
+        "type": "FLAT",
+        "max": 60,
+        "min": 40,
+        "stat": "bleed_chance"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 2,
+        "stat": "lifesteal"
+      }
+    ]
+  },
+  "nature_wrath": {
+    "id": "nature_wrath",
+    "runes": [
+      "bri",
+      "mos",
+      "und",
+      "ita"
+    ],
+    "slots": [
+      "necklace"
+    ],
+    "stats": [
+      {
+        "type": "FLAT",
+        "max": 2.9,
+        "min": 1,
+        "stat": "plus_lvl_lightning_spells"
+      },
+      {
+        "type": "FLAT",
+        "max": 2.9,
+        "min": 1,
+        "stat": "plus_lvl_cold_spells"
+      },
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 10,
+        "stat": "mana"
+      },
+      {
+        "type": "FLAT",
+        "max": -25,
+        "min": -35,
+        "stat": "fire_resist"
+      }
+    ]
+  },
+  "nightstorm": {
+    "id": "nightstorm",
+    "runes": [
+      "und",
+      "toq",
+      "bri",
+      "ita"
+    ],
+    "slots": [
+      "scythe"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 12.5,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "MORE",
+        "max": 20,
+        "min": 15,
+        "stat": "all_water_damage"
+      },
+      {
+        "type": "MORE",
+        "max": 20,
+        "min": 15,
+        "stat": "all_lightning_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 20,
+        "min": 15,
+        "stat": "power_charge_on_crit"
+      },
+      {
+        "type": "FLAT",
+        "max": 6,
+        "min": 6,
+        "stat": "crit_dmg_per_power_charge"
+      },
+      {
+        "type": "FLAT",
+        "max": 4,
+        "min": 4,
+        "stat": "aoe_per_power_charge"
+      }
+    ]
+  },
+  "overlord": {
+    "id": "overlord",
+    "runes": [
+      "bri",
+      "xer",
+      "ano",
+      "nos"
+    ],
+    "slots": [
+      "helmet"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 13.75,
+        "min": 11.25,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 6,
+        "min": 4,
+        "stat": "magic_shield"
+      },
+      {
+        "type": "FLAT",
+        "max": 2,
+        "min": 2,
+        "stat": "max_undead_summons"
+      },
+      {
+        "type": "FLAT",
+        "max": 30,
+        "min": 20,
+        "stat": "summon_undead_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 10,
+        "stat": "proc_summon_wisp_when_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "chaos_resist"
+      }
+    ]
+  },
+  "patience": {
+    "id": "patience",
+    "runes": [
+      "toq",
+      "fey",
+      "ven"
+    ],
+    "slots": [
+      "bow",
+      "crossbow",
+      "dagger"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 12.5,
+        "min": 10,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "MORE",
+        "max": 10,
+        "min": 10,
+        "stat": "dot_dmg"
+      },
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 3,
+        "stat": "dot_lifesteal"
+      },
+      {
+        "type": "FLAT",
+        "max": -15,
+        "min": -20,
+        "stat": "skill_speed"
+      }
+    ]
+  },
+  "plague": {
+    "id": "plague",
+    "runes": [
+      "ven",
+      "ano",
+      "ita",
+      "xer",
+      "har"
+    ],
+    "slots": [
+      "bow",
+      "staff"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 17.5,
+        "min": 15,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 2.9,
+        "min": 1,
+        "stat": "plus_lvl_all_spells"
+      },
+      {
+        "type": "FLAT",
+        "max": 30,
+        "min": 20,
+        "stat": "bleed_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 30,
+        "min": 20,
+        "stat": "poison_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "chaos_penetration"
+      },
+      {
+        "type": "FLAT",
+        "max": 1,
+        "min": 1,
+        "stat": "max_fire_resist"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "fire_resist"
+      }
+    ]
+  },
+  "power": {
+    "id": "power",
+    "runes": [
+      "yun",
+      "eno",
+      "nos",
+      "ita",
+      "ven",
+      "wir"
+    ],
+    "slots": [
+      "ring"
+    ],
+    "stats": [
+      {
+        "type": "MORE",
+        "max": 5,
+        "min": 5,
+        "stat": "all_physical_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 20,
+        "min": 15,
+        "stat": "spell_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 2,
+        "stat": "health"
+      },
+      {
+        "type": "FLAT",
+        "max": 25,
+        "min": 25,
+        "stat": "mana_cost"
+      },
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 10,
+        "stat": "block_chance"
+      }
+    ]
+  },
+  "prism": {
+    "id": "prism",
+    "runes": [
+      "ano",
+      "owd",
+      "fey"
+    ],
+    "slots": [
+      "ring"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 5,
+        "min": 3,
+        "stat": "health"
+      },
+      {
+        "type": "PERCENT",
+        "max": 5,
+        "min": 3,
+        "stat": "magic_shield"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 6,
+        "stat": "elemental_resist"
+      }
+    ]
+  },
+  "radiance": {
+    "id": "radiance",
+    "runes": [
+      "ita",
+      "eno",
+      "nos"
+    ],
+    "slots": [
+      "helmet"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 11.25,
+        "min": 8.75,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 15,
+        "stat": "mana_shield"
+      },
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 3,
+        "stat": "magic_shield"
+      },
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 3,
+        "stat": "mana"
+      },
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 3,
+        "stat": "intelligence"
+      }
+    ]
+  },
+  "rain": {
+    "id": "rain",
+    "runes": [
+      "har",
+      "und",
+      "nos"
+    ],
+    "slots": [
+      "necklace"
+    ],
+    "stats": [
+      {
+        "type": "FLAT",
+        "max": 20,
+        "min": 15,
+        "stat": "totem_spell_dmg"
+      },
+      {
+        "type": "PERCENT",
+        "max": 4,
+        "min": 4,
+        "stat": "mana"
+      },
+      {
+        "type": "PERCENT",
+        "max": 6,
+        "min": 6,
+        "stat": "energy"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "lightning_resist"
+      }
+    ]
+  },
+  "resilience": {
+    "id": "resilience",
+    "runes": [
+      "nos",
+      "ano"
+    ],
+    "slots": [
+      "helmet"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 7.5,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 8,
+        "min": 5,
+        "stat": "health_per_perc_of_armor"
+      },
+      {
+        "type": "FLAT",
+        "max": 0.5,
+        "min": 0.5,
+        "stat": "health_per_sec"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 6,
+        "stat": "water_resist"
+      }
+    ]
+  },
+  "rhyme": {
+    "id": "rhyme",
+    "runes": [
+      "mos",
+      "ita"
+    ],
+    "slots": [
+      "shield",
+      "tome",
+      "totem"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 7.5,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 10,
+        "stat": "mana_regen"
+      },
+      {
+        "type": "FLAT",
+        "max": 12,
+        "min": 8,
+        "stat": "elemental_resist"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 12,
+        "stat": "magic_find"
+      }
+    ]
+  },
+  "rogue": {
+    "id": "rogue",
+    "runes": [
+      "toq",
+      "wir",
+      "eno"
+    ],
+    "slots": [
+      "pants"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 12.5,
+        "min": 10,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 40,
+        "min": 30,
+        "stat": "trap_area_dmg"
+      },
+      {
+        "type": "FLAT",
+        "max": -30,
+        "min": -30,
+        "stat": "inc_aoe"
+      },
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 3,
+        "stat": "chaos_resist"
+      },
+      {
+        "type": "FLAT",
+        "max": 8,
+        "min": 8,
+        "stat": "move_speed"
+      }
+    ]
+  },
+  "selflessness": {
+    "id": "selflessness",
+    "runes": [
+      "ven",
+      "yun",
+      "wir",
+      "eno"
+    ],
+    "slots": [
+      "tome",
+      "totem",
+      "shield"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 12.5,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 1,
+        "min": 1,
+        "stat": "plus_lvl_song_spells"
+      },
+      {
+        "type": "FLAT",
+        "max": 40,
+        "min": 30,
+        "stat": "inc_effect_of_song_buff_given"
+      },
+      {
+        "type": "FLAT",
+        "max": -10,
+        "min": -15,
+        "stat": "total_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 7,
+        "stat": "inc_aoe"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 5,
+        "stat": "move_speed"
+      }
+    ]
+  },
+  "smoke": {
+    "id": "smoke",
+    "runes": [
+      "daw",
+      "oru",
+      "toq",
+      "dos"
+    ],
+    "slots": [
+      "boots"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 12.5,
+        "min": 10,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": -20,
+        "min": -15,
+        "stat": "proj_dmg_received"
+      },
+      {
+        "type": "FLAT",
+        "max": 18,
+        "min": 14,
+        "stat": "elemental_resist"
+      },
+      {
+        "type": "FLAT",
+        "max": 18,
+        "min": 14,
+        "stat": "chaos_resist"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "move_speed"
+      }
+    ]
+  },
+  "spike": {
+    "id": "spike",
+    "runes": [
+      "cen",
+      "nos"
+    ],
+    "slots": [
+      "boots"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 7.5,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 1,
+        "min": 1,
+        "stat": "learn_pull"
+      },
+      {
+        "type": "PERCENT",
+        "max": 20,
+        "min": 15,
+        "stat": "armor"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "endurance_charge_when_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "frenzy_charge_when_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "move_speed"
+      }
+    ]
+  },
+  "stealth": {
+    "id": "stealth",
+    "runes": [
+      "ita",
+      "fey"
+    ],
+    "slots": [
+      "boots",
+      "chest"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 7.5,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 3,
+        "stat": "energy"
+      },
+      {
+        "type": "FLAT",
+        "max": 13,
+        "min": 13,
+        "stat": "chaos_resist"
+      },
+      {
+        "type": "FLAT",
+        "max": 2,
+        "min": 1,
+        "stat": "energy_regen"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 6,
+        "stat": "cast_speed"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "move_speed"
+      }
+    ]
+  },
+  "steel": {
+    "id": "steel",
+    "runes": [
+      "nos",
+      "fey"
+    ],
+    "slots": [
+      "sword",
+      "axe",
+      "greatsword"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 7.5,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 3,
+        "stat": "accuracy"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "attack_speed"
+      },
+      {
+        "type": "FLAT",
+        "max": 60,
+        "min": 40,
+        "stat": "bleed_damage"
+      }
+    ]
+  },
+  "strength": {
+    "id": "strength",
+    "runes": [
+      "oru",
+      "ano"
+    ],
+    "slots": [
+      "hammer",
+      "gauntlet"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 7.5,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 5,
+        "stat": "critical_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 6,
+        "stat": "health_regen"
+      },
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 3,
+        "stat": "strength"
+      }
+    ]
+  },
+  "supersonic": {
+    "id": "supersonic",
+    "runes": [
+      "yun",
+      "sid"
+    ],
+    "slots": [
+      "boots"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 7.5,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "PERCENT",
+        "max": 24,
+        "min": 16,
+        "stat": "critical_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": 22,
+        "min": 16,
+        "stat": "move_speed"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 2,
+        "stat": "dexterity"
+      }
+    ]
+  },
+  "tempest": {
+    "id": "tempest",
+    "runes": [
+      "bri",
+      "mos",
+      "cen"
+    ],
+    "slots": [
+      "hammer",
+      "spear",
+      "staff"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 12.5,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 12,
+        "min": 12,
+        "stat": "learn_lightning_bolt"
+      },
+      {
+        "type": "FLAT",
+        "max": 50,
+        "min": 50,
+        "stat": "proc_lightning_bolt"
+      },
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 3,
+        "stat": "critical_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": 33,
+        "min": 33,
+        "stat": "attack_speed"
+      },
+      {
+        "type": "FLAT",
+        "max": 60,
+        "min": 40,
+        "stat": "basic_attack_dmg"
+      }
+    ]
+  },
+  "the_novice": {
+    "id": "the_novice",
+    "runes": [
+      "nos",
+      "dos",
+      "ita",
+      "mos"
+    ],
+    "slots": [
+      "sword",
+      "bow",
+      "crossbow",
+      "staff",
+      "dagger",
+      "hammer",
+      "spear",
+      "axe",
+      "gauntlet",
+      "scythe",
+      "greatsword"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 17.5,
+        "min": 15,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 3,
+        "stat": "health_on_hit_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 3,
+        "stat": "energy_on_hit_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 3,
+        "stat": "mana_on_hit_hit"
+      }
+    ]
+  },
+  "tranquility": {
+    "id": "tranquility",
+    "runes": [
+      "fey",
+      "ita",
+      "dos"
+    ],
+    "slots": [
+      "shield",
+      "tome",
+      "totem"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 11.25,
+        "min": 8.75,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 30,
+        "min": 20,
+        "stat": "proc_rejuvenation_on_crit"
+      },
+      {
+        "type": "PERCENT",
+        "max": 30,
+        "min": 20,
+        "stat": "critical_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 2,
+        "stat": "mana_regen"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 2,
+        "stat": "energy_regen"
+      },
+      {
+        "type": "FLAT",
+        "max": 40,
+        "min": 30,
+        "stat": "chaos_resist"
+      }
+    ]
+  },
+  "turbulence": {
+    "id": "turbulence",
+    "runes": [
+      "nos",
+      "end",
+      "toq"
+    ],
+    "slots": [
+      "chest"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 12.5,
+        "stat": "gear_defense"
+      },
+      {
+        "type": "FLAT",
+        "max": 20,
+        "min": 15,
+        "stat": "proc_cyclone_when_hit"
+      },
+      {
+        "type": "FLAT",
+        "max": 1,
+        "min": 1,
+        "stat": "learn_cyclone"
+      },
+      {
+        "type": "FLAT",
+        "max": 40,
+        "min": 30,
+        "stat": "physical_spell_dmg"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 6,
+        "stat": "mana"
+      },
+      {
+        "type": "FLAT",
+        "max": 20,
+        "min": 15,
+        "stat": "lightning_resist"
+      }
+    ]
+  },
+  "undeath": {
+    "id": "undeath",
+    "runes": [
+      "xer",
+      "har",
+      "und"
+    ],
+    "slots": [
+      "staff",
+      "scythe"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 12.5,
+        "min": 10,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": -20,
+        "min": -30,
+        "stat": "summon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 2,
+        "min": 2,
+        "stat": "max_undead_summons"
+      },
+      {
+        "type": "PERCENT",
+        "max": 20,
+        "min": 10,
+        "stat": "health_regen"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "move_speed"
+      }
+    ]
+  },
+  "venom": {
+    "id": "venom",
+    "runes": [
+      "fey",
+      "daw",
+      "ano"
+    ],
+    "slots": [
+      "sword",
+      "bow",
+      "crossbow",
+      "staff",
+      "dagger",
+      "hammer",
+      "spear",
+      "axe",
+      "gauntlet",
+      "scythe",
+      "greatsword"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 12.5,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 40,
+        "min": 40,
+        "stat": "plus_phys_to_chaos"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 5,
+        "stat": "poison_chance"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 5,
+        "stat": "attack_speed"
+      },
+      {
+        "type": "FLAT",
+        "max": 4,
+        "min": 2,
+        "stat": "energy_on_hit_hit"
+      }
+    ]
+  },
+  "wealth": {
+    "id": "wealth",
+    "runes": [
+      "oru",
+      "toq",
+      "fey"
+    ],
+    "slots": [
+      "pants"
+    ],
+    "stats": [
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 10,
+        "stat": "increased_quantity"
+      },
+      {
+        "type": "FLAT",
+        "max": 20,
+        "min": 15,
+        "stat": "magic_find"
+      }
+    ]
+  },
+  "windfury": {
+    "id": "windfury",
+    "runes": [
+      "ano",
+      "yun",
+      "wir",
+      "oru",
+      "end"
+    ],
+    "slots": [
+      "sword",
+      "greatsword",
+      "hammer",
+      "gauntlet"
+    ],
+    "stats": [
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 12.5,
+        "stat": "gear_weapon_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 1,
+        "min": 1,
+        "stat": "plus_lvl_physical_spells"
+      },
+      {
+        "type": "FLAT",
+        "max": 30,
+        "min": 25,
+        "stat": "area_dmg"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 10,
+        "stat": "inc_aoe"
+      },
+      {
+        "type": "FLAT",
+        "max": 50,
+        "min": 30,
+        "stat": "proc_cyclone_on_crit"
+      },
+      {
+        "type": "FLAT",
+        "max": 6,
+        "min": 4,
+        "stat": "accuracy"
+      }
+    ]
+  }
+}

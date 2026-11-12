@@ -1,0 +1,706 @@
+{
+  "ano": {
+    "id": "ano",
+    "item_id": "mmorpg:runes/ano",
+    "min_lvl_multi": 0.2,
+    "on_armor_stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 6,
+        "stat": "health_regen"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 6,
+        "stat": "health_regen"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": 2.5,
+        "min": 1.5,
+        "stat": "lifesteal"
+      }
+    ],
+    "tier": 1,
+    "uses_unlucky_ran": false,
+    "weight": 800
+  },
+  "bri": {
+    "id": "bri",
+    "item_id": "mmorpg:runes/bri",
+    "min_lvl_multi": 0.4,
+    "on_armor_stats": [
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 9,
+        "stat": "lightning_resist"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 9,
+        "stat": "lightning_resist"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": 7.5,
+        "min": 4.5,
+        "stat": "all_lightning_damage"
+      }
+    ],
+    "tier": 3,
+    "uses_unlucky_ran": false,
+    "weight": 0
+  },
+  "cen": {
+    "id": "cen",
+    "item_id": "mmorpg:runes/cen",
+    "min_lvl_multi": 0.1,
+    "on_armor_stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 6,
+        "stat": "armor"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 6,
+        "stat": "armor"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 6,
+        "stat": "health_regen"
+      }
+    ],
+    "tier": 1,
+    "uses_unlucky_ran": false,
+    "weight": 900
+  },
+  "daw": {
+    "id": "daw",
+    "item_id": "mmorpg:runes/daw",
+    "min_lvl_multi": 0.4,
+    "on_armor_stats": [
+      {
+        "type": "FLAT",
+        "max": 12.5,
+        "min": 7.5,
+        "stat": "chaos_resist"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "FLAT",
+        "max": 12.5,
+        "min": 7.5,
+        "stat": "chaos_resist"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": 7.5,
+        "min": 4.5,
+        "stat": "all_chaos_damage"
+      }
+    ],
+    "tier": 3,
+    "uses_unlucky_ran": false,
+    "weight": 0
+  },
+  "dos": {
+    "id": "dos",
+    "item_id": "mmorpg:runes/dos",
+    "min_lvl_multi": 0.1,
+    "on_armor_stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 6,
+        "stat": "dodge"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 6,
+        "stat": "dodge"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 6,
+        "stat": "energy_regen"
+      }
+    ],
+    "tier": 1,
+    "uses_unlucky_ran": false,
+    "weight": 900
+  },
+  "end": {
+    "id": "end",
+    "item_id": "mmorpg:runes/end",
+    "min_lvl_multi": 0.55,
+    "on_armor_stats": [
+      {
+        "type": "FLAT",
+        "max": 7,
+        "min": 4,
+        "stat": "dmg_reduction_chance"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "FLAT",
+        "max": 7,
+        "min": 4,
+        "stat": "dmg_reduction_chance"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": 7.5,
+        "min": 4.5,
+        "stat": "all_physical_damage"
+      }
+    ],
+    "tier": 4,
+    "uses_unlucky_ran": false,
+    "weight": 0
+  },
+  "eno": {
+    "id": "eno",
+    "item_id": "mmorpg:runes/eno",
+    "min_lvl_multi": 0.4,
+    "on_armor_stats": [
+      {
+        "type": "FLAT",
+        "max": -6.5,
+        "min": -3,
+        "stat": "mana_cost"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "FLAT",
+        "max": -6.5,
+        "min": -3,
+        "stat": "mana_cost"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": -6.5,
+        "min": -3,
+        "stat": "mana_cost"
+      }
+    ],
+    "tier": 3,
+    "uses_unlucky_ran": false,
+    "weight": 600
+  },
+  "fey": {
+    "id": "fey",
+    "item_id": "mmorpg:runes/fey",
+    "min_lvl_multi": 0.2,
+    "on_armor_stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 6,
+        "stat": "energy_regen"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 6,
+        "stat": "energy_regen"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": 22.5,
+        "min": 13.5,
+        "stat": "attack_speed"
+      }
+    ],
+    "tier": 1,
+    "uses_unlucky_ran": false,
+    "weight": 800
+  },
+  "har": {
+    "id": "har",
+    "item_id": "mmorpg:runes/har",
+    "min_lvl_multi": 0.3,
+    "on_armor_stats": [
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 6,
+        "stat": "increase_healing"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 6,
+        "stat": "increase_healing"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 6,
+        "stat": "increase_healing"
+      }
+    ],
+    "tier": 2,
+    "uses_unlucky_ran": false,
+    "weight": 700
+  },
+  "ita": {
+    "id": "ita",
+    "item_id": "mmorpg:runes/ita",
+    "min_lvl_multi": 0,
+    "on_armor_stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 6,
+        "stat": "mana_regen"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 6,
+        "stat": "mana_regen"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": 2.5,
+        "min": 1.5,
+        "stat": "mana_on_kill"
+      }
+    ],
+    "tier": 0,
+    "uses_unlucky_ran": false,
+    "weight": 1000
+  },
+  "mos": {
+    "id": "mos",
+    "item_id": "mmorpg:runes/mos",
+    "min_lvl_multi": 0,
+    "on_armor_stats": [
+      {
+        "type": "PERCENT",
+        "max": 7.5,
+        "min": 4.5,
+        "stat": "magic_shield"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "PERCENT",
+        "max": 7.5,
+        "min": 4.5,
+        "stat": "magic_shield"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 6,
+        "stat": "magic_shield_regen"
+      }
+    ],
+    "tier": 0,
+    "uses_unlucky_ran": false,
+    "weight": 1000
+  },
+  "net": {
+    "id": "net",
+    "item_id": "mmorpg:runes/net",
+    "min_lvl_multi": 0.15,
+    "on_armor_stats": [
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 9,
+        "stat": "fire_resist"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 9,
+        "stat": "fire_resist"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": 7.5,
+        "min": 4.5,
+        "stat": "all_fire_damage"
+      }
+    ],
+    "tier": 1,
+    "uses_unlucky_ran": false,
+    "weight": 0
+  },
+  "nos": {
+    "id": "nos",
+    "item_id": "mmorpg:runes/nos",
+    "min_lvl_multi": 0,
+    "on_armor_stats": [
+      {
+        "type": "PERCENT",
+        "max": 7.5,
+        "min": 4.5,
+        "stat": "health"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "PERCENT",
+        "max": 7.5,
+        "min": 4.5,
+        "stat": "health"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": 2.5,
+        "min": 1.5,
+        "stat": "health_on_kill"
+      }
+    ],
+    "tier": 0,
+    "uses_unlucky_ran": false,
+    "weight": 1000
+  },
+  "oru": {
+    "id": "oru",
+    "item_id": "mmorpg:runes/oru",
+    "min_lvl_multi": 0.5,
+    "on_armor_stats": [
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 9,
+        "stat": "critical_damage"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 9,
+        "stat": "critical_damage"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "PERCENT",
+        "max": 1.25,
+        "min": 0.75,
+        "stat": "gear_weapon_damage"
+      }
+    ],
+    "tier": 4,
+    "uses_unlucky_ran": false,
+    "weight": 400
+  },
+  "owd": {
+    "id": "owd",
+    "item_id": "mmorpg:runes/owd",
+    "min_lvl_multi": 0,
+    "on_armor_stats": [
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 9,
+        "stat": "accuracy"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "PERCENT",
+        "max": 15,
+        "min": 9,
+        "stat": "accuracy"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "PERCENT",
+        "max": 20,
+        "min": 12,
+        "stat": "accuracy"
+      }
+    ],
+    "tier": 0,
+    "uses_unlucky_ran": false,
+    "weight": 0
+  },
+  "sid": {
+    "id": "sid",
+    "item_id": "mmorpg:runes/sid",
+    "min_lvl_multi": 0.65,
+    "on_armor_stats": [
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 6,
+        "stat": "magic_find"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 6,
+        "stat": "magic_find"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 6,
+        "stat": "magic_find"
+      }
+    ],
+    "tier": 4,
+    "uses_unlucky_ran": false,
+    "weight": 0
+  },
+  "toq": {
+    "id": "toq",
+    "item_id": "mmorpg:runes/toq",
+    "min_lvl_multi": 0.3,
+    "on_armor_stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 6,
+        "stat": "critical_hit"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 6,
+        "stat": "critical_hit"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": 2.5,
+        "min": 1.5,
+        "stat": "critical_hit"
+      }
+    ],
+    "tier": 2,
+    "uses_unlucky_ran": false,
+    "weight": 700
+  },
+  "und": {
+    "id": "und",
+    "item_id": "mmorpg:runes/und",
+    "min_lvl_multi": 0.3,
+    "on_armor_stats": [
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 9,
+        "stat": "water_resist"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 9,
+        "stat": "water_resist"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": 7.5,
+        "min": 4.5,
+        "stat": "all_water_damage"
+      }
+    ],
+    "tier": 2,
+    "uses_unlucky_ran": false,
+    "weight": 0
+  },
+  "ven": {
+    "id": "ven",
+    "item_id": "mmorpg:runes/ven",
+    "min_lvl_multi": 0.6,
+    "on_armor_stats": [
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 3,
+        "stat": "spirit_cost"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 3,
+        "stat": "spirit_cost"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 6,
+        "stat": "heal_effect_on_self"
+      }
+    ],
+    "tier": 4,
+    "uses_unlucky_ran": false,
+    "weight": 100
+  },
+  "wir": {
+    "id": "wir",
+    "item_id": "mmorpg:runes/wir",
+    "min_lvl_multi": 0.5,
+    "on_armor_stats": [
+      {
+        "type": "FLAT",
+        "max": 8,
+        "min": 5,
+        "stat": "elemental_resist"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "FLAT",
+        "max": 8,
+        "min": 5,
+        "stat": "elemental_resist"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": 8,
+        "min": 5,
+        "stat": "elemental_resist"
+      }
+    ],
+    "tier": 4,
+    "uses_unlucky_ran": false,
+    "weight": 200
+  },
+  "xer": {
+    "id": "xer",
+    "item_id": "mmorpg:runes/xer",
+    "min_lvl_multi": 0.4,
+    "on_armor_stats": [
+      {
+        "type": "FLAT",
+        "max": 7.5,
+        "min": 4.5,
+        "stat": "summon_damage"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "FLAT",
+        "max": 7.5,
+        "min": 4.5,
+        "stat": "summon_damage"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": 7.5,
+        "min": 4.5,
+        "stat": "summon_damage"
+      }
+    ],
+    "tier": 3,
+    "uses_unlucky_ran": false,
+    "weight": 600
+  },
+  "yun": {
+    "id": "yun",
+    "item_id": "mmorpg:runes/yun",
+    "min_lvl_multi": 0.6,
+    "on_armor_stats": [
+      {
+        "type": "FLAT",
+        "max": 7.5,
+        "min": 4.5,
+        "stat": "aura_effect"
+      }
+    ],
+    "on_jewelry_stats": [
+      {
+        "type": "FLAT",
+        "max": 7.5,
+        "min": 4.5,
+        "stat": "aura_effect"
+      }
+    ],
+    "on_weapons_stats": [
+      {
+        "type": "FLAT",
+        "max": 7.5,
+        "min": 4.5,
+        "stat": "aura_effect"
+      }
+    ],
+    "tier": 4,
+    "uses_unlucky_ran": false,
+    "weight": 50
+  }
+}
