@@ -1,0 +1,10 @@
+---
+import InfusionBrowser from '../components/InfusionBrowser.tsx';
+import Layout from '../layouts/Layout.astro';
+import { bases, infusions, maxLevel, rarities, tagNames } from '../lib/gear';
+import '../styles/infusions.css';
+---
+
+<Layout title="Infusions" description="Every stat an Infusion scroll can add to gear in Craft to Exile 2, by gear slot, rarity and level.">
+  <InfusionBrowser client:load infusions={infusions} bases={bases} rarities={rarities} tagNames={tagNames} maxLevel={maxLevel} />
+</Layout>

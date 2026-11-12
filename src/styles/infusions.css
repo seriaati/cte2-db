@@ -1,0 +1,9 @@
+.row.infusion {
+  grid-template-columns: minmax(0, 1fr) 64px;
+}
+
+@media (max-width: 620px) {
+  .row.infusion {
+    grid-template-areas: 'stats pct';
+  }
+}
