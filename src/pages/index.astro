@@ -1,0 +1,52 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { affixes, bases, infusions } from '../lib/gear';
+import { stats } from '../lib/stats';
+import { uniques } from '../lib/uniques';
+---
+
+<Layout>
+  <h1>CTE2 Database</h1>
+  <p class="lead">
+    Gear data for Craft to Exile 2, taken straight from the modpack's files and laid out so you can search it and
+    plan a build.
+  </p>
+  <div class="blocks">
+    <a class="block" href="/affixes">
+      <strong>Affixes</strong>
+      <p>{affixes.length} prefixes, suffixes and implicits across {bases.length} gear types.</p>
+    </a>
+    <a class="block" href="/planner">
+      <strong>Gear planner</strong>
+      <p>Put one piece of gear together part by part and see what it can roll.</p>
+    </a>
+    <a class="block" href="/bases">
+      <strong>Base gear</strong>
+      <p>Base stats and attribute requirements for every armor material, weapon and off-hand.</p>
+    </a>
+    <a class="block" href="/uniques">
+      <strong>Uniques</strong>
+      <p>{uniques.length} unique items with their stats, drop level and where they drop.</p>
+    </a>
+    <a class="block" href="/runes">
+      <strong>Runes</strong>
+      <p>What each rune gives in weapons, armor and jewelry, and the runewords they make.</p>
+    </a>
+    <a class="block" href="/gems">
+      <strong>Gems</strong>
+      <p>Socket gems by type and tier, with what they give in each kind of gear.</p>
+    </a>
+    <a class="block" href="/auras">
+      <strong>Augments</strong>
+      <p>Every augment gem with its stats and how much capacity it reserves.</p>
+    </a>
+    <a class="block" href="/infusions">
+      <strong>Infusions</strong>
+      <p>{infusions.length} stats an Infusion scroll can add to gear, by slot and rarity.</p>
+    </a>
+    <a class="block" href="/stats">
+      <strong>Stats</strong>
+      <p>{stats.length} stats with the game's description of what each one does.</p>
+    </a>
+  </div>
+</Layout>
