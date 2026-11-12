@@ -1,0 +1,12 @@
+---
+import BaseGear from '../components/BaseGear.tsx';
+import Layout from '../layouts/Layout.astro';
+import { baseGear, reqScaling } from '../lib/bases';
+import { maxLevel, tagNames } from '../lib/gear';
+import { planRarities } from '../lib/planner';
+import '../styles/bases.css';
+---
+
+<Layout title="Base gear" description="Base stats and attribute requirements for every armor material, weapon and off-hand in Craft to Exile 2.">
+  <BaseGear client:load bases={baseGear} rarities={planRarities} tagNames={tagNames} reqScaling={reqScaling} maxLevel={maxLevel} />
+</Layout>
