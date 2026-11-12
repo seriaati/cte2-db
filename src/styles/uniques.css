@@ -1,0 +1,39 @@
+.field.source {
+  flex: 0 1 220px;
+}
+
+.row.unique {
+  grid-template-columns: minmax(120px, 0.42fr) minmax(0, 1fr) 60px minmax(96px, 0.36fr);
+  align-items: baseline;
+}
+
+.base {
+  display: block;
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.row.unique .tags {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* The source column gets narrower than the longest league name just above the 940px breakpoint. */
+.row.unique .tag {
+  white-space: normal;
+}
+
+@media (max-width: 620px) {
+  .field.source {
+    flex-grow: 1;
+  }
+
+  .row.unique {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'name pct'
+      'stats stats'
+      'tags tags';
+  }
+}
