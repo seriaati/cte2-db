@@ -1,0 +1,23 @@
+---
+import RuneBrowser from '../components/RuneBrowser.tsx';
+import Layout from '../layouts/Layout.astro';
+import { bases, maxLevel, tagNames } from '../lib/gear';
+import { runed, runedSockets, runes, runewords, slotNames, uniquesTakeRunes } from '../lib/runes';
+import '../styles/lists.css';
+---
+
+<Layout title="Runes" description="Every rune and runeword in Craft to Exile 2: what each rune gives per gear type, where it drops and which runewords it spells.">
+  <style is:inline set:html={`:root { --rar: ${runed.ink}; }`}></style>
+  <RuneBrowser
+    client:load
+    runes={runes}
+    runewords={runewords}
+    bases={bases}
+    slotNames={slotNames}
+    tagNames={tagNames}
+    rarity={runed}
+    runedSockets={runedSockets}
+    uniquesTakeRunes={uniquesTakeRunes}
+    maxLevel={maxLevel}
+  />
+</Layout>

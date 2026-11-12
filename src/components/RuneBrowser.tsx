@@ -1,0 +1,228 @@
+import { useMemo, useState } from 'react';
+import { formatStat, type Base, type Rarity } from '../lib/affix';
+import type { Rune, Runeword } from '../lib/runes';
+import { Dropdown, GearRail, GearSelect, LevelStepper } from './controls';
+import { StatLine } from './StatLine';
+import { useStored } from '../lib/useStored';
+
+interface Props {
+  runes: Rune[];
+  runewords: Runeword[];
+  bases: Base[];
+  slotNames: Record<string, string>;
+  tagNames: Record<string, string>;
+  rarity: Rarity;
+  runedSockets: { min: number; max: number };
+  uniquesTakeRunes: boolean;
+  maxLevel: number;
+}
+
+const FAMILIES = [
+  { id: 'Weapon', label: 'Weapon' },
+  { id: 'OffHand', label: 'Off-hand' },
+  { id: 'Armor', label: 'Armor' },
+  { id: 'Jewelry', label: 'Jewelry' },
+];
+
+// The three stat lists a rune carries. Off-hand gear uses the armor one.
+const KINDS = [
+  { id: 'Weapon', label: 'Weapons' },
+  { id: 'Armor', label: 'Armor, off-hand' },
+  { id: 'Jewelry', label: 'Jewelry' },
+] as const;
+
+const text = (line: { value: string; label: string }) => `${line.value} ${line.label}`.toLowerCase();
+
+export default function RuneBrowser({ runes, runewords, bases, slotNames, tagNames, rarity, runedSockets, uniquesTakeRunes, maxLevel }: Props) {
+  const [query, setQuery] = useState('');
+  const [baseId, setBaseId] = useState('');
+  const [runeId, setRuneId] = useState('');
+  const [level, setLevel] = useStored('level', maxLevel);
+
+  const base = bases.find((b) => b.id === baseId);
+  const picked = runes.find((r) => r.id === runeId);
+  const q = query.trim().toLowerCase();
+
+  const runeRows = useMemo(() => {
+    const kinds = KINDS.filter((k) => !base || k.id === (base.family === 'OffHand' ? 'Armor' : base.family));
+    const usable = runewords.filter((w) => !base || w.slots.includes(base.slot));
+    return runes
+      .map((rune) => {
+        // Kinds of gear that get the same stats from the rune share one entry.
+        const stats: { labels: string[]; lines: ReturnType<typeof formatStat>[] }[] = [];
+        for (const kind of kinds) {
+          const lines = rune.stats[kind.id].map((s) => formatStat(s, rarity, level));
+          const same = stats.find((s) => s.lines.map(text).join() === lines.map(text).join());
+          if (same) same.labels.push(kind.label);
+          else stats.push({ labels: [kind.label], lines });
+        }
+        return { rune, stats, uses: usable.filter((w) => w.runes.includes(rune.id)).length };
+      })
+      .filter((r) => !q || r.rune.name.toLowerCase().includes(q) || r.stats.some((s) => s.lines.some((l) => text(l).includes(q))));
+  }, [runes, runewords, base, rarity, level, q]);
+
+  const groups = useMemo(() => {
+    const rows = runewords
+      .filter((w) => (!base || w.slots.includes(base.slot)) && (!runeId || w.runes.includes(runeId)))
+      .map((word) => ({ word, lines: word.stats.map((s) => formatStat(s, rarity, level)) }))
+      .filter(
+        (r) =>
+          !q ||
+          r.word.name.toLowerCase().includes(q) ||
+          r.lines.some((l) => text(l).includes(q)) ||
+          r.word.runes.some((id) => runes.find((x) => x.id === id)!.name.toLowerCase().includes(q)),
+      )
+      .sort((a, b) => a.word.runes.length - b.word.runes.length || a.word.name.localeCompare(b.word.name));
+    const all = base
+      ? [{ id: base.id, label: base.name, rows }]
+      : FAMILIES.map((f) => ({ ...f, rows: rows.filter((r) => r.word.family === f.id) }));
+    return all.filter((g) => g.rows.length);
+  }, [runes, runewords, base, runeId, rarity, level, q]);
+
+  return (
+    <div className="browser">
+      <GearRail bases={bases} tagNames={tagNames} value={baseId} onChange={setBaseId} anyLabel="All gear" />
+
+      <div className="content">
+        <div className="title-row">
+          <h1>Runes</h1>
+          <span className="context">
+            {base?.name ?? 'All gear'} / <span className="rar">{picked?.name ?? 'Any rune'}</span> / Lv {level}
+          </span>
+        </div>
+        <p className="lead">Every rune in Craft to Exile 2, what it gives on each kind of gear, and the runewords the runes spell.</p>
+
+        <div className="controls">
+          <label className="field grow">
+            <span className="cap">Search</span>
+            <input className="in" type="search" placeholder="Name or stat" value={query} onChange={(e) => setQuery(e.target.value)} />
+          </label>
+          <GearSelect bases={bases} value={baseId} onChange={setBaseId} anyLabel="All gear" />
+          <Dropdown
+            className="with-rune"
+            label="Runewords with"
+            value={runeId}
+            groups={[{ options: [{ value: '', label: 'Any rune' }, ...runes.map((r) => ({ value: r.id, label: r.name }))] }]}
+            onChange={setRuneId}
+          />
+          <LevelStepper value={level} max={maxLevel} onChange={setLevel} />
+        </div>
+
+        <p className="note">
+          A rune goes into an empty socket, and what it gives depends on the kind of gear; off-hand items count as
+          armor. Its value rolls anywhere in the range shown when you socket it, and flat values grow with the gear's
+          level. Each rune fits once per item: using the same rune again rerolls it and keeps the higher roll.
+          {!uniquesTakeRunes && ' Unique gear takes no runes.'} A rune can drop once the monsters you fight reach its
+          drop level. Runes marked Not a random drop never roll as loot; in this version of the pack they come from
+          bosses and quests.
+        </p>
+
+        <section key={baseId} className="group">
+          <div className="group-head">
+            <h2>Runes</h2>
+            <span className="count">{runeRows.length}</span>
+          </div>
+          <div className="row rune head cap" aria-hidden="true">
+            <span>Rune</span>
+            <span>Stats at lv {level}</span>
+            <span className="pct">Drop lv</span>
+            <span>Drops from</span>
+          </div>
+          {runeRows.length === 0 && <p className="empty">Nothing matches.</p>}
+          <ul>
+            {runeRows.map(({ rune, stats, uses }) => (
+              <li key={rune.id} className="row rune">
+                <div className="name named">
+                  <img className="sprite" src={rune.icon} alt="" width={32} height={32} />
+                  <div>
+                    {rune.name}
+                    {uses ? (
+                      <a className="uses" href="#runewords" onClick={() => setRuneId(rune.id)}>
+                        {uses} {uses === 1 ? 'runeword' : 'runewords'}
+                      </a>
+                    ) : (
+                      <span className="uses">No runewords</span>
+                    )}
+                  </div>
+                </div>
+                <div className={`stats ${base ? '' : 'by-gear'}`}>
+                  {stats.map((s) => [
+                    !base && (
+                      <span key={s.labels[0]} className="cap">
+                        {s.labels.length === KINDS.length ? 'Any gear' : s.labels.join(', ')}
+                      </span>
+                    ),
+                    <div key={`${s.labels[0]}-lines`}>
+                      {s.lines.map((line, i) => (
+                        <div key={i}>
+                          <StatLine line={line} />
+                        </div>
+                      ))}
+                    </div>,
+                  ])}
+                </div>
+                <span className="pct">{rune.drops && `Lv ${rune.dropLevel}`}</span>
+                <span className="tags">{rune.drops ? 'Any loot' : <span className="tag not">Not a random drop</span>}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <p className="note" id="runewords">
+          A runeword only forms on {rarity.name} gear, a rarity of its own that comes with {runedSockets.min} to{' '}
+          {runedSockets.max} sockets. Socket the runes in the order shown, with no other rune in between, into one of the
+          gear types listed; the runeword appears when the last one goes in. Its stats roll once, anywhere in the range
+          shown, and flat values grow with the gear's level. If the sockets spell more than one runeword, the one with
+          the most runes counts. Click a rune to see every runeword that uses it.
+        </p>
+
+        {groups.length === 0 && <p className="empty">No runeword matches.</p>}
+        {groups.map((group) => (
+          <section key={`${group.id}/${baseId}`} className="group">
+            <div className="group-head">
+              <h2>{group.label} runewords</h2>
+              <span className="count">{group.rows.length}</span>
+            </div>
+            <div className="row runeword head cap" aria-hidden="true">
+              <span>Runeword</span>
+              <span>Runes, in order</span>
+              <span>Stats at lv {level}</span>
+              <span>Goes on</span>
+            </div>
+            <ul>
+              {group.rows.map(({ word, lines }) => (
+                <li key={word.id} className="row runeword">
+                  <span className="name">{word.name}</span>
+                  <ol className="word">
+                    {word.runes.map((id) => (
+                      <li key={id}>
+                        <button className="rune-chip" type="button" aria-pressed={id === runeId} onClick={() => setRuneId(id === runeId ? '' : id)}>
+                          <img className="sprite" src={runes.find((r) => r.id === id)!.icon} alt="" width={32} height={32} />
+                          {id}
+                        </button>
+                      </li>
+                    ))}
+                  </ol>
+                  <div className="stats">
+                    {lines.map((line, i) => (
+                      <div key={i}>
+                        <StatLine line={line} />
+                      </div>
+                    ))}
+                  </div>
+                  <span className="tags">
+                    {word.slots.map((slot) => (
+                      <span key={slot} className="tag">
+                        {slotNames[slot]}
+                      </span>
+                    ))}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,204 @@
+/* Shared by the rune, gem and aura pages. */
+
+.sprite {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+
+.named {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* The site's tooltip opens rightwards from its label and can run off the page. Here it opens from
+   the start of the stat line and stays inside that column. */
+.row:is(.rune, .runeword, .gem, .aura) .tip {
+  position: static;
+}
+
+.row:is(.rune, .runeword, .gem, .aura) :is(.stats, .gem-stat) div {
+  position: relative;
+}
+
+.row:is(.rune, .runeword, .gem, .aura) .tip:hover::after {
+  box-sizing: border-box;
+  max-width: min(340px, 100%);
+}
+
+/* Runes */
+
+.field.with-rune {
+  flex: 0 1 200px;
+}
+
+.row.rune {
+  grid-template-columns: minmax(150px, 0.42fr) minmax(0, 1fr) 60px minmax(96px, 0.36fr);
+}
+
+.row.rune .tags {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.uses {
+  display: block;
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* The label column is fixed so the stats line up from row to row. */
+.by-gear {
+  display: grid;
+  grid-template-columns: 188px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 2px 14px;
+}
+
+.row.runeword {
+  grid-template-columns: minmax(110px, 0.34fr) minmax(134px, 0.76fr) minmax(0, 1fr) minmax(96px, 0.4fr);
+}
+
+.word {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rune-chip {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  padding: 3px 3px 4px;
+  background: transparent;
+  border: 2px solid var(--line-soft);
+  color: var(--muted);
+  font: 400 14px/1 var(--pixel);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 0.1s,
+    border-color 0.1s;
+}
+
+.rune-chip:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.rune-chip[aria-pressed='true'] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+  box-shadow: 3px 3px 0 #000;
+}
+
+/* Gems */
+
+.row.gem {
+  grid-template-columns: minmax(190px, 0.7fr) repeat(var(--cols), minmax(0, 1fr)) 130px;
+}
+
+.gem-stat .cap {
+  display: none;
+}
+
+.drop {
+  text-align: right;
+}
+
+/* Auras */
+
+.row.aura {
+  grid-template-columns: minmax(180px, 0.42fr) minmax(0, 1fr) 90px;
+}
+
+/* The column heading says it on wide screens. */
+.row.aura .pct .cap {
+  display: none;
+}
+
+@media (max-width: 1180px) {
+  .by-gear {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .by-gear .cap:not(:first-child) {
+    margin-top: 6px;
+  }
+}
+
+/* Three stat columns need room, so the gem rows stack earlier than the rest. */
+@media (max-width: 940px) {
+  .row.gem.head {
+    display: none;
+  }
+
+  .row.gem {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'name drop';
+    gap: 6px 12px;
+  }
+
+  .row.gem .name {
+    grid-area: name;
+  }
+
+  .drop {
+    grid-area: drop;
+  }
+
+  .gem-stat {
+    grid-column: 1 / -1;
+  }
+
+  .gem-stat .cap {
+    display: block;
+    margin-bottom: 2px;
+  }
+}
+
+@media (max-width: 620px) {
+  .field.with-rune {
+    flex-grow: 1;
+  }
+
+  .row.rune {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'name pct'
+      'stats stats'
+      'tags tags';
+  }
+
+  .row.runeword {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'name'
+      'word'
+      'stats'
+      'tags';
+  }
+
+  .word {
+    grid-area: word;
+  }
+
+  .row.aura {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'name pct'
+      'stats stats';
+  }
+
+  .row.aura .pct .cap {
+    display: inline;
+  }
+}
