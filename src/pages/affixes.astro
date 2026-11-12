@@ -1,0 +1,9 @@
+---
+import AffixBrowser from '../components/AffixBrowser.tsx';
+import Layout from '../layouts/Layout.astro';
+import { affixes, bases, maxLevel, rarities, tagNames } from '../lib/gear';
+---
+
+<Layout title="Affixes" description="Every prefix, suffix and implicit in Craft to Exile 2, with roll ranges and chances per gear type.">
+  <AffixBrowser client:load affixes={affixes} bases={bases} rarities={rarities} tagNames={tagNames} maxLevel={maxLevel} />
+</Layout>
