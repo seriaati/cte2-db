@@ -1,0 +1,23 @@
+.row.stat {
+  grid-template-columns: minmax(180px, 0.6fr) minmax(0, 1fr) minmax(140px, 0.5fr);
+  align-items: start;
+}
+
+.desc {
+  color: var(--ink-2);
+}
+
+.field.found {
+  flex: 0 1 220px;
+}
+
+@media (max-width: 620px) {
+  .row.stat {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: none;
+  }
+
+  .row.stat > * {
+    grid-area: auto;
+  }
+}

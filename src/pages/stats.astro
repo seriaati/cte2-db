@@ -1,0 +1,10 @@
+---
+import StatBrowser from '../components/StatBrowser.tsx';
+import Layout from '../layouts/Layout.astro';
+import { sourceNames, stats } from '../lib/stats';
+import '../styles/stats.css';
+---
+
+<Layout title="Stats" description="Every stat in Craft to Exile 2 with the game's description of what it does and where it appears on gear.">
+  <StatBrowser client:load stats={stats} sourceNames={sourceNames} />
+</Layout>
