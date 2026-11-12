@@ -1,0 +1,25 @@
+---
+import GearPlanner from '../components/GearPlanner.tsx';
+import Layout from '../layouts/Layout.astro';
+import { infusions, maxLevel, tagNames } from '../lib/gear';
+import { gems, ranks } from '../lib/gems';
+import { planAffixes, planBases, planRarities } from '../lib/planner';
+import { runes, runewords } from '../lib/runes';
+import '../styles/planner.css';
+---
+
+<Layout title="Gear planner" description="Plan a piece of Craft to Exile 2 gear: pick a base, rarity, implicit, prefixes, suffixes, sockets and an infusion and see the stats it ends up with.">
+  <GearPlanner
+    client:load
+    affixes={planAffixes}
+    infusions={infusions}
+    bases={planBases}
+    rarities={planRarities}
+    runes={runes}
+    gems={gems}
+    ranks={ranks}
+    runewords={runewords}
+    tagNames={tagNames}
+    maxLevel={maxLevel}
+  />
+</Layout>
