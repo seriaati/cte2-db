@@ -59,7 +59,7 @@ const RARITY_COLORS: Record<string, string> = {
   GOLD: '#FFAA00',
   DARK_PURPLE: '#AA00AA',
 };
-const RARITY_INKS: Record<string, string> = { DARK_PURPLE: '#D04AD0' };
+const RARITY_INKS: Record<string, string> = { DARK_PURPLE: '#D95CD9' };
 
 export const rarities: Rarity[] = Object.values(rarityData)
   .filter((r) => r.type === 'NORMAL')
