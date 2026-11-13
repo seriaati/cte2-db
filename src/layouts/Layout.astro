@@ -1,5 +1,10 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import '@fontsource/jersey-15/latin-400.css';
+import '@fontsource/space-grotesk/latin-400.css';
+import '@fontsource/space-grotesk/latin-600.css';
+import headingFont from '@fontsource/jersey-15/files/jersey-15-latin-400-normal.woff2?url';
+import bodyFont from '@fontsource/space-grotesk/files/space-grotesk-latin-400-normal.woff2?url';
 import '../styles/global.css';
 
 interface Props {
@@ -29,12 +34,8 @@ const nav = [
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Jersey+15&family=Space+Grotesk:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="preload" as="font" type="font/woff2" href={headingFont} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={bodyFont} crossorigin />
     <title>{title ? `${title} · CTE2 Database` : 'CTE2 Database'}</title>
     <ClientRouter />
   </head>
