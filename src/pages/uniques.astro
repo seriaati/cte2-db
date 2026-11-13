@@ -6,7 +6,7 @@ import { sources, uniqueRarity, uniques } from '../lib/uniques';
 import '../styles/uniques.css';
 ---
 
-<Layout title="Uniques" description="Every unique item in Craft to Exile 2, with its stats, drop level and where it drops.">
+<Layout title="CTE2 Uniques | Craft to Exile 2 Database" description="Every unique item in Craft to Exile 2, with its stats, drop level and where it drops.">
   <style is:inline set:html={`:root { --rar: ${uniqueRarity.ink}; }`}></style>
   <UniqueBrowser client:load uniques={uniques} bases={bases} sources={sources} rarity={uniqueRarity} tagNames={tagNames} maxLevel={maxLevel} />
 </Layout>

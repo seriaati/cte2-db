@@ -3,9 +3,18 @@ import Layout from '../layouts/Layout.astro';
 import { affixes, bases, infusions } from '../lib/gear';
 import { stats } from '../lib/stats';
 import { uniques } from '../lib/uniques';
+
+const structuredData = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'CTE2 Database',
+  alternateName: 'Craft to Exile 2 Database',
+  url: Astro.site,
+});
 ---
 
 <Layout>
+  <script type="application/ld+json" slot="head" set:html={structuredData} />
   <h1>CTE2 Database</h1>
   <p class="lead">
     Gear data for Craft to Exile 2, taken straight from the modpack's files and laid out so you can search it and

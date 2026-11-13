@@ -12,8 +12,13 @@ interface Props {
   description?: string;
 }
 
-const { title, description = 'Searchable gear database for the Craft to Exile 2 modpack.' } = Astro.props;
+const {
+  title = 'CTE2 Database | Craft to Exile 2 Gear Planner and Affixes',
+  description = 'CTE2 Database is a searchable gear database for the Craft to Exile 2 modpack: a gear planner, affixes, uniques, runes, gems, augments, infusions and stats.',
+} = Astro.props;
 const path = Astro.url.pathname;
+const url = new URL(path, Astro.site);
+const image = new URL('/og.png', Astro.site);
 const nav = [
   ['/planner', 'Gear planner'],
   ['/affixes', 'Affixes'],
@@ -31,12 +36,26 @@ const nav = [
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width" />
+    <meta name="theme-color" content="#17191a" />
+    <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={url} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CTE2 Database" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="CTE2 Database: gear planner, affixes, uniques, runes, gems and stats for Craft to Exile 2" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="preload" as="font" type="font/woff2" href={headingFont} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={bodyFont} crossorigin />
-    <title>{title ? `${title} · CTE2 Database` : 'CTE2 Database'}</title>
+    <slot name="head" />
     <ClientRouter />
   </head>
   <body>
