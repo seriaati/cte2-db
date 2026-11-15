@@ -14,7 +14,7 @@ interface Props {
 
 const {
   title = 'CTE2 Database | Craft to Exile 2 Gear Planner and Affixes',
-  description = 'CTE2 Database is a searchable gear database for the Craft to Exile 2 modpack: a gear planner, affixes, uniques, runes, gems, augments, infusions and stats.',
+  description = 'CTE2 Database is a searchable gear database for the Craft to Exile 2 modpack: a gear planner, affixes, uniques, runes, gems, augments, infusions, jewels and stats.',
 } = Astro.props;
 const path = Astro.url.pathname;
 const url = new URL(path, Astro.site);
@@ -28,6 +28,7 @@ const nav = [
   ['/gems', 'Gems'],
   ['/auras', 'Augments'],
   ['/infusions', 'Infusions'],
+  ['/jewels', 'Jewels'],
   ['/talents', 'Talents'],
   ['/stats', 'Stats'],
 ];

@@ -1,4 +1,4 @@
-/* Shared by the rune, gem and aura pages. */
+/* Shared by the rune, gem, aura and jewel pages. */
 
 .sprite {
   flex: none;
@@ -15,15 +15,15 @@
 
 /* The site's tooltip opens rightwards from its label and can run off the page. Here it opens from
    the start of the stat line and stays inside that column. */
-.row:is(.rune, .runeword, .gem, .aura) .tip {
+.row:is(.rune, .runeword, .gem, .aura, .eye) .tip {
   position: static;
 }
 
-.row:is(.rune, .runeword, .gem, .aura) :is(.stats, .gem-stat) div {
+.row:is(.rune, .runeword, .gem, .aura, .eye) :is(.stats, .gem-stat) div {
   position: relative;
 }
 
-.row:is(.rune, .runeword, .gem, .aura) .tip:hover::after {
+.row:is(.rune, .runeword, .gem, .aura, .eye) .tip:hover::after {
   box-sizing: border-box;
   max-width: min(340px, 100%);
 }
@@ -125,6 +125,24 @@
   display: none;
 }
 
+/* Jewels */
+
+.row.jewel {
+  grid-template-columns: minmax(0, 1fr) 64px;
+}
+
+.row.jewel.wide {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.5fr);
+}
+
+.row.eye {
+  grid-template-columns: minmax(180px, 0.42fr) minmax(0, 1fr) 64px;
+}
+
+.note.about {
+  margin: 0 0 16px;
+}
+
 @media (max-width: 1180px) {
   .by-gear {
     grid-template-columns: minmax(0, 1fr);
@@ -200,5 +218,20 @@
 
   .row.aura .pct .cap {
     display: inline;
+  }
+
+  .row.jewel {
+    grid-template-areas: 'stats pct';
+  }
+
+  .row.jewel.wide {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'stats'
+      'tags';
+  }
+
+  .row.eye {
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 }
