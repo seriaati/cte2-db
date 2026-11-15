@@ -163,3 +163,4 @@ cython_debug/
 !src/lib/
 node_modules/
 .astro/
+.wrangler/
