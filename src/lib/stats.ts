@@ -6,6 +6,7 @@ import gemData from '../data/gems.json';
 import langData from '../data/lang.json';
 import runeData from '../data/runes.json';
 import runewordData from '../data/runeword.json';
+import supportData from '../data/support_gem.json';
 import uniqueData from '../data/unique_gears.json';
 import { text } from './gear';
 import { ascendancy, atlas, talents } from './talents';
@@ -34,6 +35,7 @@ const SOURCES: [name: string, mods: Mods][] = [
   ['Runewords', Object.values(runewordData).flatMap((r) => r.stats)],
   ['Gems', Object.values(gemData).flatMap(socketed)],
   ['Augments', Object.values(auraData).flatMap((a) => a.stats)],
+  ['Support gems', Object.values(supportData).filter((g) => g.weight > 0).flatMap((g) => g.stats)],
   ['Infusions', Object.values(affixData).filter((a) => a.type === 'enchant' && a.weight > 0).flatMap((a) => a.stats)],
   ['Jewels', Object.values(affixData).filter((a) => ['jewel', 'jewel_corruption', 'crafted_jewel_unique', 'watcher_eye'].includes(a.type)).flatMap((a) => a.stats)],
   ['Talents', [talents, ascendancy, atlas].flatMap((tree) => tree.perks).flatMap((p) => p.stats.map((s) => ({ stat: s.id })))],
