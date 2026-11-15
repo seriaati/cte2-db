@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import { affixes, bases, infusions } from '../lib/gear';
 import { stats } from '../lib/stats';
+import { supports } from '../lib/supports';
 import { talents } from '../lib/talents';
 import { uniques } from '../lib/uniques';
 
@@ -49,6 +50,10 @@ const structuredData = JSON.stringify({
     <a class="block" href="/auras">
       <strong>Augments</strong>
       <p>Every augment gem with its stats and how much capacity it reserves.</p>
+    </a>
+    <a class="block" href="/supports">
+      <strong>Support gems</strong>
+      <p>{supports.length} gems that boost the skill they are socketed into, and what each one costs.</p>
     </a>
     <a class="block" href="/infusions">
       <strong>Infusions</strong>
