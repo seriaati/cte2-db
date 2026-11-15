@@ -9,8 +9,8 @@ import { planRarities } from './planner';
 import { rollWindows } from './plannerRules';
 import { runed, runes, runewords, slotNames } from './runes';
 import { stats } from './stats';
-import { neighbours } from './talentRules';
-import { ascendancy, atlas, talents, type Perk } from './talents';
+import { encodeBuild, neighbours, rooted } from './talentRules';
+import { ascendancy, atlas, talents, type Perk, type TalentTree } from './talents';
 import { sources, uniqueRarity, uniques } from './uniques';
 
 export { maxLevel };
@@ -44,10 +44,17 @@ const familyLines = (item: FamilyStats, rolls: Rarity, level: number) =>
 const drop = (item: { drops: boolean; dropLevel: number }) => (item.drops ? `Drops from monsters of level ${item.dropLevel} and up` : 'Not a random drop');
 
 const TREES = {
-  talents: { name: 'Talents', tree: talents, links: neighbours(talents) },
-  ascendancy: { name: 'Ascendancy', tree: ascendancy, links: neighbours(ascendancy) },
-  atlas: { name: 'Atlas passives', tree: atlas, links: neighbours(atlas) },
+  talents: { name: 'Talents', path: '/talents', tree: talents, links: neighbours(talents) },
+  ascendancy: { name: 'Ascendancy', path: '/talents/ascendancy', tree: ascendancy, links: neighbours(ascendancy) },
+  atlas: { name: 'Atlas passives', path: '/talents/atlas', tree: atlas, links: neighbours(atlas) },
 };
+const NODE_ID = new RegExp(`^\\[?(${Object.keys(TREES).join('|')})-(\\d+)\\]?$`);
+
+function nodeAt(id: string) {
+  const [, key, index] = id.match(NODE_ID) ?? [];
+  const found = TREES[key as keyof typeof TREES];
+  return found?.tree.nodes[Number(index)] ? { key, found, index: Number(index) } : null;
+}
 
 const perkStats = (perk: Perk, level: number) => perk.stats.map((s) => show(formatRange(s, rolled(s, 100, level), rolled(s, 100, level))));
 const perkLines = (perk: Perk, level: number) => [
@@ -160,18 +167,109 @@ export function search({ query = '', category, level = maxLevel, rarity: rarityI
   ].join('\n\n');
 }
 
+const brief = (key: string, tree: TalentTree, node: number, level: number) => {
+  const perk = tree.perks[tree.nodes[node][2]];
+  return `[${key}-${node}] ${perk.name || perkStats(perk, level).join(', ')}`;
+};
+
 // Nodes are numbered per tree, as in the talent planner's build links.
 export function talentLinks(nodes: string[], level = maxLevel): string {
   return nodes
     .map((id) => {
-      const [, key, index] = id.match(/^\[?([a-z]+)-(\d+)\]?$/) ?? [];
-      const found = TREES[key as keyof typeof TREES];
-      const node = found?.tree.nodes[Number(index)];
-      if (!node) return `${id} is not a talent node.`;
-      const perkAt = (n: number) => found.tree.perks[found.tree.nodes[n][2]];
-      const perk = perkAt(Number(index));
-      const linked = found.links[Number(index)].map((n) => `[${key}-${n}] ${perkAt(n).name || perkStats(perkAt(n), level).join(', ')}`);
-      return [`## [${key}-${Number(index)}] ${perk.name || 'Unnamed talent'} (${found.name})`, ...perkLines(perk, level), `Links to: ${linked.join('; ')}`].join('\n');
+      const at = nodeAt(id);
+      if (!at) return `${id} is not a talent node.`;
+      const { key, found, index } = at;
+      const perk = found.tree.perks[found.tree.nodes[index][2]];
+      const linked = found.links[index].map((n) => brief(key, found.tree, n, level));
+      return [`## [${key}-${index}] ${perk.name || 'Unnamed talent'} (${found.name})`, ...perkLines(perk, level), `Links to: ${linked.join('; ')}`].join('\n');
     })
     .join('\n\n');
+}
+
+// The wanted nodes plus the nodes that join them to the entry nodes, one wanted node at a time: whichever
+// is fewest steps from what is joined so far goes next, by a shortest route. That isn't always the fewest
+// nodes overall, but it is close. A route never takes a one-of-a-kind talent that wasn't asked for, which
+// keeps it off other entry points. Wanted nodes no route reaches are left in, unjoined.
+function joinUp(tree: TalentTree, links: number[][], wanted: Set<number>, entries: number[]): Set<number> {
+  const taken = new Set(entries);
+  const left = new Set([...wanted].filter((n) => !taken.has(n)));
+  while (left.size) {
+    const from = new Map<number, number>();
+    const queue = [...taken];
+    let hit: number | undefined;
+    for (const n of queue) {
+      if (left.has(n)) {
+        hit = n;
+        break;
+      }
+      for (const next of links[n]) {
+        if (taken.has(next) || from.has(next) || (!wanted.has(next) && tree.perks[tree.nodes[next][2]].oneKind)) continue;
+        from.set(next, n);
+        queue.push(next);
+      }
+    }
+    if (hit === undefined) break;
+    for (let n = hit; !taken.has(n); n = from.get(n)!) {
+      taken.add(n);
+      left.delete(n);
+    }
+  }
+  return new Set([...taken, ...left]);
+}
+
+// A link to the talent planner with the build loaded. Throws, saying what is wrong, for a build the game wouldn't allow.
+export function talentBuildLink(origin: string, ids: string[], level = maxLevel, bonus?: number, connect = false): string {
+  const unknown = ids.filter((id) => !nodeAt(id));
+  if (unknown.length) throw new Error(`Not talent nodes: ${unknown.join(', ')}.`);
+  const at = ids.map((id) => nodeAt(id)!);
+  const { key, found } = at[0];
+  if (at.some((a) => a.key !== key)) throw new Error('A link holds one tree. Make a separate link for each tree.');
+  const { tree, links, name, path } = found;
+  const { points } = tree;
+  const wanted = new Set(at.map((a) => a.index));
+  const list = (nodes: number[]) => nodes.map((n) => `[${key}-${n}]`).join(', ');
+  const problems: string[] = [];
+
+  const looseIn = (build: Set<number>) => {
+    const held = rooted(tree, links, build);
+    return [...build].filter((n) => !held.has(n));
+  };
+  let taken = wanted;
+  if (connect) {
+    const isEntry = (n: number) => tree.perks[tree.nodes[n][2]].entry;
+    const given = [...wanted].filter(isEntry);
+    // With no entry point asked for, each one is tried and the one that joins the most with the fewest nodes is kept.
+    const starts = given.length ? [given] : tree.nodes.flatMap((_, n) => (isEntry(n) ? [[n]] : []));
+    const cost = (build: Set<number>) => looseIn(build).length * tree.nodes.length + build.size;
+    taken = starts.map((entries) => joinUp(tree, links, wanted, entries)).reduce((best, build) => (cost(build) < cost(best) ? build : best));
+  }
+  const added = [...taken].filter((n) => !wanted.has(n));
+  const loose = looseIn(taken);
+  if (loose.length)
+    problems.push(
+      connect
+        ? `No route joins these to the rest of the build: ${list(loose)}.`
+        : `Not joined to an entry point through other talents in the build: ${list(loose)}. Add the nodes in between, or set connect to have them added.`,
+    );
+
+  const kinds = Map.groupBy([...taken].filter((n) => tree.perks[tree.nodes[n][2]].oneKind), (n) => tree.perks[tree.nodes[n][2]].oneKind);
+  for (const [kind, nodes] of kinds) if (nodes.length > 1) problems.push(`Only one ${kind} talent can be taken, but the build has ${list(nodes)}.`);
+
+  // The planner page starts from the same bonus: none, or all of them on a tree that gives no points per level.
+  bonus ??= points.perLevel ? 0 : points.maxBonus;
+  if (bonus > points.maxBonus) problems.push(`The ${name} tree allows at most ${points.maxBonus} bonus points.`);
+  const total = Math.min(points.maxTotal, points.base + Math.trunc(level * points.perLevel) + bonus);
+  if (taken.size > total) {
+    const most = Math.min(points.maxTotal, points.base + Math.trunc(maxLevel * points.perLevel) + points.maxBonus);
+    problems.push(`The build takes ${taken.size} talents${added.length ? `, ${added.length} of them added to join it up` : ''}, but ${points.perLevel ? `level ${level} with ` : ''}${bonus} bonus points gives ${total} points. This tree never gives more than ${most}.`);
+  }
+  if (problems.length) throw new Error(problems.join('\n'));
+
+  return [
+    `${origin}${path}#${encodeBuild({ level, bonus, nodes: [...taken] })}`,
+    `${name} tree, ${taken.size} of ${total} points spent${points.perLevel ? ` at level ${level}` : ''}${points.perLevel && bonus ? `, ${bonus} of them bonus points` : ''}.`,
+    ...(added.length
+      ? [`Added to join the build up (${added.length}): ${added.map((n) => brief(key, tree, n, level) + (tree.perks[tree.nodes[n][2]].type === 'MAJOR' ? ' (game changer)' : '')).join('; ')}`]
+      : []),
+  ].join('\n');
 }

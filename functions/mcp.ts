@@ -1,11 +1,11 @@
 // Cloudflare Pages Function: serves the MCP endpoint at /mcp next to the static site.
 import { createMcpHandler, McpServer } from '@modelcontextprotocol/server';
 import * as z from 'zod/v4';
-import { CATEGORIES, maxLevel, RARITIES, search, talentLinks } from '../src/lib/mcp';
+import { CATEGORIES, maxLevel, RARITIES, search, talentBuildLink, talentLinks } from '../src/lib/mcp';
 
 const level = z.number().int().min(1).max(maxLevel).optional().describe(`Item or character level the stat values are worked out at. Defaults to ${maxLevel}, the highest.`);
 
-const handler = createMcpHandler(() => {
+const handler = createMcpHandler(({ requestInfo }) => {
   const server = new McpServer({ name: 'cte2-db', version: '1.0.0' });
   server.registerTool(
     'search',
@@ -41,6 +41,31 @@ const handler = createMcpHandler(() => {
       annotations: { readOnlyHint: true },
     },
     async ({ nodes, level }) => ({ content: [{ type: 'text', text: talentLinks(nodes, level) }] }),
+  );
+  server.registerTool(
+    'talent_build_link',
+    {
+      title: 'Make a shareable talent build link',
+      description:
+        "Turn a talent build into a link that opens it in the site's talent planner, to hand to the user. Give the nodes the build takes, all from one tree: talents, ascendancy or atlas. The build has to be one the game allows: it includes an entry point, every other node links to one already in the build, no more than one talent of a one-of-a-kind group, and no more nodes than the character has points. When it isn't, the answer says which nodes are the problem instead of giving a link. Set connect to give only the talents the build is after and have the nodes between them filled in.",
+      inputSchema: z.object({
+        nodes: z.array(z.string()).min(1).max(200).describe('Node ids of the talents in the build, e.g. ["talents-449", "talents-412"]: all of them, or with connect only the ones that matter.'),
+        level: level.describe(`Character level, which on the talent tree sets how many points there are to spend. Defaults to ${maxLevel}, the highest.`),
+        bonus: z
+          .number()
+          .int()
+          .min(0)
+          .optional()
+          .describe('Points the character has on top of those from its level. Defaults to 0 on the talent tree, and to the most there can be on the ascendancy and atlas trees, which give no points per level.'),
+        connect: z
+          .boolean()
+          .optional()
+          .describe('Add the nodes needed to join the given talents to an entry point and to each other, along short routes; each still costs a point. With no entry point given, the one that takes the fewest nodes is picked. The answer lists what was added. To steer a route, give a node it should pass through.'),
+      }),
+      annotations: { readOnlyHint: true },
+    },
+    // The link goes to whichever site this server is running next to, so a local or preview build links to itself.
+    async ({ nodes, level, bonus, connect }) => ({ content: [{ type: 'text', text: talentBuildLink(new URL(requestInfo!.url).origin, nodes, level, bonus, connect) }] }),
   );
   return server;
 });

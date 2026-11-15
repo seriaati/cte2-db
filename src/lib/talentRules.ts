@@ -38,11 +38,11 @@ export function canRemove(tree: TalentTree, links: number[][], taken: Set<number
   return links[node].every((n) => !taken.has(n) || perkOf(tree, n).entry || reachesEntry(n));
 }
 
-// A build holds together when every taken node reaches a taken entry node through other taken nodes.
-function connected(tree: TalentTree, links: number[][], taken: Set<number>): boolean {
+// The taken nodes that reach a taken entry node through other taken nodes. A build holds together when that is all of them.
+export function rooted(tree: TalentTree, links: number[][], taken: Set<number>): Set<number> {
   const seen = new Set([...taken].filter((n) => perkOf(tree, n).entry));
   for (const n of seen) for (const next of links[n]) if (taken.has(next)) seen.add(next);
-  return seen.size === taken.size;
+  return seen;
 }
 
 export interface Build {
@@ -62,6 +62,7 @@ export function decodeBuild(text: string, tree: TalentTree, links: number[][]): 
   const [level, bonus, code = ''] = text.split('.').map((part, i) => (i < 2 ? Number(part) : part)) as [number, number, string?];
   const nodes = (code.match(/../g) ?? []).map((pair) => DIGITS.indexOf(pair[0]) * 64 + DIGITS.indexOf(pair[1]));
   if (!Number.isInteger(level) || !Number.isInteger(bonus) || code.length % 2) return null;
-  if (!nodes.every((n) => n >= 0 && n < tree.nodes.length) || !connected(tree, links, new Set(nodes))) return null;
+  const taken = new Set(nodes);
+  if (!nodes.every((n) => n >= 0 && n < tree.nodes.length) || rooted(tree, links, taken).size !== taken.size) return null;
   return { level, bonus, nodes };
 }
