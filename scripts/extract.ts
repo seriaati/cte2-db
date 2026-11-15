@@ -11,9 +11,11 @@ const REGISTRIES = [
   'mmorpg_gear_rarity',
   'mmorpg_gear_slot',
   'mmorpg_gems',
+  'mmorpg_perk',
   'mmorpg_runes',
   'mmorpg_runeword',
   'mmorpg_stat',
+  'mmorpg_talent_tree',
   'mmorpg_unique_gears',
 ];
 const LANG = 'assets/mmorpg/lang/en_us.json';
@@ -96,6 +98,10 @@ const layers = [
   ...list(join(mc, 'config/openloader/resources')).map(dirLayer),
 ];
 
+// Talent trees hold their grid as a string with raw line breaks in it, which the game's parser
+// accepts and JSON.parse doesn't.
+const parse = (json: string) => JSON.parse(json.replace(/"(?:[^"\\]|\\.)*"/g, (s) => s.replace(/\r?\n/g, '\\n')));
+
 const registryFile = new RegExp(`^data/[^/]+/(${REGISTRIES.join('|')})/.+\\.json$`);
 const registries: Record<string, Record<string, unknown>> = {};
 const lang: Record<string, string> = {};
@@ -105,7 +111,7 @@ for (const layer of layers) {
     if (path === LANG) Object.assign(lang, JSON.parse(read().toString()));
     const registry = registryFile.exec(path)?.[1];
     if (!registry) continue;
-    const entry = JSON.parse(read().toString());
+    const entry = parse(read().toString());
     // Entries are keyed by id, not file path: the pack moves files into subfolders but keeps ids.
     const id: string = entry.guid ?? entry.id ?? entry.identifier ?? entry.data.id;
     (registries[registry] ??= {})[id] = entry;
@@ -119,11 +125,41 @@ for (const slot of Object.keys(registries.mmorpg_gear_slot)) {
   icons[slot] = traceIcon(read(), mode);
 }
 
+// Perk icons for the talent tree page, packed into one row of 32px cells. Most icons are 16px
+// and double cleanly; the rest are 32px, bar one that is 18px.
+const TALENTS = join(import.meta.dirname, '../public/talents');
+const CELL = 32;
+const texture = (path: string) => layers.findLast((layer) => layer.has(path))!.get(path)!();
+const perks = registries.mmorpg_perk as Record<string, { icon: string }>;
+const grid = (registries.mmorpg_talent_tree.talents as { perks: string }).perks;
+const perkIcons = [...new Set(grid.split(/[\n,]/).flatMap((id) => perks[id.toLowerCase()]?.icon ?? []))].sort();
+const talent_icons = Object.fromEntries(perkIcons.map((icon, i) => [icon, i]));
+const atlas = new PNG({ width: CELL * perkIcons.length, height: CELL });
+perkIcons.forEach((icon, i) => {
+  const [namespace, path] = icon.split(':');
+  // A few of these files end with a second end-of-image marker, which pngjs won't read past.
+  const png = texture(`assets/${namespace}/${path}`);
+  const { width, data } = PNG.sync.read(png.subarray(0, png.indexOf('IEND') + 8));
+  for (let y = 0; y < CELL; y++) {
+    for (let x = 0; x < CELL; x++) {
+      const from = (Math.floor((y * width) / CELL) * width + Math.floor((x * width) / CELL)) * 4;
+      data.copy(atlas.data, (y * atlas.width + i * CELL + x) * 4, from, from + 4);
+    }
+  }
+});
+mkdirSync(TALENTS, { recursive: true });
+writeFileSync(join(TALENTS, 'icons.png'), PNG.sync.write(atlas));
+// The frame the game draws around each type of perk, plain and lit.
+for (const frame of ['stat', 'special', 'major', 'start'].flatMap((type) => [`${type}_off`, `${type}_on`])) {
+  writeFileSync(join(TALENTS, `${frame}.png`), texture(`assets/mmorpg/textures/gui/skill_tree/borders/${frame}.png`));
+}
+console.log(`talent icons: ${perkIcons.length}`);
+
 const sorted = (o: Record<string, unknown>) =>
   Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)));
 
 mkdirSync(OUT, { recursive: true });
-for (const [registry, entries] of Object.entries({ ...registries, lang, icons })) {
+for (const [registry, entries] of Object.entries({ ...registries, lang, icons, talent_icons })) {
   const file = `${registry.replace('mmorpg_', '')}.json`;
   writeFileSync(join(OUT, file), JSON.stringify(sorted(entries), null, 2) + '\n');
   console.log(`${file}: ${Object.keys(entries).length}`);
