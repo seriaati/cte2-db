@@ -15,6 +15,7 @@ const REGISTRIES = [
   'mmorpg_runes',
   'mmorpg_runeword',
   'mmorpg_stat',
+  'mmorpg_support_gem',
   'mmorpg_talent_tree',
   'mmorpg_unique_gears',
 ];
@@ -165,12 +166,12 @@ for (const [registry, entries] of Object.entries({ ...registries, lang, icons, t
   console.log(`${file}: ${Object.keys(entries).length}`);
 }
 
-// Item sprites for the rune, gem, aura and jewel pages: item "mmorpg:runes/ano" ends up at public/items/runes/ano.png.
+// Item sprites for the rune, gem, aura, support gem and jewel pages: item "mmorpg:runes/ano" ends up at public/items/runes/ano.png.
 const SPRITES = join(import.meta.dirname, '../public/items');
 const spriteItems = [
   ...[...Object.values(registries.mmorpg_runes), ...Object.values(registries.mmorpg_gems)].map((e) => (e as { item_id: string }).item_id),
-  // SkillGemsItems in Mine and Slash: an aura gem is one of three items, picked by the aura's style.
-  ...['str', 'dex', 'int'].map((style) => `mmorpg:skill_gems/aura/${style}`),
+  // SkillGemsItems in Mine and Slash: an aura or support gem is one of three items, picked by its style.
+  ...['aura', 'support'].flatMap((gem) => ['str', 'dex', 'int'].map((style) => `mmorpg:skill_gems/${gem}/${style}`)),
   ...['str', 'dex', 'int', 'unique_crafted', 'watcher_eye'].map((jewel) => `mmorpg:jewel/${jewel}`),
 ];
 for (const item of spriteItems) {
