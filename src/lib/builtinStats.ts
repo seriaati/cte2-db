@@ -24,7 +24,7 @@ const FLAT_SCALED = new Set([
 const FLAT_UNSCALED = new Set(['jewel_socket', 'spirit_cost']);
 
 // Long stats print as their sentence alone, with no number in front.
-const LONG = new Set(['chaos_doesnt_bypass_magic_shield']);
+const LONG = new Set(['blood_user', 'chaos_doesnt_bypass_magic_shield']);
 
 export function builtinStat(id: string): { percent: boolean; scaling: string; long: boolean } {
   return { ...flags(id), long: LONG.has(id) };

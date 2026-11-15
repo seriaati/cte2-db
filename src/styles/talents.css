@@ -1,0 +1,313 @@
+/* Fullscreen: the controls stay on top and the tree takes the rest. The class alone has to cover the
+   window too, for iPhones, where the browser can't put an element in fullscreen. */
+.tree-app.full {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  background: var(--bg);
+}
+
+.tree-app.full .controls {
+  margin-top: 0;
+}
+
+.tree-app.full .tree-frame {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+  margin-top: 16px;
+}
+
+.in.bonus {
+  width: 96px;
+  padding: 0 4px;
+  text-align: center;
+  font: 400 24px/1 var(--pixel);
+}
+
+.tree-frame {
+  position: relative;
+  /* Sized to end at the bottom of the window, since the wheel zooms the tree instead of scrolling the page. */
+  height: clamp(420px, calc(100vh - 370px), 900px);
+  margin-top: 24px;
+  /* clip, not hidden: focusing a talent must not scroll the frame out from under the pan and zoom. */
+  overflow: clip;
+  background: var(--rail);
+  border: 2px solid var(--line);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.tree-frame:active {
+  cursor: grabbing;
+}
+
+.tree {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+}
+
+/* Zoomed in, the game's pixel art stays sharp; zoomed out, smoothing keeps it from turning to noise. */
+.crisp .tree {
+  image-rendering: pixelated;
+}
+
+.edges {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: visible;
+}
+
+.edges path {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 2;
+}
+
+.edges path.on {
+  stroke: var(--ink);
+  stroke-width: 3;
+}
+
+/* Frame sizes are PerkType.size in Mine and Slash; each is centred on its grid point. */
+.node {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--rail) url('/talents/stat_off.png') center / 100%;
+  cursor: pointer;
+}
+
+.node::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 16px;
+  height: 16px;
+  margin: auto;
+  background: url('/talents/icons.png') calc(var(--icon) * -16px) 0 / auto 16px;
+}
+
+.node.special,
+.node.start {
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+}
+
+.node.major {
+  width: 33px;
+  height: 33px;
+  margin: -16px 0 0 -16px;
+  border-radius: 0;
+}
+
+.node.special {
+  background-image: url('/talents/special_off.png');
+}
+
+.node.major {
+  background-image: url('/talents/major_off.png');
+}
+
+.node.start {
+  background-image: url('/talents/start_off.png');
+}
+
+.node.dim {
+  opacity: 0.25;
+}
+
+.node:is(:hover, :focus-visible) {
+  z-index: 1;
+  filter: brightness(1.3);
+}
+
+/* A node the next point could go in, then one with a point in it: the game's yellow and green. */
+.node.open {
+  background-color: #5e5312;
+}
+
+.node.on {
+  background-color: #1d7a3e;
+  background-image: url('/talents/stat_on.png');
+}
+
+.node.special.on {
+  background-image: url('/talents/special_on.png');
+}
+
+.node.major.on {
+  background-image: url('/talents/major_on.png');
+}
+
+.node.start.on {
+  background-image: url('/talents/start_on.png');
+}
+
+.talent-tip {
+  animation: pop 0.12s ease-out;
+  position: absolute;
+  z-index: 3;
+  width: max-content;
+  padding: 10px 12px;
+  background: var(--panel);
+  border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0 #000;
+  line-height: 1.35;
+  pointer-events: none;
+}
+
+.talent-tip strong {
+  display: block;
+  font: 400 24px/1 var(--pixel);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.talent-tip .cap {
+  display: block;
+  margin: 4px 0 6px;
+}
+
+.talent-tip strong + div {
+  margin-top: 6px;
+}
+
+.talent-tip p {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+/* Buttons and panels laid over the tree. */
+.tree-ui {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: default;
+}
+
+.tree-ui .btn:disabled {
+  color: var(--dim);
+  pointer-events: none;
+}
+
+.tree-tools {
+  top: 10px;
+  right: 10px;
+}
+
+.tree-tools .btn:not(:last-child) {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  padding: 0;
+  font-size: 26px;
+}
+
+.tree-points {
+  bottom: 10px;
+  left: 10px;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  max-width: calc(100% - 20px);
+  max-height: calc(100% - 20px);
+}
+
+.tree-points > div {
+  display: flex;
+  flex-wrap: wrap-reverse;
+  gap: 8px;
+}
+
+.tree-points .count {
+  display: grid;
+  place-items: center;
+  height: 44px;
+  padding: 0 12px;
+}
+
+.tree-points .count.over {
+  background: #ff6b5e;
+}
+
+.tree-found {
+  top: 10px;
+  left: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  max-height: calc(100% - 20px);
+}
+
+.tree-list {
+  animation: pop 0.12s ease-out;
+  width: min(360px, calc(100vw - 56px));
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  background: var(--panel);
+  border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0 #000;
+  line-height: 1.35;
+  user-select: text;
+}
+
+.tree-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+}
+
+.tree-points li {
+  padding-block: 4px;
+}
+
+.tree-list li + li {
+  border-top: 2px solid var(--line-row);
+}
+
+.tree-list strong {
+  display: block;
+}
+
+.perk-icon {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  background: url('/talents/icons.png') calc(var(--icon) * -32px) 0 / auto 32px;
+  image-rendering: pixelated;
+}
+
+.times {
+  margin-left: auto;
+  font: 400 20px/1.2 var(--pixel);
+  color: var(--muted);
+}
+
+/* On a phone the search count and the zoom buttons don't fit side by side, and the lists stop
+   short of the zoom buttons instead of covering them. */
+@media (max-width: 620px) {
+  .tree-found {
+    top: 62px;
+  }
+
+  .tree-found,
+  .tree-points {
+    max-height: calc(100% - 72px);
+  }
+}

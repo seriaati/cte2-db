@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import { affixes, bases, infusions } from '../lib/gear';
 import { stats } from '../lib/stats';
+import { tree } from '../lib/talents';
 import { uniques } from '../lib/uniques';
 
 const structuredData = JSON.stringify({
@@ -52,6 +53,10 @@ const structuredData = JSON.stringify({
     <a class="block" href="/infusions">
       <strong>Infusions</strong>
       <p>{infusions.length} stats an Infusion scroll can add to gear, by slot and rarity.</p>
+    </a>
+    <a class="block" href="/talents">
+      <strong>Talents</strong>
+      <p>The talent tree with all {tree.nodes.length} talents and what each one gives.</p>
     </a>
     <a class="block" href="/stats">
       <strong>Stats</strong>

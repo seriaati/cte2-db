@@ -216,9 +216,9 @@ ul {
   color: var(--bg);
 }
 
-/* Below this the nine tabs no longer fit on one row beside the site name, so the nav becomes a
+/* Below this the ten tabs no longer fit on one row beside the site name, so the nav becomes a
    menu opened from a button in the bottom right corner, within thumb reach on a phone. */
-@media (max-width: 1220px) {
+@media (max-width: 1321px) {
   .menu-toggle {
     position: fixed;
     right: 16px;

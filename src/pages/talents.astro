@@ -1,0 +1,11 @@
+---
+import TalentTree from '../components/TalentTree.tsx';
+import Layout from '../layouts/Layout.astro';
+import { maxLevel } from '../lib/gear';
+import { talentPoints, tree } from '../lib/talents';
+import '../styles/talents.css';
+---
+
+<Layout title="CTE2 Talents | Craft to Exile 2 Database" description="The Craft to Exile 2 talent tree: spend your points to plan a build, see what each talent gives and search the tree by stat.">
+  <TalentTree client:load tree={tree} points={talentPoints} maxLevel={maxLevel} />
+</Layout>
