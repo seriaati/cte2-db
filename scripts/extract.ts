@@ -125,14 +125,14 @@ for (const slot of Object.keys(registries.mmorpg_gear_slot)) {
   icons[slot] = traceIcon(read(), mode);
 }
 
-// Perk icons for the talent tree page, packed into one row of 32px cells. Most icons are 16px
+// Perk icons for the talent tree pages, packed into one row of 32px cells. Most icons are 16px
 // and double cleanly; the rest are 32px, bar one that is 18px.
 const TALENTS = join(import.meta.dirname, '../public/talents');
 const CELL = 32;
 const texture = (path: string) => layers.findLast((layer) => layer.has(path))!.get(path)!();
 const perks = registries.mmorpg_perk as Record<string, { icon: string }>;
-const grid = (registries.mmorpg_talent_tree.talents as { perks: string }).perks;
-const perkIcons = [...new Set(grid.split(/[\n,]/).flatMap((id) => perks[id.toLowerCase()]?.icon ?? []))].sort();
+const grids = Object.values(registries.mmorpg_talent_tree).map((tree) => (tree as { perks: string }).perks);
+const perkIcons = [...new Set(grids.flatMap((grid) => grid.split(/[\n,]/)).flatMap((id) => perks[id.toLowerCase()]?.icon ?? []))].sort();
 const talent_icons = Object.fromEntries(perkIcons.map((icon, i) => [icon, i]));
 const atlas = new PNG({ width: CELL * perkIcons.length, height: CELL });
 perkIcons.forEach((icon, i) => {
@@ -150,7 +150,7 @@ perkIcons.forEach((icon, i) => {
 mkdirSync(TALENTS, { recursive: true });
 writeFileSync(join(TALENTS, 'icons.png'), PNG.sync.write(atlas));
 // The frame the game draws around each type of perk, plain and lit.
-for (const frame of ['stat', 'special', 'major', 'start'].flatMap((type) => [`${type}_off`, `${type}_on`])) {
+for (const frame of ['stat', 'special', 'major', 'start', 'asc'].flatMap((type) => [`${type}_off`, `${type}_on`])) {
   writeFileSync(join(TALENTS, `${frame}.png`), texture(`assets/mmorpg/textures/gui/skill_tree/borders/${frame}.png`));
 }
 console.log(`talent icons: ${perkIcons.length}`);
