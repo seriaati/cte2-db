@@ -7,10 +7,19 @@ import { LevelStepper } from './controls';
 import { StatLine } from './StatLine';
 
 interface Props {
+  // Which of TREES this is; a build is saved under this name.
+  id: string;
+  // The page's own opening sentence.
+  intro: string;
   tree: Tree;
-  points: { base: number; perLevel: number; maxBonus: number; maxTotal: number };
   maxLevel: number;
 }
+
+const TREES = [
+  ['talents', '/talents', 'Talents'],
+  ['ascendancy', '/talents/ascendancy', 'Ascendancy'],
+  ['atlas', '/talents/atlas', 'Atlas'],
+];
 
 // Where the tree's centre sits inside the frame, and how far it is zoomed.
 interface View {
@@ -62,11 +71,15 @@ const nodeOf = (e: React.SyntheticEvent) => {
   return el ? Number(el.dataset.node) : null;
 };
 
-export default function TalentTree({ tree, points, maxLevel }: Props) {
+export default function TalentTree({ id, intro, tree, maxLevel }: Props) {
+  const { points } = tree;
+  // Level only matters where it gives points or grows a stat, which on the atlas tree it never does.
+  const levelled = points.perLevel > 0 || tree.perks.some((perk) => perk.stats.some((s) => s.scaling));
   const [query, setQuery] = useState('');
   const [level, setLevel] = useStored('level', maxLevel);
-  const [bonus, setBonus] = useStored('talentBonus', 0);
-  const [stored, setStored] = useStored<number[]>('talents', []);
+  // Trees that give no points per level are planned with every point they can ever have.
+  const [bonus, setBonus] = useStored(`${id}Bonus`, points.perLevel ? 0 : points.maxBonus);
+  const [stored, setStored] = useStored<number[]>(id, []);
   const [view, setView] = useState<View | null>(null);
   const [active, setActive] = useState<number | null>(null);
   // Only one of the two lists laid over the tree is open at a time.
@@ -135,7 +148,7 @@ export default function TalentTree({ tree, points, maxLevel }: Props) {
       history.replaceState(null, '', location.pathname);
       let saved = '[]';
       try {
-        saved = localStorage.getItem('talents') ?? saved;
+        saved = localStorage.getItem(id) ?? saved;
       } catch {}
       if (saved !== '[]' && saved !== JSON.stringify(build.nodes) && !confirm('Replace your saved talents with the build in this link?')) return;
       setLevel(Math.min(maxLevel, Math.max(1, build.level)));
@@ -159,10 +172,18 @@ export default function TalentTree({ tree, points, maxLevel }: Props) {
     }
   };
 
-  // Half the side of the square that holds the whole tree.
-  const reach = useMemo(() => (Math.max(...tree.nodes.map(([x, y]) => Math.max(Math.abs(x), Math.abs(y)))) + 2) * SPACING, [tree]);
-  const minZoom = () => Math.min(frame.current!.clientWidth, frame.current!.clientHeight) / (2 * reach);
-  const reset = () => setView({ x: frame.current!.clientWidth / 2, y: frame.current!.clientHeight / 2, k: Math.max(minZoom(), 0.5) });
+  // The box that holds the whole tree, in pixels before any zoom: its middle and its size with some room to spare.
+  const bounds = useMemo(() => {
+    const [xs, ys] = [0, 1].map((axis) => tree.nodes.map((node) => node[axis] * SPACING));
+    const span = (v: number[]) => ({ mid: (Math.min(...v) + Math.max(...v)) / 2, size: Math.max(...v) - Math.min(...v) + 4 * SPACING });
+    return { x: span(xs), y: span(ys) };
+  }, [tree]);
+  const minZoom = () => Math.min(frame.current!.clientWidth / bounds.x.size, frame.current!.clientHeight / bounds.y.size);
+  // Opens on the whole tree, unless that would make it too small to read; then it opens closer in.
+  const reset = () => {
+    const k = minZoom() < 0.2 ? 0.5 : minZoom();
+    setView({ x: frame.current!.clientWidth / 2 - bounds.x.mid * k, y: frame.current!.clientHeight / 2 - bounds.y.mid * k, k });
+  };
 
   // Where the inside of the frame starts on screen, past its border.
   const origin = () => {
@@ -269,7 +290,7 @@ export default function TalentTree({ tree, points, maxLevel }: Props) {
   const hint = (i: number) => {
     if (taken.has(i)) return canRemove(tree, links, taken, i) ? '' : 'Other talents you have taken connect through this one.';
     const why = blocked(tree, links, taken, i);
-    if (why === 'start') return 'Start with one of the grey talents around the centre.';
+    if (why === 'start') return 'Start with one of the talents marked yellow.';
     if (why === 'link') return 'Not linked to a talent you have taken.';
     return why || hasPoints ? '' : 'No points left.';
   };
@@ -307,23 +328,34 @@ export default function TalentTree({ tree, points, maxLevel }: Props) {
   return (
     <div className="content">
       <div className="title-row">
-        <h1>Talents</h1>
-        <span className="context">Lv {level}</span>
+        <h1>{TREES.find(([name]) => name === id)![2]}</h1>
+        {levelled && <span className="context">Lv {level}</span>}
       </div>
       <p className="lead">
-        All {tree.nodes.length} talents in the tree, laid out as they are in game. Click talents to spend your points,
-        and search for a stat to light up every talent that gives it.
+        {intro} Click talents to spend your points, and search for a stat to light up every talent that gives it.
       </p>
 
       <div ref={app} className={`tree-app ${full ? 'full' : ''}`}>
         <div className="controls">
+          <div className="field">
+            <span className="cap" id="tree-label">
+              Tree
+            </span>
+            <nav className="seg" aria-labelledby="tree-label">
+              {TREES.map(([name, href, label]) => (
+                <a key={name} className="btn" href={href} aria-current={name === id ? 'page' : undefined}>
+                  {label}
+                </a>
+              ))}
+            </nav>
+          </div>
           <label className="field grow">
             <span className="cap">Search</span>
             <input className="in" type="search" placeholder="Name or stat" value={query} onChange={(e) => setQuery(e.target.value)} />
           </label>
-          <LevelStepper value={level} max={maxLevel} onChange={setLevel} />
+          {levelled && <LevelStepper value={level} max={maxLevel} onChange={setLevel} />}
           <label className="field">
-            <span className="cap">Bonus points</span>
+            <span className="cap">{points.perLevel ? 'Bonus points' : 'Points'}</span>
             <input
               className="in bonus"
               type="number"

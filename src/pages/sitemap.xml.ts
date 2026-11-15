@@ -1,8 +1,8 @@
 import type { APIRoute } from 'astro';
 
-// Every page is a single .astro file in this folder, so the file names are the site's routes.
+// Every page is a single .astro file in this folder or below it, so the file paths are the site's routes.
 // Pages are built as folders, so every address but the home page ends in a slash, as the canonical links do.
-const paths = Object.keys(import.meta.glob('./*.astro')).map((file) => file.replace(/^\.\/(index\.astro$)?/, '/').replace(/\.astro$/, '/'));
+const paths = Object.keys(import.meta.glob('./**/*.astro')).map((file) => file.replace(/^\.\/(index\.astro$)?/, '/').replace(/\.astro$/, '/'));
 
 export const GET: APIRoute = ({ site }) =>
   new Response(

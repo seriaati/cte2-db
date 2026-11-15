@@ -21,7 +21,14 @@ const FLAT_SCALED = new Set([
   'spell_dodge',
   'weapon_damage',
 ]);
-const FLAT_UNSCALED = new Set(['jewel_socket', 'spirit_cost']);
+const FLAT_UNSCALED = new Set([
+  'harvest_completion_bounty',
+  'imprisoned_monster_double_spawn',
+  'jewel_socket',
+  'prophecy_double_curse',
+  'shrine_double_buff',
+  'spirit_cost',
+]);
 
 // Long stats print as their sentence alone, with no number in front.
 const LONG = new Set(['blood_user', 'chaos_doesnt_bypass_magic_shield']);

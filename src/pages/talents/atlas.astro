@@ -1,0 +1,11 @@
+---
+import TalentTree from '../../components/TalentTree.tsx';
+import Layout from '../../layouts/Layout.astro';
+import { maxLevel } from '../../lib/gear';
+import { atlas } from '../../lib/talents';
+import '../../styles/talents.css';
+---
+
+<Layout title="CTE2 Atlas Passives | Craft to Exile 2 Database" description="The Craft to Exile 2 atlas passive tree: every atlas passive, with what each one does to your maps and a planner for your points.">
+  <TalentTree client:load id="atlas" intro={`All ${atlas.nodes.length} atlas passives, laid out as they are in game.`} tree={atlas} maxLevel={maxLevel} />
+</Layout>

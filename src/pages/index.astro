@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import { affixes, bases, infusions } from '../lib/gear';
 import { stats } from '../lib/stats';
-import { tree } from '../lib/talents';
+import { talents } from '../lib/talents';
 import { uniques } from '../lib/uniques';
 
 const structuredData = JSON.stringify({
@@ -56,7 +56,7 @@ const structuredData = JSON.stringify({
     </a>
     <a class="block" href="/talents">
       <strong>Talents</strong>
-      <p>The talent tree with all {tree.nodes.length} talents and what each one gives.</p>
+      <p>A planner for all {talents.nodes.length} talents, plus the ascendancy and atlas trees.</p>
     </a>
     <a class="block" href="/stats">
       <strong>Stats</strong>

@@ -8,7 +8,7 @@ import runeData from '../data/runes.json';
 import runewordData from '../data/runeword.json';
 import uniqueData from '../data/unique_gears.json';
 import { text } from './gear';
-import { tree } from './talents';
+import { ascendancy, atlas, talents } from './talents';
 import { uniques } from './uniques';
 
 export interface Stat {
@@ -35,7 +35,7 @@ const SOURCES: [name: string, mods: Mods][] = [
   ['Gems', Object.values(gemData).flatMap(socketed)],
   ['Augments', Object.values(auraData).flatMap((a) => a.stats)],
   ['Infusions', Object.values(affixData).filter((a) => a.type === 'enchant' && a.weight > 0).flatMap((a) => a.stats)],
-  ['Talents', tree.perks.flatMap((p) => p.stats.map((s) => ({ stat: s.id })))],
+  ['Talents', [talents, ascendancy, atlas].flatMap((tree) => tree.perks).flatMap((p) => p.stats.map((s) => ({ stat: s.id })))],
 ];
 export const sourceNames = SOURCES.map(([name]) => name);
 const sourceStats = SOURCES.map(([name, mods]) => [name, new Set(mods.map((m) => m.stat))] as const);

@@ -1,0 +1,19 @@
+---
+import TalentTree from '../../components/TalentTree.tsx';
+import Layout from '../../layouts/Layout.astro';
+import { maxLevel } from '../../lib/gear';
+import { ascendancy } from '../../lib/talents';
+import '../../styles/talents.css';
+
+const classes = ascendancy.nodes.filter(([, , perk]) => ascendancy.perks[perk].entry).length;
+---
+
+<Layout title="CTE2 Ascendancy | Craft to Exile 2 Database" description="The Craft to Exile 2 ascendancy tree: every ascendancy class and its talents, with what each one gives and a planner for your points.">
+  <TalentTree
+    client:load
+    id="ascendancy"
+    intro={`The ${classes} ascendancy classes and their ${ascendancy.nodes.length - classes} talents, laid out as they are in game.`}
+    tree={ascendancy}
+    maxLevel={maxLevel}
+  />
+</Layout>

@@ -21,6 +21,21 @@
   margin-top: 16px;
 }
 
+.seg a.btn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.seg a.btn[aria-current] {
+  position: relative;
+  z-index: 1;
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+  box-shadow: 4px 4px 0 #000;
+}
+
 .in.bonus {
   width: 96px;
   padding: 0 4px;
@@ -113,6 +128,20 @@
   border-radius: 0;
 }
 
+/* An ascendancy class: twice the size of the rest, icon included. */
+.node.asc {
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+}
+
+.node.asc::before {
+  width: 32px;
+  height: 32px;
+  background-position: calc(var(--icon) * -32px) 0;
+  background-size: auto 32px;
+}
+
 .node.special {
   background-image: url('/talents/special_off.png');
 }
@@ -123,6 +152,10 @@
 
 .node.start {
   background-image: url('/talents/start_off.png');
+}
+
+.node.asc {
+  background-image: url('/talents/asc_off.png');
 }
 
 .node.dim {
@@ -154,6 +187,11 @@
 
 .node.start.on {
   background-image: url('/talents/start_on.png');
+}
+
+.node.asc.on {
+  border-radius: 0;
+  background-image: url('/talents/asc_on.png');
 }
 
 .talent-tip {
