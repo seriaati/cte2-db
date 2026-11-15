@@ -19,7 +19,7 @@ export default function StatBrowser({ stats, sourceNames }: Props) {
         (!q || s.name.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q)),
     );
     return [
-      { label: 'On gear', rows: rows.filter((s) => s.sources.length) },
+      { label: 'On this site', rows: rows.filter((s) => s.sources.length) },
       { label: 'Other stats', rows: rows.filter((s) => !s.sources.length) },
     ].filter((g) => g.rows.length);
   }, [stats, source, query]);
@@ -52,7 +52,7 @@ export default function StatBrowser({ stats, sourceNames }: Props) {
 
       <p className="note">
         Descriptions are the game's own. Stats under Other come from parts of the game this site doesn't list yet, such
-        as talents, spells, jewels and maps. An X in a name stands for the stat's value.
+        as spells, jewels and maps. An X in a name stands for the stat's value.
       </p>
 
       {groups.length === 0 && <p className="empty">Nothing matches.</p>}
