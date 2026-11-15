@@ -52,7 +52,7 @@ export default function StatBrowser({ stats, sourceNames }: Props) {
 
       <p className="note">
         Descriptions are the game's own. Stats under Other come from parts of the game this site doesn't list yet, such
-        as spells, jewels and maps. An X in a name stands for the stat's value.
+        as spells and maps. An X in a name stands for the stat's value.
       </p>
 
       {groups.length === 0 && <p className="empty">Nothing matches.</p>}
