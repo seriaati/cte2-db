@@ -5,8 +5,8 @@ import { statMod } from './gear';
 // The game multiplies these as 32-bit floats and drops the fraction.
 export const floatInt = (a: number, b: number) => Math.trunc(Math.fround(Math.fround(a) * Math.fround(b)));
 
-// scripts/extract.ts copies each item's sprite to public/items/<item path>.png.
-export const sprite = (item: string) => `/items/${item.split(':')[1]}.png`;
+// scripts/extract.ts copies each item's sprite to public/items/<item path>.webp.
+export const sprite = (item: string) => `/items/${item.split(':')[1]}.webp`;
 
 // What a rune or gem gives depends on the gear it sits in. Off-hand gear uses the armor stats
 // (Rune.getFor and BaseGem.getFor in Mine and Slash fall back to them).

@@ -2,6 +2,7 @@ import AdmZip from 'adm-zip';
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, sep } from 'node:path';
 import { PNG } from 'pngjs';
+import sharp from 'sharp';
 
 const REGISTRIES = [
   'mmorpg_affixes',
@@ -21,6 +22,9 @@ const REGISTRIES = [
 ];
 const LANG = 'assets/mmorpg/lang/en_us.json';
 const OUT = join(import.meta.dirname, '../src/data');
+
+// The site's images are lossless WebP, which comes out at well under half the size of the game's PNGs.
+const writeImage = async (file: string, png: Buffer) => writeFileSync(file, await sharp(png).webp({ lossless: true, effort: 6 }).toBuffer());
 
 // Gear icons are traced from in-game textures: most gear slots have a white glyph inside their
 // "soul" item texture. The slots listed here have none, so theirs are drawn by hand to match.
@@ -150,10 +154,10 @@ perkIcons.forEach((icon, i) => {
   }
 });
 mkdirSync(TALENTS, { recursive: true });
-writeFileSync(join(TALENTS, 'icons.png'), PNG.sync.write(atlas));
+await writeImage(join(TALENTS, 'icons.webp'), PNG.sync.write(atlas));
 // The frame the game draws around each type of perk, plain and lit.
 for (const frame of ['stat', 'special', 'major', 'start', 'asc'].flatMap((type) => [`${type}_off`, `${type}_on`])) {
-  writeFileSync(join(TALENTS, `${frame}.png`), texture(`assets/mmorpg/textures/gui/skill_tree/borders/${frame}.png`));
+  await writeImage(join(TALENTS, `${frame}.webp`), texture(`assets/mmorpg/textures/gui/skill_tree/borders/${frame}.png`));
 }
 console.log(`talent icons: ${perkIcons.length}`);
 
@@ -167,7 +171,7 @@ for (const [registry, entries] of Object.entries({ ...registries, lang, icons, t
   console.log(`${file}: ${Object.keys(entries).length}`);
 }
 
-// Item sprites for the rune, gem, aura, support gem and jewel pages: item "mmorpg:runes/ano" ends up at public/items/runes/ano.png.
+// Item sprites for the rune, gem, aura, support gem and jewel pages: item "mmorpg:runes/ano" ends up at public/items/runes/ano.webp.
 const SPRITES = join(import.meta.dirname, '../public/items');
 const spriteItems = [
   ...[...Object.values(registries.mmorpg_runes), ...Object.values(registries.mmorpg_gems)].map((e) => (e as { item_id: string }).item_id),
@@ -182,8 +186,8 @@ for (const item of spriteItems) {
   // Animated textures stack their frames vertically, so the top square is the first frame.
   const frame = new PNG({ width, height: width });
   data.copy(frame.data, 0, 0, width * width * 4);
-  const file = join(SPRITES, `${path}.png`);
+  const file = join(SPRITES, `${path}.webp`);
   mkdirSync(dirname(file), { recursive: true });
-  writeFileSync(file, PNG.sync.write(frame));
+  await writeImage(file, PNG.sync.write(frame));
 }
 console.log(`item sprites: ${spriteItems.length}`);

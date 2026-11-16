@@ -8,7 +8,7 @@ import { statMod, text } from './gear';
 
 export interface Perk {
   type: 'STAT' | 'SPECIAL' | 'MAJOR' | 'START' | 'ASC';
-  // Which cell of public/talents/icons.png holds the icon.
+  // Which cell of public/talents/icons.webp holds the icon.
   icon: number;
   // Empty for the many small perks the game leaves unnamed.
   name: string;
