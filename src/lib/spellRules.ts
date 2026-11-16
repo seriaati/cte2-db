@@ -46,10 +46,10 @@ export interface Spell {
 // The game does this arithmetic in 32-bit floats and then drops the fraction, so the rounding has to match.
 const f = Math.fround;
 const int = (v: number) => Math.trunc(f(v));
-const multiplier = (s: Scaling, level: number) => f(s.base + f(f(s.perLevel) * (level - 1)));
+export const multiplier = (s: Scaling, level: number) => f(s.base + f(f(s.perLevel) * (level - 1)));
 
 // LeveledValue.getValue in Mine and Slash.
-function leveled(v: Leveled, rank: number, topRank: number) {
+export function leveled(v: Leveled, rank: number, topRank: number) {
   const min = f(v.min);
   return f(min + f(f(f(f(v.max) - min) / topRank) * rank));
 }

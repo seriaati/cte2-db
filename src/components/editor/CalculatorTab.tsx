@@ -91,7 +91,7 @@ export default function CalculatorTab({ build }: TabProps) {
       </div>
       <p className="note">
         The stats of the whole build at level {build.level}, added up the way the game does it. Support gems only count for their own skill and are left out, and so are buffs, food and
-        what vanilla armor and attributes give. Damage isn't worked out yet.
+        what vanilla armor and attributes give.
       </p>
       <StatTotals build={build} />
     </div>

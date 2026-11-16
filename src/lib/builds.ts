@@ -21,6 +21,7 @@ import type { Affix, StatMod } from './affix';
 import { auras } from './auras';
 import { VANILLA_HEALTH, type Limits, type RarityType, type TreeId } from './buildRules';
 import { builtinLimits, transfers } from './builtinStats';
+import { damage } from './damage';
 import { affixesOf, infusions, maxLevel, statMod, tagNames, text } from './gear';
 import { gems, ranks } from './gems';
 import { sprite } from './items';
@@ -326,5 +327,5 @@ const stats = {
   ],
 };
 
-export const sections = { ...partial, stats };
+export const sections = { ...partial, stats, damage };
 export type Sections = typeof sections;

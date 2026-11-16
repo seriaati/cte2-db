@@ -15,6 +15,9 @@ export interface Totals {
   stats: Map<string, Total>;
   // Why parts of the build give nothing.
   skipped: string[];
+  // The base of the weapon held, and whether a second one is held beside it.
+  weapon?: string;
+  dualWield: boolean;
 }
 
 const exact = ({ stats, rolls, level }: Part): Exact[] => stats.map((s) => ({ id: s.id, type: s.type, value: rolled(s, rolls.maxPercent, level) }));
@@ -22,11 +25,11 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
 
 // Everything that gives a character stats, as the game gathers it (StatCalculation.collectStatsWithCtx
 // and CachedPlayerStats). What it takes from a weapon in the off hand depends on a stat of the
-// character's own, so that is passed in.
-function gather(data: Sections, build: Build, dualWield: number) {
+// character's own, so that is passed in. `extra` is what a skill adds for itself alone.
+function gather(data: Sections, build: Build, dualWield: number, extra: Exact[]) {
   const { level } = build;
   const skipped: string[] = [];
-  const others: Exact[] = [...exact({ stats: data.stats.base, rolls: exactly(100), level }), ...newbieResists(level)];
+  const others: Exact[] = [...extra, ...exact({ stats: data.stats.base, rolls: exactly(100), level }), ...newbieResists(level)];
 
   // GearData: gear above the character's level gives nothing, and a weapon in the off hand gives
   // a share of its stats when it is one that can be dual wielded beside a one-handed weapon.
@@ -111,11 +114,14 @@ function gather(data: Sections, build: Build, dualWield: number) {
   });
 
   const sources: Source[] = [{ kind: 'other', stats: others }, { kind: 'jewel', stats: jewels }, ...auras.map(({ stats }): Source => ({ kind: 'aura', stats }))];
-  return { sources, skipped, secondWeapon: worn.some((w) => w.share !== 1) };
+  return { sources, skipped, secondWeapon: worn.some((w) => w.share !== 1), weapon: worn.find((w) => w.item === build.gear.weapon)?.parts.base.id };
 }
 
-// What the whole build's stats come to. Null until all the game data it draws on has arrived.
-export function useTotals(build: Build): Totals | null {
+const NONE: Exact[] = [];
+
+// What the whole build's stats come to, with what a skill adds for itself when that is given. Null
+// until all the game data it draws on has arrived.
+export function useTotals(build: Build, extra = NONE): Totals | null {
   const data = {
     stats: useSection('stats'),
     gear: useSection('gear'),
@@ -131,11 +137,11 @@ export function useTotals(build: Build): Totals | null {
     // CachedEntityStats.afterStatCalc: the gear is gone over again until Dual Wield Effectiveness settles.
     let dualWield = 0;
     for (let pass = 0; ; pass++) {
-      const { sources, skipped, secondWeapon } = gather(loaded, build, dualWield);
+      const { sources, skipped, secondWeapon, weapon } = gather(loaded, build, dualWield, extra);
       const stats = totalStats(loaded.stats, sources);
       const next = stats.get('dual_wield_effectiveness')?.value ?? 0;
-      if (!secondWeapon || Math.abs(next - dualWield) <= 0.01 || pass === 5) return { rules: loaded.stats, stats, skipped };
+      if (!secondWeapon || Math.abs(next - dualWield) <= 0.01 || pass === 5) return { rules: loaded.stats, stats, skipped, weapon, dualWield: secondWeapon };
       dualWield = next;
     }
-  }, [build, ...Object.values(data)]);
+  }, [build, extra, ...Object.values(data)]);
 }

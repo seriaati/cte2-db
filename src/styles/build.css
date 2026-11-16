@@ -942,3 +942,45 @@ body.editor-page:has(.stats-side:not(.leaving)) {
   border-bottom: 2px solid var(--line-row);
   break-inside: avoid;
 }
+
+/* Damage */
+
+.more.float {
+  position: relative;
+}
+
+.more.float .more-body {
+  animation: pop 0.12s ease-out;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 4;
+  width: max-content;
+  max-width: min(520px, calc(100vw - 32px));
+  margin-top: 0;
+  padding: 16px;
+  background: var(--panel);
+  border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0 #000;
+}
+
+.damage-main {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 620px) {
+  .damage-main {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.totals.one {
+  columns: auto;
+  max-width: 760px;
+}
+
+.totals.one li {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}

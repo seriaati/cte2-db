@@ -94,6 +94,8 @@ export interface Skill {
   supports: Rolled[];
 }
 
+export const RESISTS = ['fire', 'water', 'lightning', 'chaos'];
+
 export interface Build {
   name: string;
   level: number;
@@ -111,6 +113,11 @@ export interface Build {
   codex: Codex | null;
   augments: Rolled[];
   jewels: Jewel[];
+  // What damage is worked out for: a skill on the hotbar, or the basic attack when empty, and the
+  // effects the skill is used under, the fewest it takes when empty. The basic attacks a second
+  // are the weapon's own unless set. The target is an enemy of the character's own level unless
+  // one is set, with its armor and its resistances by element.
+  damage: { skill: string; under: string; attacks?: number; target: { level?: number; armor: number; resists: Record<string, number> } };
 }
 
 // GemInventoryHelper in Mine and Slash 6.4.13.
@@ -147,6 +154,7 @@ export const emptyBuild = ({ maxLevel, points }: Limits, name = 'New build'): Bu
   codex: null,
   augments: [],
   jewels: [],
+  damage: { skill: '', under: '', target: { armor: 0, resists: {} } },
 });
 
 // SpellSchool.isLevelEnoughFor and isLevelEnoughForSpellLevelUp: a perk opens at its row's level,
@@ -235,6 +243,22 @@ function readCodex(v: unknown, maxLevel: number): Codex | null {
   };
 }
 
+function readDamage(v: unknown, maxLevel: number): Build['damage'] {
+  const damage = isObject(v) ? v : {};
+  const target = isObject(damage.target) ? damage.target : {};
+  const resists = isObject(target.resists) ? target.resists : {};
+  return {
+    skill: id(damage.skill),
+    under: id(damage.under),
+    attacks: typeof damage.attacks === 'number' && damage.attacks > 0 ? Math.min(20, damage.attacks) : undefined,
+    target: {
+      level: typeof target.level === 'number' ? int(target.level, 1, maxLevel) : undefined,
+      armor: int(target.armor, 0, 10000000),
+      resists: Object.fromEntries(RESISTS.map((element) => [element, int(resists[element], -300, 75, 0)])),
+    },
+  };
+}
+
 export function readBuild(v: unknown, limits: Limits): Build | null {
   if (!isObject(v)) return null;
   const empty = emptyBuild(limits);
@@ -270,6 +294,7 @@ export function readBuild(v: unknown, limits: Limits): Build | null {
       const kind = isObject(j) && oneOf(j.kind, JEWEL_KINDS);
       return kind ? [{ kind, rarity: id(j.rarity), level: int(j.level, 1, maxLevel, maxLevel), affixes: rolled(j.affixes, 8), corruption: rolled(j.corruption, 2) }] : [];
     }),
+    damage: readDamage(v.damage, maxLevel),
   };
 }
 
