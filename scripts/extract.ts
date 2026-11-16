@@ -25,6 +25,9 @@ const REGISTRIES = [
   'mmorpg_spells',
   'mmorpg_stat',
   'mmorpg_stat_compat',
+  'mmorpg_stat_condition',
+  'mmorpg_stat_effect',
+  'mmorpg_stat_layer',
   'mmorpg_support_gem',
   'mmorpg_talent_tree',
   'mmorpg_unique_gears',
@@ -214,7 +217,7 @@ for (const [key, entry] of Object.entries(unlisted)) {
   const shrine = entry as { id: string; effect_id: string; weight: number };
   if (key.startsWith('mmorpg_shrine_buff/') && shrine.weight > 0) source(shrine.effect_id, 'shrines', shrine.id);
 }
-const statEffect = (id: string) => unlisted[`mmorpg_stat_effect/${id}`] as { ser?: string; effect: string } | undefined;
+const statEffect = (id: string) => registries.mmorpg_stat_effect[id] as { ser?: string; effect: string } | undefined;
 for (const [id, stat] of Object.entries(registries.mmorpg_stat as Record<string, { effect?: { effects: string[] }[] }>)) {
   if (!names.has(id) || !Array.isArray(stat.effect)) continue;
   for (const gives of stat.effect.flatMap((e) => e.effects).map(statEffect)) {
