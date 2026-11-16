@@ -144,7 +144,7 @@ export function NumberField(props: { label: string; value: number; min: number; 
           min={min}
           max={max}
           value={value}
-          onChange={(e) => onChange(Math.min(max, Math.max(min, Math.trunc(e.target.valueAsNumber) || min)))}
+          onChange={(e) => onChange(Math.min(max, Math.max(min, Number.isNaN(e.target.valueAsNumber) ? min : Math.trunc(e.target.valueAsNumber))))}
         />
         {suffix}
       </span>
