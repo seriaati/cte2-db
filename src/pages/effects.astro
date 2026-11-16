@@ -1,0 +1,11 @@
+---
+import EffectBrowser from '../components/EffectBrowser.tsx';
+import Layout from '../layouts/Layout.astro';
+import { effects, effectTags } from '../lib/effects';
+import { maxLevel } from '../lib/gear';
+import '../styles/lists.css';
+---
+
+<Layout title="CTE2 Status Effects | Craft to Exile 2 Database" description="Every status effect in Craft to Exile 2: the buffs, debuffs and ailments, with their stats per stack, maximum stacks and tags.">
+  <EffectBrowser client:load effects={effects} tags={effectTags} maxLevel={maxLevel} />
+</Layout>

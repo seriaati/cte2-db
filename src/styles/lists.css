@@ -1,4 +1,4 @@
-/* Shared by the rune, gem, aura, support gem, jewel and spell pages. */
+/* Shared by the rune, gem, aura, support gem, jewel, spell and effect pages. */
 
 .sprite {
   flex: none;
@@ -15,32 +15,45 @@
 
 /* The site's tooltip opens rightwards from its label and can run off the page. Here it opens from
    the start of the stat line and stays inside that column. */
-.row:is(.rune, .runeword, .gem, .aura, .support, .eye, .spell) .tip {
+.row:is(.rune, .runeword, .gem, .aura, .support, .eye, .spell, .effect) .tip {
   position: static;
 }
 
-.row:is(.rune, .runeword, .gem, .aura, .support, .eye, .spell) :is(.stats, .gem-stat) div {
+.row:is(.rune, .runeword, .gem, .aura, .support, .eye, .spell, .effect) :is(.stats, .gem-stat) div {
   position: relative;
 }
 
-.row:is(.rune, .runeword, .gem, .aura, .support, .eye, .spell) .tip:hover::after {
+.row:is(.rune, .runeword, .gem, .aura, .support, .eye, .spell, .effect) .tip:hover::after {
   box-sizing: border-box;
   max-width: min(340px, 100%);
 }
 
 /* Runes */
 
-.field.with-rune {
+.field:is(.with-rune, .with-tag) {
   flex: 0 1 200px;
 }
 
-.row.rune {
+.row:is(.rune, .effect) {
   grid-template-columns: minmax(150px, 0.42fr) minmax(0, 1fr) 60px minmax(96px, 0.36fr);
 }
 
 .row.rune .tags {
   font-size: 14px;
   color: var(--muted);
+}
+
+.links {
+  align-items: center;
+  margin-top: 6px;
+}
+
+a.tag {
+  text-decoration: none;
+}
+
+a.tag:hover {
+  border-color: var(--ink);
 }
 
 .uses {
@@ -121,7 +134,7 @@
 }
 
 /* The column heading says it on wide screens. */
-.row:is(.aura, .support) .pct .cap {
+.row:is(.aura, .support, .effect) .pct .cap {
   display: none;
 }
 
@@ -180,11 +193,11 @@
 }
 
 @media (max-width: 620px) {
-  .field.with-rune {
+  .field:is(.with-rune, .with-tag) {
     flex-grow: 1;
   }
 
-  .row.rune {
+  .row:is(.rune, .effect) {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
       'name pct'
@@ -212,7 +225,7 @@
       'stats stats';
   }
 
-  .row:is(.aura, .support) .pct .cap {
+  .row:is(.aura, .support, .effect) .pct .cap {
     display: inline;
   }
 

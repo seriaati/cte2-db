@@ -6,6 +6,7 @@ import '@fontsource/space-grotesk/latin-600.css';
 import headingFont from '@fontsource/jersey-15/files/jersey-15-latin-400-normal.woff2?url';
 import bodyFont from '@fontsource/space-grotesk/files/space-grotesk-latin-400-normal.woff2?url';
 import { auras } from '../lib/auras';
+import { effects } from '../lib/effects';
 import { affixes, bases, infusions } from '../lib/gear';
 import { gems } from '../lib/gems';
 import { jewelAffixes } from '../lib/jewels';
@@ -24,7 +25,7 @@ interface Props {
 
 const {
   title = 'CTE2 Database | Craft to Exile 2 Gear Planner and Affixes',
-  description = 'CTE2 Database is a searchable gear database for the Craft to Exile 2 modpack: a gear planner, affixes, uniques, runes, gems, augments, support gems, infusions, jewels, spells and stats.',
+  description = 'CTE2 Database is a searchable gear database for the Craft to Exile 2 modpack: a gear planner, affixes, uniques, runes, gems, augments, support gems, infusions, jewels, spells, status effects and stats.',
 } = Astro.props;
 const path = Astro.url.pathname;
 const url = new URL(path, Astro.site);
@@ -43,6 +44,7 @@ const nav: [href: string, label: string, icon: string, count?: number][] = [
   ['/jewels', 'Jewels', 'M2 0h4v1h-4zM1 1h1v1h-1zM6 1h1v1h-1zM0 2h1v1h-1zM3 2h2v1h-2zM7 2h1v1h-1zM0 3h1v1h-1zM2 3h4v1h-4zM7 3h1v1h-1zM0 4h1v1h-1zM2 4h4v1h-4zM7 4h1v1h-1zM0 5h1v1h-1zM3 5h2v1h-2zM7 5h1v1h-1zM1 6h1v1h-1zM6 6h1v1h-1zM2 7h4v1h-4z', Object.values(jewelAffixes).flat().length],
   ['/talents', 'Talents', 'M2 0h4v1h-4zM1 1h6v1h-6zM0 2h3v1h-3zM5 2h3v1h-3zM0 3h2v1h-2zM6 3h2v1h-2zM0 4h2v1h-2zM6 4h2v1h-2zM0 5h3v1h-3zM5 5h3v1h-3zM1 6h6v1h-6zM2 7h4v1h-4z', talents.nodes.length],
   ['/spells', 'Spells', 'M6 0h2v1h-2zM4 1h3v1h-3zM2 2h5v1h-5zM1 3h6v1h-6zM0 4h3v1h-3zM5 4h2v1h-2zM0 5h3v1h-3zM5 5h2v1h-2zM0 6h6v1h-6zM1 7h4v1h-4z', spells.length],
+  ['/effects', 'Status effects', 'M0 0h8v1h-8zM0 1h3v1h-3zM5 1h3v1h-3zM0 2h2v1h-2zM6 2h2v1h-2zM0 3h1v1h-1zM7 3h1v1h-1zM0 4h3v1h-3zM5 4h3v1h-3zM0 5h3v1h-3zM5 5h3v1h-3zM0 6h3v1h-3zM5 6h3v1h-3zM0 7h8v1h-8z', effects.length],
   ['/stats', 'Stats', 'M6 0h2v1h-2zM6 1h2v1h-2zM3 2h2v1h-2zM6 2h2v1h-2zM3 3h2v1h-2zM6 3h2v1h-2zM0 4h2v1h-2zM3 4h2v1h-2zM6 4h2v1h-2zM0 5h2v1h-2zM3 5h2v1h-2zM6 5h2v1h-2zM0 6h2v1h-2zM3 6h2v1h-2zM6 6h2v1h-2z', stats.length],
 ];
 ---

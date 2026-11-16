@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { effects } from '../lib/effects';
 import { affixes, bases, infusions } from '../lib/gear';
 import { spells } from '../lib/spells';
 import { stats } from '../lib/stats';
@@ -71,6 +72,10 @@ const structuredData = JSON.stringify({
     <a class="block" href="/spells">
       <strong>Spells</strong>
       <p>{spells.length} class spells with what they do, what they cost and how fast they cast.</p>
+    </a>
+    <a class="block" href="/effects">
+      <strong>Status effects</strong>
+      <p>{effects.length} buffs, debuffs and ailments with their stats per stack and how far they stack.</p>
     </a>
     <a class="block" href="/stats">
       <strong>Stats</strong>

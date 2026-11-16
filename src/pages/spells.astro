@@ -1,6 +1,7 @@
 ---
 import SpellBrowser from '../components/SpellBrowser.tsx';
 import Layout from '../layouts/Layout.astro';
+import { spellEffects } from '../lib/effects';
 import { maxLevel } from '../lib/gear';
 import { bonusLevels, classIcons, costScaling, spells } from '../lib/spells';
 import '../styles/lists.css';
@@ -8,5 +9,5 @@ import '../styles/spells.css';
 ---
 
 <Layout title="CTE2 Spells | Craft to Exile 2 Database" description="Every spell the classes of Craft to Exile 2 teach, with its damage scaling, mana and energy cost, cooldown, cast time and level requirement.">
-  <SpellBrowser client:load spells={spells} classIcons={classIcons} bonusLevels={bonusLevels} costScaling={costScaling} maxLevel={maxLevel} />
+  <SpellBrowser client:load spells={spells} effects={spellEffects} classIcons={classIcons} bonusLevels={bonusLevels} costScaling={costScaling} maxLevel={maxLevel} />
 </Layout>

@@ -8,6 +8,7 @@ import runeData from '../data/runes.json';
 import runewordData from '../data/runeword.json';
 import supportData from '../data/support_gem.json';
 import uniqueData from '../data/unique_gears.json';
+import { effects } from './effects';
 import { text } from './gear';
 import { spells } from './spells';
 import { ascendancy, atlas, talents } from './talents';
@@ -41,6 +42,7 @@ const SOURCES: [name: string, mods: Mods][] = [
   ['Jewels', Object.values(affixData).filter((a) => ['jewel', 'jewel_corruption', 'crafted_jewel_unique', 'watcher_eye'].includes(a.type)).flatMap((a) => a.stats)],
   ['Talents', [talents, ascendancy, atlas].flatMap((tree) => tree.perks).flatMap((p) => p.stats.map((s) => ({ stat: s.id })))],
   ['Spells', spells.flatMap((spell) => spell.stats.map((s) => ({ stat: s.id })))],
+  ['Status effects', effects.flatMap((e) => e.stats.map((s) => ({ stat: s.id })))],
 ];
 export const sourceNames = SOURCES.map(([name]) => name);
 const sourceStats = SOURCES.map(([name, mods]) => [name, new Set(mods.map((m) => m.stat))] as const);

@@ -1,19 +1,23 @@
 import { useMemo, useState } from 'react';
 import type { StatMod } from '../lib/affix';
+import type { Link } from '../lib/effects';
 import { calcText, cost, spellStat, type Spell } from '../lib/spellRules';
 import { useStored } from '../lib/useStored';
 import { Dropdown, LevelStepper } from './controls';
+import { LinkTags } from './LinkTags';
 import { StatLine } from './StatLine';
 
 interface Props {
   spells: Spell[];
+  // The status effects each spell gives, by spell id.
+  effects: Record<string, Link[]>;
   classIcons: Record<string, string>;
   bonusLevels: number;
   costScaling: NonNullable<StatMod['scaling']>;
   maxLevel: number;
 }
 
-export default function SpellBrowser({ spells, classIcons, bonusLevels, costScaling, maxLevel }: Props) {
+export default function SpellBrowser({ spells, effects, classIcons, bonusLevels, costScaling, maxLevel }: Props) {
   const [query, setQuery] = useState('');
   const [school, setSchool] = useState('');
   const [level, setLevel] = useStored('level', maxLevel);
@@ -135,6 +139,7 @@ export default function SpellBrowser({ spells, classIcons, bonusLevels, costScal
                       <StatLine line={line} />
                     </div>
                   ))}
+                  <LinkTags label="Applies" links={effects[spell.id] ?? []} />
                   <div className="tags">
                     {spell.tags.map((tag) => (
                       <span key={tag} className="tag">

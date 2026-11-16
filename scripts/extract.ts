@@ -8,6 +8,7 @@ const REGISTRIES = [
   'mmorpg_affixes',
   'mmorpg_aura',
   'mmorpg_base_gear_types',
+  'mmorpg_exile_effect',
   'mmorpg_game_balance',
   'mmorpg_gear_rarity',
   'mmorpg_gear_slot',
@@ -109,8 +110,10 @@ const layers = [
 // accepts and JSON.parse doesn't.
 const parse = (json: string) => JSON.parse(json.replace(/"(?:[^"\\]|\\.)*"/g, (s) => s.replace(/\r?\n/g, '\\n')));
 
-const registryFile = new RegExp(`^data/[^/]+/(${REGISTRIES.join('|')})/.+\\.json$`);
+const registryFile = /^data\/[^/]+\/(mmorpg_[a-z_]+)\/.+\.json$/;
 const registries: Record<string, Record<string, unknown>> = {};
+// Every other Mine and Slash registry, which is only read to see what the pack makes use of.
+const unlisted: Record<string, unknown> = {};
 const lang: Record<string, string> = {};
 
 for (const layer of layers) {
@@ -118,6 +121,13 @@ for (const layer of layers) {
     if (path === LANG) Object.assign(lang, JSON.parse(read().toString()));
     const registry = registryFile.exec(path)?.[1];
     if (!registry) continue;
+    if (!REGISTRIES.includes(registry)) {
+      try {
+        const entry = parse(read().toString());
+        unlisted[`${registry}/${entry.guid ?? entry.id ?? entry.identifier ?? path}`] = entry;
+      } catch {}
+      continue;
+    }
     const entry = parse(read().toString());
     // Entries are keyed by id, not file path: the pack moves files into subfolders but keeps ids.
     const id: string = entry.guid ?? entry.id ?? entry.identifier ?? entry.data.id;
@@ -164,11 +174,52 @@ for (const frame of ['stat', 'special', 'major', 'start', 'asc'].flatMap((type) 
 }
 console.log(`talent icons: ${perkIcons.length}`);
 
+// What gives each status effect: spells and other effects through their scripts, shrines, and stats
+// through their stat effects. Left out are the spells the pack has retired, the shrines that never
+// spawn and the stats nothing in the pack uses, so an effect with no source is one the pack never applies.
+function given(script: unknown, found = new Set<string>()) {
+  if (script && typeof script === 'object') {
+    const { type, map } = script as { type?: string; map?: Record<string, string> };
+    if (type === 'exile_effect' && map?.potion_action === 'GIVE_STACKS') found.add(map.exile_potion_id);
+    Object.values(script).forEach((value) => given(value, found));
+  }
+  return found;
+}
+const names = new Set<string>();
+const collect = (value: unknown) => {
+  if (typeof value === 'string') names.add(value);
+  else if (value && typeof value === 'object') Object.entries(value).forEach(([key, inner]) => (names.add(key), collect(inner)));
+};
+const STAT_REGISTRIES = ['mmorpg_stat', 'mmorpg_stat_effect', 'mmorpg_stat_condition'];
+Object.entries(unlisted).forEach(([key, entry]) => STAT_REGISTRIES.includes(key.split('/')[0]) || collect(entry));
+Object.entries(registries).forEach(([registry, entries]) => STAT_REGISTRIES.includes(registry) || collect(entries));
+
+const effect_sources: Record<string, Record<'spells' | 'effects' | 'shrines' | 'stats', string[]>> = {};
+const source = (effect: string, kind: 'spells' | 'effects' | 'shrines' | 'stats', id: string) => {
+  if (!(effect in registries.mmorpg_exile_effect)) return;
+  (effect_sources[effect] ??= { spells: [], effects: [], shrines: [], stats: [] })[kind].push(id);
+};
+for (const [id, spell] of Object.entries(registries.mmorpg_spells)) {
+  if (!id.endsWith('_deprecated')) given(spell).forEach((effect) => source(effect, 'spells', id));
+}
+for (const [id, effect] of Object.entries(registries.mmorpg_exile_effect)) given(effect).forEach((other) => other === id || source(other, 'effects', id));
+for (const [key, entry] of Object.entries(unlisted)) {
+  const shrine = entry as { id: string; effect_id: string; weight: number };
+  if (key.startsWith('mmorpg_shrine_buff/') && shrine.weight > 0) source(shrine.effect_id, 'shrines', shrine.id);
+}
+const statEffect = (id: string) => unlisted[`mmorpg_stat_effect/${id}`] as { ser?: string; effect: string } | undefined;
+for (const [id, stat] of Object.entries(registries.mmorpg_stat as Record<string, { effect?: { effects: string[] }[] }>)) {
+  if (!names.has(id) || !Array.isArray(stat.effect)) continue;
+  for (const gives of stat.effect.flatMap((e) => e.effects).map(statEffect)) {
+    if (gives?.ser?.startsWith('give_exile_effect')) source(gives.effect, 'stats', id);
+  }
+}
+
 const sorted = (o: Record<string, unknown>) =>
   Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)));
 
 mkdirSync(OUT, { recursive: true });
-for (const [registry, entries] of Object.entries({ ...registries, lang, icons, talent_icons })) {
+for (const [registry, entries] of Object.entries({ ...registries, lang, icons, effect_sources, talent_icons })) {
   const file = `${registry.replace('mmorpg_', '')}.json`;
   writeFileSync(join(OUT, file), JSON.stringify(sorted(entries), null, 2) + '\n');
   console.log(`${file}: ${Object.keys(entries).length}`);
@@ -194,6 +245,15 @@ for (const item of spriteItems) {
   await writeImage(file, PNG.sync.write(frame));
 }
 console.log(`item sprites: ${spriteItems.length}`);
+
+// Icons for the effects page. The pack has no texture for a few effects; the game shows its missing-texture square for them.
+const EFFECTS = join(import.meta.dirname, '../public/effects');
+const effectIcons = Object.keys(registries.mmorpg_exile_effect)
+  .map((id) => [id, `assets/mmorpg/textures/item/mob_effects/${id}.png`])
+  .filter(([, path]) => layers.some((layer) => layer.has(path)));
+mkdirSync(EFFECTS, { recursive: true });
+for (const [id, path] of effectIcons) await writeImage(join(EFFECTS, `${id}.webp`), texture(path));
+console.log(`effect icons: ${effectIcons.length}`);
 
 // Icons for the spells page. A class lists its spells and its passives together; only the spells are in the spell registry.
 const SPELLS = join(import.meta.dirname, '../public/spells');

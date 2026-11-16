@@ -1,0 +1,1793 @@
+{
+  "abyssal_aura": {
+    "spells": [
+      "abyssal_aura"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "abyssal_aura_effect": {
+    "spells": [
+      "abyssal_aura"
+    ],
+    "effects": [
+      "abyssal_aura"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "affinity_of_abyss": {
+    "spells": [
+      "reaper_form"
+    ],
+    "effects": [
+      "reaper_form"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "affinity_of_blood": {
+    "spells": [
+      "reaper_form"
+    ],
+    "effects": [
+      "reaper_form"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "affinity_of_plague": {
+    "spells": [
+      "reaper_form"
+    ],
+    "effects": [
+      "reaper_form"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "aggravated_wounds": {
+    "spells": [
+      "summon_wraith"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "agony": {
+    "spells": [
+      "curse_of_agony"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "cursed_by_agony"
+    ]
+  },
+  "alpha": {
+    "spells": [
+      "turbo",
+      "zap"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "arachnid_inoculation": {
+    "spells": [
+      "arachnid_inoculation"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "avalanche_vault": {
+    "spells": [
+      "avalanche_vault"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "banishing_blade": {
+    "spells": [
+      "banishing_blade"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "banner_of_the_blizzard": {
+    "spells": [
+      "banner_of_the_blizzard"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "banner_of_the_frozen_guard": {
+    "spells": [
+      "banner_of_the_frozen_guard"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "banner_of_the_hunt": {
+    "spells": [
+      "banner_of_the_hunt"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "banner_of_the_piercing_gale": {
+    "spells": [
+      "banner_of_the_piercing_gale"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "battle_orders": {
+    "spells": [
+      "battle_orders"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "berserk": {
+    "spells": [
+      "undying_will"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "berserk_on_kill"
+    ]
+  },
+  "beta": {
+    "spells": [
+      "cold_snap",
+      "turbo"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "blasphemous_ritual": {
+    "spells": [
+      "blasphemous_ritual"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "bleed_effect": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "bleed_effect_when_hit"
+    ]
+  },
+  "blessed_aim": {
+    "spells": [
+      "blessed_aim"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "blessed_aim_effect": {
+    "spells": [
+      "blessed_aim"
+    ],
+    "effects": [
+      "blessed_aim"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "blind": {
+    "spells": [
+      "shadow_step"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "blood_harvest": {
+    "spells": [
+      "blood_harvest"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "brutality": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "brutality_on_basic_hit"
+    ]
+  },
+  "burn_effect": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "burn_effect_when_hit"
+    ]
+  },
+  "chaos_id": {
+    "spells": [
+      "chaos_id"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "charm": {
+    "spells": [
+      "power_chord",
+      "chaos_burst",
+      "cursed_power_chord"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "chilled_reflexes": {
+    "spells": [
+      "chilled_reflexes"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "chronobreak": {
+    "spells": [
+      "chronobreak"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "cinder": {
+    "spells": [
+      "flame_splash_potion"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "cold_id": {
+    "spells": [
+      "cold_id"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "combat_talent_melee": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "combat_talent_ranged_hit"
+    ]
+  },
+  "combat_talent_ranged": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "combat_talent_melee_hit"
+    ]
+  },
+  "combo_extender": {
+    "spells": [
+      "rallying_sweep",
+      "anti_gravity_smash",
+      "eighth_gate",
+      "spirit_offensive",
+      "flowing_river_rush",
+      "triple_blitz"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "combo_extender_on_kill"
+    ]
+  },
+  "combo_linker": {
+    "spells": [
+      "elemental_assault",
+      "sweeping_blow",
+      "piercing_strike",
+      "debilitating_blow",
+      "goading_strike"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "combo_starter": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "proc_combo_starter"
+    ]
+  },
+  "concentration": {
+    "spells": [
+      "concentration"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "concentration_effect": {
+    "spells": [
+      "concentration"
+    ],
+    "effects": [
+      "concentration"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "conduction": {
+    "spells": [
+      "conduction"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "conduction_cold_snap": {
+    "spells": [
+      "cold_snap"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "conduction_zap": {
+    "spells": [
+      "zap"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "corporeal_respite": {
+    "spells": [
+      "corporeal_respite"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "cursed_timewinder": {
+    "spells": [
+      "cursed_timewinder"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "damnation": {
+    "spells": [
+      "curse_of_damnation"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "debilitating_blow": {
+    "spells": [
+      "debilitating_blow"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "defender_stance": {
+    "spells": [
+      "fighter_stance",
+      "defender_stance"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "defiance": {
+    "spells": [
+      "defiance"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "defiance_effect": {
+    "spells": [
+      "defiance"
+    ],
+    "effects": [
+      "defiance"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "despair": {
+    "spells": [
+      "curse_of_despair"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "cursed_by_despair"
+    ]
+  },
+  "draconic_blood": {
+    "spells": [
+      "draconic_blood"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "drain": {
+    "spells": [
+      "drain"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "eighth_gate": {
+    "spells": [
+      "eighth_gate"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "ele_equil_cold": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "ele_equil_cold_on_fire_hit"
+    ]
+  },
+  "ele_equil_fire": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "ele_equil_fire_on_lightning_hit"
+    ]
+  },
+  "ele_equil_lightning": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "ele_equil_lightning_on_cold_hit"
+    ]
+  },
+  "electrify_effect": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "electrify_effect_when_hit"
+    ]
+  },
+  "elemental_assault": {
+    "spells": [
+      "elemental_assault"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "elemental_overload": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "elemental_overload_on_crit"
+    ]
+  },
+  "elemental_weakness": {
+    "spells": [
+      "fire_trap",
+      "flame_strike",
+      "magma_flower",
+      "merc_fire_trap",
+      "noise",
+      "magma_orb",
+      "merc_magma_orb",
+      "merc_flame_strike"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "encased": {
+    "spells": [
+      "frost_trap"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "endurance_charge": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "endurance_charge_on_crit",
+      "endurance_charge_on_hit",
+      "endurance_charge_on_kill",
+      "endurance_charge_when_hit"
+    ]
+  },
+  "enflamed": {
+    "spells": [
+      "fire_trap"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "fanaticism": {
+    "spells": [
+      "fanaticism"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "fanaticism_effect": {
+    "spells": [
+      "fanaticism"
+    ],
+    "effects": [
+      "fanaticism"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "fighter_stance": {
+    "spells": [
+      "fighter_stance"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "fire_golem_buff": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "apply_golem_effect_fire_golem_buff"
+    ]
+  },
+  "fire_id": {
+    "spells": [
+      "fire_id"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "focus": {
+    "spells": [
+      "focus"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "forbidden_alchemy": {
+    "spells": [
+      "vile_splash_potion"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "forethought": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "forethought_on_finisher_hit"
+    ]
+  },
+  "fortify": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "fortify_on_melee_hit"
+    ]
+  },
+  "freeze_effect": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "freeze_effect_when_hit"
+    ]
+  },
+  "frenzy_charge": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "frenzy_charge_on_crit",
+      "frenzy_charge_on_hit",
+      "frenzy_charge_on_kill",
+      "exile_effect_to_target_frenzy_charge_when_hit",
+      "gain_frenzy_charges_every_10s",
+      "frenzy_charge_when_hit"
+    ]
+  },
+  "frost_blade": {
+    "spells": [
+      "frost_blade"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "frost_lich": {
+    "spells": [
+      "frost_lich_armor"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "frost_nova_heal": {
+    "spells": [
+      "frost_nova"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "frost_orbs": {
+    "spells": [
+      "frost_orbs"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "fury": {
+    "spells": [
+      "fury"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "gale_force": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "gale_force_on_hit"
+    ]
+  },
+  "galvanic_blade": {
+    "spells": [
+      "galvanic_blade"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "gamma": {
+    "spells": [
+      "fusion"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "ghost_shroud": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "ghost_shroud_on_dodge"
+    ]
+  },
+  "glacial_dash": {
+    "spells": [
+      "glacial_dash"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "goading_strike": {
+    "spells": [
+      "goading_strike"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "heart_of_ice": {
+    "spells": [
+      "heart_of_ice"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "heart_of_ice_regen": {
+    "spells": [
+      "heart_of_ice"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "heat": {
+    "spells": [
+      "steam_cloud"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "hemorrhage": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "hemorrhage_to_source_on_crit"
+    ]
+  },
+  "hoarfrost_armor": {
+    "spells": [
+      "hoarfrost_armor"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "holy_fire": {
+    "spells": [
+      "holy_fire"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "holy_immolation": {
+    "spells": [
+      "holy_immolation"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "holy_shock": {
+    "spells": [
+      "holy_shock"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "holy_shock_effect": {
+    "spells": [
+      "holy_shock"
+    ],
+    "effects": [
+      "holy_shock"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "hunters_focus": {
+    "spells": [
+      "hunters_focus"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "hunters_mark": {
+    "spells": [
+      "hunters_mark"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "ice_golem_buff": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "apply_golem_effect_ice_golem_buff"
+    ]
+  },
+  "ice_tipped_spear": {
+    "spells": [
+      "ice_tipped_spear"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "ikou": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "exile_effect_to_source_ikou_on_heal"
+    ]
+  },
+  "impending_doom": {
+    "spells": [
+      "curse_of_damnation"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "infection": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "infection_to_target_on_hit"
+    ]
+  },
+  "inner_calm": {
+    "spells": [
+      "thorn_bush"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "judgment": {
+    "spells": [
+      "holy_shield_throw"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "lightning_golem_buff": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "apply_golem_effect_lightning_golem_buff"
+    ]
+  },
+  "lightning_id": {
+    "spells": [
+      "lightning_id"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "mage_circle": {
+    "spells": [
+      "mage_circle",
+      "merc_mage_circle"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "meditation": {
+    "spells": [
+      "meditation"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "meditation_effect": {
+    "spells": [
+      "meditation"
+    ],
+    "effects": [
+      "meditation"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "merc_encased": {
+    "spells": [
+      "merc_frost_trap"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "merc_enflamed": {
+    "spells": [
+      "merc_fire_trap"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "merc_frost_lich": {
+    "spells": [
+      "merc_frost_lich_armor"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "merc_frost_nova_heal": {
+    "spells": [
+      "merc_frost_nova"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "merc_heart_of_ice": {
+    "spells": [
+      "merc_heart_of_ice"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "merc_heart_of_ice_regen": {
+    "spells": [
+      "merc_heart_of_ice"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "merc_hunters_focus": {
+    "spells": [
+      "merc_hunters_focus"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "merc_protection": {
+    "spells": [
+      "merc_protection"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "mirror_image": {
+    "spells": [
+      "mirror_image"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "ms_regen": {
+    "spells": [
+      "ms_regen"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "omnislash": {
+    "spells": [
+      "omnislash"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "overheat": {
+    "spells": [
+      "fireball",
+      "meteor",
+      "magma_orb",
+      "fire_wall"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "pants_att_speed": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "pants_att_speed_when_hit"
+    ]
+  },
+  "pants_cast_speed": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "pants_cast_speed_when_hit"
+    ]
+  },
+  "pants_damage": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "pants_damage_when_hit"
+    ]
+  },
+  "pants_move_speed": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "pants_move_speed_when_hit"
+    ]
+  },
+  "pants_regen": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "pants_regen_when_hit"
+    ]
+  },
+  "pants_regen_life": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "pants_regen_life_when_hit"
+    ]
+  },
+  "pants_resource_cost": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "pants_resource_cost_when_hit"
+    ]
+  },
+  "pedipalps": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "exile_effect_to_source_pedipalps_on_kill"
+    ]
+  },
+  "perseverance": {
+    "spells": [
+      "song_of_perseverance"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "petrify": {
+    "spells": [
+      "entangling_seed"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "plague_aura": {
+    "spells": [
+      "plague_aura"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "plague_aura_effect": {
+    "spells": [
+      "plague_aura"
+    ],
+    "effects": [
+      "plague_aura"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "poison_effect": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "poison_effect_when_hit"
+    ]
+  },
+  "power_charge": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "power_charge_on_crit",
+      "power_charge_on_hit",
+      "exile_effect_to_source_power_charge_on_kill"
+    ]
+  },
+  "power_surge": {
+    "spells": [
+      "power_surge"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "prayer": {
+    "spells": [
+      "prayer"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "prayer_effect": {
+    "spells": [
+      "prayer"
+    ],
+    "effects": [
+      "prayer"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "prestissimo": {
+    "spells": [
+      "prestissimo"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "projection_on_dodge": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "projection_on_dodge"
+    ]
+  },
+  "projection_when_hit": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "projection_when_hit"
+    ]
+  },
+  "protection": {
+    "spells": [
+      "protection"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "pulsar_singularity_trap": {
+    "spells": [
+      "pulsar_singularity_trap"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "quickdraw": {
+    "spells": [
+      "quickdraw"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "rallying_march": {
+    "spells": [
+      "rallying_march"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "rallying_sweep": {
+    "spells": [
+      "rallying_sweep"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "reaper_form": {
+    "spells": [
+      "reaper_form"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "extend_reaper_form_on_hit"
+    ]
+  },
+  "reckless_defender": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "reckless_defender_when_phys_hit",
+      "reckless_defender"
+    ]
+  },
+  "redemption": {
+    "spells": [
+      "redemption"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "redemption_effect": {
+    "spells": [
+      "redemption"
+    ],
+    "effects": [
+      "redemption"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "rejuvenation": {
+    "spells": [
+      "rejuvenation",
+      "nature_balm"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "retribution": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "retribution_on_block"
+    ]
+  },
+  "ritual_of_abyss": {
+    "spells": [
+      "blasphemous_ritual"
+    ],
+    "effects": [
+      "blasphemous_ritual"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "ritual_of_blood": {
+    "spells": [
+      "blasphemous_ritual"
+    ],
+    "effects": [
+      "blasphemous_ritual"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "ritual_of_plague": {
+    "spells": [
+      "blasphemous_ritual"
+    ],
+    "effects": [
+      "blasphemous_ritual"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "saboteur": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "instant_traps"
+    ]
+  },
+  "sacrifice": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "sacrifice_when_hit"
+    ]
+  },
+  "safeguard": {
+    "spells": [
+      "safeguard"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "salvation": {
+    "spells": [
+      "salvation"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "salvation_effect": {
+    "spells": [
+      "salvation"
+    ],
+    "effects": [
+      "salvation"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "sanguine_aura": {
+    "spells": [
+      "sanguine_aura"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "sanguine_aura_effect": {
+    "spells": [
+      "sanguine_aura"
+    ],
+    "effects": [
+      "sanguine_aura"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "sharpen": {
+    "spells": [
+      "sharpen"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "shred": {
+    "spells": [
+      "pull",
+      "shred",
+      "quake",
+      "piercing_strike",
+      "puncture",
+      "merc_shred",
+      "cursed_quake"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "shred_on_attack_hit"
+    ]
+  },
+  "shrine_acceleration": {
+    "spells": [],
+    "effects": [],
+    "shrines": [
+      "shrine_acceleration"
+    ],
+    "stats": []
+  },
+  "shrine_brutal": {
+    "spells": [],
+    "effects": [],
+    "shrines": [
+      "shrine_brutal"
+    ],
+    "stats": []
+  },
+  "shrine_charges": {
+    "spells": [],
+    "effects": [],
+    "shrines": [
+      "shrine_charges"
+    ],
+    "stats": []
+  },
+  "shrine_critical_strikes": {
+    "spells": [],
+    "effects": [],
+    "shrines": [
+      "shrine_critical_strikes"
+    ],
+    "stats": []
+  },
+  "shrine_impenetrable": {
+    "spells": [],
+    "effects": [],
+    "shrines": [
+      "shrine_impenetrable"
+    ],
+    "stats": []
+  },
+  "shrine_massive": {
+    "spells": [],
+    "effects": [],
+    "shrines": [
+      "shrine_massive"
+    ],
+    "stats": []
+  },
+  "shrine_replenishing": {
+    "spells": [],
+    "effects": [],
+    "shrines": [
+      "shrine_replenishing"
+    ],
+    "stats": []
+  },
+  "shrine_resistance": {
+    "spells": [],
+    "effects": [],
+    "shrines": [
+      "shrine_resistance"
+    ],
+    "stats": []
+  },
+  "shrine_riches": {
+    "spells": [],
+    "effects": [],
+    "shrines": [
+      "shrine_riches"
+    ],
+    "stats": []
+  },
+  "siphoner": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "siphoner_to_source_on_kill"
+    ]
+  },
+  "slow": {
+    "spells": [
+      "blizzard",
+      "boomerang",
+      "charged_bolt",
+      "chilling_field",
+      "chilling_touch",
+      "frost_flower",
+      "frost_trap",
+      "frostball",
+      "frozen_orb",
+      "gale_wind",
+      "ritardando",
+      "whirlwind",
+      "noise",
+      "ensnaring_melody",
+      "quake",
+      "shadow_step",
+      "parallel_convergence",
+      "timewinder",
+      "time_dilation",
+      "chronobreak",
+      "comeuppance",
+      "putrid_breath",
+      "rime_reaver",
+      "vortex_skewer",
+      "glacial_dash",
+      "banner_of_the_frozen_guard",
+      "banner_of_the_blizzard",
+      "merc_frost_trap",
+      "merc_charged_bolt",
+      "merc_chilling_field",
+      "merc_frozen_orb",
+      "merc_quake",
+      "cursed_timewinder",
+      "cursed_quake",
+      "frost_orbs"
+    ],
+    "effects": [
+      "time_dilation"
+    ],
+    "shrines": [],
+    "stats": [
+      "cursed_by_slow"
+    ]
+  },
+  "snow_tracked": {
+    "spells": [
+      "vortex_skewer",
+      "glacial_dash",
+      "banner_of_the_hunt",
+      "whiteout_sovereign",
+      "tailwind_sweep",
+      "glacial_condemnation"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "snow_tracked_on_dodge"
+    ]
+  },
+  "soul": {
+    "spells": [
+      "chilling_touch",
+      "curse_of_agony",
+      "curse_of_despair",
+      "curse_of_weak",
+      "poison_ball"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "soul_impale": {
+    "spells": [
+      "soul_wound"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "soul_rupture": {
+    "spells": [
+      "poison_cloud"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "soul_wound": {
+    "spells": [
+      "soul_wound"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "speed": {
+    "spells": [
+      "smoke_bomb"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "spirit": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "spirit_on_kill"
+    ]
+  },
+  "splinter": {
+    "spells": [
+      "chilling_touch"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "static": {
+    "spells": [
+      "chain_lightning",
+      "charged_bolt",
+      "lightning_nova",
+      "lightning_totem",
+      "battery_fusillade",
+      "merc_charged_bolt",
+      "cursed_lightning_nova"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "stun": {
+    "spells": [
+      "boomerang",
+      "charge",
+      "explosive_arrow",
+      "gale_wind",
+      "gong_strike",
+      "merc_gong_strike",
+      "merc_pull",
+      "pull",
+      "tidal_strike",
+      "noise",
+      "meditate",
+      "sweeping_blow",
+      "omnislash",
+      "flowing_river_rush",
+      "phase_dive",
+      "parallel_convergence",
+      "pulsar_singularity_trap",
+      "chronobreak",
+      "reckoners_flail",
+      "winters_grasp",
+      "avalanche_vault",
+      "cursed_axe_throw",
+      "ice_tipped_spear_stun"
+    ],
+    "effects": [
+      "encased",
+      "merc_encased"
+    ],
+    "shrines": [],
+    "stats": [
+      "stun_on_basic_hit",
+      "stun_on_hit"
+    ]
+  },
+  "tailwind_sweep": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "give_tailwind_on_hit"
+    ]
+  },
+  "thorn": {
+    "spells": [
+      "entangling_seed",
+      "garden_of_thorns",
+      "thorn_bush"
+    ],
+    "effects": [
+      "envenomed"
+    ],
+    "shrines": [],
+    "stats": []
+  },
+  "time_dilation": {
+    "spells": [
+      "time_dilation"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "timewinder": {
+    "spells": [
+      "timewinder"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "undying_will": {
+    "spells": [
+      "undying_will"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "valor": {
+    "spells": [
+      "song_of_valor"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "vamp_blood": {
+    "spells": [
+      "vamp_blood"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "venom": {
+    "spells": [
+      "venom_splash_potion"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "vigor": {
+    "spells": [
+      "song_of_vigor"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "vile_host": {
+    "spells": [
+      "vile_splash_potion"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "weak": {
+    "spells": [
+      "curse_of_weak"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "cursed_by_weak"
+    ]
+  },
+  "whirling_blades": {
+    "spells": [
+      "whirling_blades"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "whiteout_sovereign": {
+    "spells": [
+      "whiteout_sovereign"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "winters_grasp": {
+    "spells": [
+      "winters_grasp"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  },
+  "wounds": {
+    "spells": [
+      "recoil_shot"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "cursed_by_wounds"
+    ]
+  },
+  "wrath": {
+    "spells": [],
+    "effects": [],
+    "shrines": [],
+    "stats": [
+      "wrath_when_hit",
+      "wrath_on_kill"
+    ]
+  },
+  "zen": {
+    "spells": [
+      "zen"
+    ],
+    "effects": [],
+    "shrines": [],
+    "stats": []
+  }
+}
