@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { AUGMENT_SLOTS, GEAR_SLOTS, TREES, emptyBuild, exportBuild, importBuild, pointsAt, readBuild, type Build, type Pool } from '../../lib/buildRules';
 import type { Core } from '../../lib/builds';
 import { LevelStepper } from '../controls';
 import AugmentsTab from './AugmentsTab';
+import CalculatorTab, { StatTotals } from './CalculatorTab';
 import GearTab from './GearTab';
 import JewelsTab, { jewelSockets } from './JewelsTab';
 import SkillsTab from './SkillsTab';
@@ -10,9 +11,29 @@ import StatsTab from './StatsTab';
 import TalentsTab from './TalentsTab';
 
 const STORE = 'builds';
-const TABS = ['skills', 'talents', 'stats', 'gear', 'augments', 'jewels'] as const;
+const PANEL = 'build-stats-panel';
+const TABS = ['skills', 'talents', 'stats', 'gear', 'augments', 'jewels', 'calculator'] as const;
 type Tab = (typeof TABS)[number];
-const LABELS: Record<Tab, string> = { skills: 'Skills', talents: 'Talents', stats: 'Stat points', gear: 'Gear', augments: 'Augments', jewels: 'Jewels' };
+const LABELS: Record<Tab, string> = { skills: 'Skills', talents: 'Talents', stats: 'Stat points', gear: 'Gear', augments: 'Augments', jewels: 'Jewels', calculator: 'Stats' };
+
+// Screens with room for the build's stats beside the editor.
+const DESKTOP = '(min-width: 1280px)';
+const watchDesktop = (notify: () => void) => {
+  const media = matchMedia(DESKTOP);
+  media.addEventListener('change', notify);
+  return () => media.removeEventListener('change', notify);
+};
+
+// Drawn on an 8 x 8 pixel grid. Where the database has a page for the same thing, the icon is that page's.
+const ICONS: Record<Tab, string> = {
+  skills: 'M6 0h2v1h-2zM4 1h3v1h-3zM2 2h5v1h-5zM1 3h6v1h-6zM0 4h3v1h-3zM5 4h2v1h-2zM0 5h3v1h-3zM5 5h2v1h-2zM0 6h6v1h-6zM1 7h4v1h-4z',
+  talents: 'M2 0h4v1h-4zM1 1h6v1h-6zM0 2h3v1h-3zM5 2h3v1h-3zM0 3h2v1h-2zM6 3h2v1h-2zM0 4h2v1h-2zM6 4h2v1h-2zM0 5h3v1h-3zM5 5h3v1h-3zM1 6h6v1h-6zM2 7h4v1h-4z',
+  stats: 'M3 1h2v2h-2zM1 3h6v2h-6zM3 5h2v2h-2z',
+  gear: 'M1 1h2v1h-2zM5 1h2v1h-2zM0 2h2v1h-2zM3 2h2v1h-2zM6 2h2v1h-2zM0 3h8v1h-8zM2 4h4v1h-4zM2 5h4v1h-4zM2 6h4v1h-4z',
+  augments: 'M4 0h1v1h-1zM3 1h3v1h-3zM3 2h3v1h-3zM1 3h1v1h-1zM3 3h3v1h-3zM0 4h3v1h-3zM4 4h3v1h-3zM0 5h3v1h-3zM4 5h3v1h-3zM0 6h3v1h-3zM4 6h3v1h-3zM1 7h1v1h-1zM4 7h2v1h-2z',
+  jewels: 'M2 0h4v1h-4zM1 1h1v1h-1zM6 1h1v1h-1zM0 2h1v1h-1zM3 2h2v1h-2zM7 2h1v1h-1zM0 3h1v1h-1zM2 3h4v1h-4zM7 3h1v1h-1zM0 4h1v1h-1zM2 4h4v1h-4zM7 4h1v1h-1zM0 5h1v1h-1zM3 5h2v1h-2zM7 5h1v1h-1zM1 6h1v1h-1zM6 6h1v1h-1zM2 7h4v1h-4z',
+  calculator: 'M6 0h2v1h-2zM6 1h2v1h-2zM3 2h2v1h-2zM6 2h2v1h-2zM3 3h2v1h-2zM6 3h2v1h-2zM0 4h2v1h-2zM3 4h2v1h-2zM6 4h2v1h-2zM0 5h2v1h-2zM3 5h2v1h-2zM6 5h2v1h-2zM0 6h2v1h-2zM3 6h2v1h-2zM6 6h2v1h-2z',
+};
 
 interface Saved {
   current: number;
@@ -41,6 +62,25 @@ export default function BuildEditor({ core }: { core: Core }) {
   const menuRoot = useRef<HTMLDivElement>(null);
   const file = useRef<HTMLInputElement>(null);
   const build = saved.builds[saved.current];
+  // The stats tab shows the same list, so the panel at the side makes way for it.
+  const desktop = useSyncExternalStore(watchDesktop, () => matchMedia(DESKTOP).matches) && tab !== 'calculator';
+  const [panel, setPanel] = useState(() => {
+    try {
+      return localStorage.getItem(PANEL) !== 'off';
+    } catch {
+      return true;
+    }
+  });
+  // Set while the panel slides away; it is taken off the page once it is out of sight.
+  const [leaving, setLeaving] = useState(false);
+  const out = panel && !leaving;
+  const showPanel = (show: boolean) => {
+    setPanel(show);
+    setLeaving(false);
+    try {
+      localStorage.setItem(PANEL, show ? 'on' : 'off');
+    } catch {}
+  };
 
   useEffect(() => {
     try {
@@ -101,8 +141,8 @@ export default function BuildEditor({ core }: { core: Core }) {
     action();
   };
 
-  // What each tab holds of the build, and the points that are spent on it.
-  const PARTS: Record<Tab, [fields: (keyof Build)[], pools: Pool[]]> = {
+  // What each tab holds of the build, and the points that are spent on it. The calculator holds nothing.
+  const PARTS: Partial<Record<Tab, [fields: (keyof Build)[], pools: Pool[]]>> = {
     skills: [['classes', 'perks', 'hotbar'], ['spells', 'passives']],
     talents: [['trees'], [...TREES]],
     stats: [['stats'], ['stats']],
@@ -113,7 +153,7 @@ export default function BuildEditor({ core }: { core: Core }) {
   const resetTab = () => {
     if (!confirm(`Reset everything under ${LABELS[tab]}?`)) return;
     const fresh = emptyBuild(core);
-    const [fields, pools] = PARTS[tab];
+    const [fields, pools] = PARTS[tab]!;
     change({ ...Object.fromEntries(fields.map((field) => [field, fresh[field]])), bonus: { ...build.bonus, ...Object.fromEntries(pools.map((pool) => [pool, fresh.bonus[pool]])) } });
     setResets(resets + 1);
   };
@@ -125,7 +165,7 @@ export default function BuildEditor({ core }: { core: Core }) {
 
   // How far along each part is, for its tab.
   const spent = sum(Object.values(build.stats));
-  const counts: Record<Tab, [done: number, of: number]> = {
+  const counts: Partial<Record<Tab, [done: number, of: number]>> = {
     skills: [build.hotbar.filter(Boolean).length, build.hotbar.length],
     talents: [sum(TREES.map((t) => build.trees[t].length)), sum(TREES.map((t) => pointsAt(core.points[t], build.level, build.bonus[t])))],
     stats: [spent, pointsAt(core.points.stats, build.level, build.bonus.stats)],
@@ -134,106 +174,145 @@ export default function BuildEditor({ core }: { core: Core }) {
     jewels: [build.jewels.length, jewelSockets(core, build)],
   };
 
-  const props = { core, build, change, rolls };
+  const reset = PARTS[tab] && (
+    <button className="btn tab-reset" type="button" onClick={resetTab}>
+      Reset {LABELS[tab]}
+    </button>
+  );
+  const props = { core, build, change, rolls, reset };
 
   return (
-    <div className="editor">
-      <header className="editor-bar">
-        <a className="btn back" href="/">
-          <svg viewBox="0 0 7 7" width="14" height="14" shapeRendering="crispEdges" aria-hidden="true">
-            <path fill="currentColor" d="M3 0h1v1h-1zM2 1h1v1h-1zM1 2h1v1h-1zM0 3h7v1h-7zM1 4h1v1h-1zM2 5h1v1h-1zM3 6h1v1h-1z" />
-          </svg>
-          Database
-        </a>
-        <label className="field grow build-name">
-          <span className="cap">Build</span>
-          <input className="in" type="text" maxLength={60} value={build.name} onChange={(e) => change({ name: e.target.value })} onBlur={() => build.name.trim() || change({ name: 'New build' })} />
-        </label>
-        <LevelStepper value={build.level} max={core.maxLevel} onChange={(level) => change({ level })} />
-        <div className="editor-actions">
-          <button className="btn primary" type="button" title="Save this build as a file, to keep or to send to someone" onClick={download}>
-            Export
-          </button>
-          <button className="btn" type="button" title="Open a build from a file" onClick={() => file.current!.click()}>
-            Import
-          </button>
-          <div className="menu" ref={menuRoot}>
-            <button className="btn" type="button" aria-haspopup="menu" aria-expanded={menu} onClick={() => setMenu(!menu)}>
-              Builds
+    <>
+      <div className="editor">
+        <header className="editor-bar">
+          <a className="btn back" href="/">
+            <svg viewBox="0 0 7 7" width="14" height="14" shapeRendering="crispEdges" aria-hidden="true">
+              <path fill="currentColor" d="M3 0h1v1h-1zM2 1h1v1h-1zM1 2h1v1h-1zM0 3h7v1h-7zM1 4h1v1h-1zM2 5h1v1h-1zM3 6h1v1h-1z" />
+            </svg>
+            Database
+          </a>
+          <label className="field grow build-name">
+            <span className="cap">Build</span>
+            <input className="in" type="text" maxLength={60} value={build.name} onChange={(e) => change({ name: e.target.value })} onBlur={() => build.name.trim() || change({ name: 'New build' })} />
+          </label>
+          <LevelStepper value={build.level} max={core.maxLevel} onChange={(level) => change({ level })} />
+          <div className="editor-actions">
+            <button className="btn" type="button" aria-pressed={rolls} title="Set the exact roll of each stat. Off, everything is at its best roll." onClick={() => setRolls(!rolls)}>
+              Exact rolls
             </button>
-            {menu && (
-              <div className="menu-list" role="menu">
-                <div className="cap">Saved in this browser</div>
-                {saved.builds.map((b, i) => (
-                  <button key={i} type="button" role="menuitemradio" aria-checked={i === saved.current} onClick={act(() => setSaved({ ...saved, current: i }))}>
-                    {b.name}
-                    <small>Lv {b.level}</small>
+            <div className="menu" ref={menuRoot}>
+              <button className="btn" type="button" aria-haspopup="menu" aria-expanded={menu} onClick={() => setMenu(!menu)}>
+                Builds
+              </button>
+              {menu && (
+                <div className="menu-list" role="menu">
+                  <div className="cap">Saved in this browser</div>
+                  {saved.builds.map((b, i) => (
+                    <button key={i} type="button" role="menuitemradio" aria-checked={i === saved.current} onClick={act(() => setSaved({ ...saved, current: i }))}>
+                      {b.name}
+                      <small>Lv {b.level}</small>
+                    </button>
+                  ))}
+                  <hr />
+                  <button type="button" role="menuitem" onClick={act(() => open(emptyBuild(core, `Build ${saved.builds.length + 1}`)))}>
+                    New build
                   </button>
-                ))}
-                <hr />
-                <button type="button" role="menuitem" onClick={act(() => open(emptyBuild(core, `Build ${saved.builds.length + 1}`)))}>
-                  New build
-                </button>
-                <button type="button" role="menuitem" onClick={act(() => open({ ...build, name: `${build.name} copy`.slice(0, 60) }))}>
-                  Duplicate
-                </button>
-                <button type="button" role="menuitem" onClick={act(resetBuild)}>
-                  Reset
-                </button>
-                <button type="button" role="menuitem" onClick={act(remove)}>
-                  Delete
-                </button>
-              </div>
-            )}
+                  <button type="button" role="menuitem" onClick={act(() => open({ ...build, name: `${build.name} copy`.slice(0, 60) }))}>
+                    Duplicate
+                  </button>
+                  <hr />
+                  <button type="button" role="menuitem" title="Save this build as a file, to keep or to send to someone" onClick={act(download)}>
+                    Export to a file
+                  </button>
+                  <button type="button" role="menuitem" title="Open a build from a file" onClick={act(() => file.current!.click())}>
+                    Import a file
+                  </button>
+                  <hr />
+                  <button type="button" role="menuitem" title="Empty the whole build. Its name is kept." onClick={act(resetBuild)}>
+                    Reset the whole build
+                  </button>
+                  <button type="button" role="menuitem" onClick={act(remove)}>
+                    Delete this build
+                  </button>
+                </div>
+              )}
+            </div>
+            <input
+              ref={file}
+              type="file"
+              accept="application/json,.json"
+              hidden
+              onChange={(e) => {
+                upload(e.target.files?.[0]);
+                e.target.value = '';
+              }}
+            />
           </div>
-          <input
-            ref={file}
-            type="file"
-            accept="application/json,.json"
-            hidden
-            onChange={(e) => {
-              upload(e.target.files?.[0]);
-              e.target.value = '';
-            }}
-          />
-        </div>
-      </header>
+        </header>
 
-      <div className="editor-tabs">
-        <nav aria-label="Parts of the build">
-          {TABS.map((id) => (
-            <button key={id} className="tab" type="button" aria-current={id === tab ? 'page' : undefined} onClick={() => setTab(id)}>
-              {LABELS[id]}
-              <span className={`tab-count ${counts[id][0] > counts[id][1] ? 'over' : ''}`}>
-                {counts[id][0]}/{counts[id][1]}
-              </span>
-            </button>
-          ))}
-        </nav>
-        <div className="tab-tools">
-          <button className="btn" type="button" onClick={resetTab}>
-            Reset {LABELS[tab]}
-          </button>
-          <button className="btn" type="button" aria-pressed={rolls} title="Set the exact roll of each stat. Off, everything is at its best roll." onClick={() => setRolls(!rolls)}>
-            Exact rolls
-          </button>
+        <div className="editor-tabs">
+          <nav aria-label="Parts of the build">
+            {TABS.map((id) => (
+              <button key={id} className="tab" type="button" aria-current={id === tab ? 'page' : undefined} onClick={() => setTab(id)}>
+                <svg viewBox="0 0 8 8" width="16" height="16" shapeRendering="crispEdges" aria-hidden="true">
+                  <path fill="currentColor" d={ICONS[id]} />
+                </svg>
+                {LABELS[id]}
+                {counts[id] && (
+                  <span className={`tab-count ${counts[id][0] > counts[id][1] ? 'over' : ''}`}>
+                    {counts[id][0]}/{counts[id][1]}
+                  </span>
+                )}
+              </button>
+            ))}
+          </nav>
         </div>
+
+        <main className="editor-main" key={`${saved.current} ${resets}`}>
+          {tab === 'skills' && <SkillsTab {...props} />}
+          {tab === 'talents' && <TalentsTab {...props} />}
+          {tab === 'stats' && <StatsTab {...props} />}
+          {tab === 'gear' && <GearTab {...props} />}
+          {tab === 'augments' && <AugmentsTab {...props} />}
+          {tab === 'jewels' && <JewelsTab {...props} />}
+          {tab === 'calculator' && <CalculatorTab {...props} />}
+        </main>
+
+        {notice && (
+          <div className="editor-notice" role="status">
+            {notice}
+          </div>
+        )}
       </div>
-
-      <main className="editor-main" key={`${saved.current} ${resets}`}>
-        {tab === 'skills' && <SkillsTab {...props} />}
-        {tab === 'talents' && <TalentsTab {...props} />}
-        {tab === 'stats' && <StatsTab {...props} />}
-        {tab === 'gear' && <GearTab {...props} />}
-        {tab === 'augments' && <AugmentsTab {...props} />}
-        {tab === 'jewels' && <JewelsTab {...props} />}
-      </main>
-
-      {notice && (
-        <div className="editor-notice" role="status">
-          {notice}
-        </div>
+      {/* A bookmark on the panel's edge: it tucks the panel away, and stays at the side of the page to pull it back out. */}
+      {desktop && (
+        <button
+          className={`stats-mark ${out ? 'out' : ''}`}
+          type="button"
+          aria-expanded={out}
+          title={out ? 'Hide the stats' : 'Show the stats'}
+          aria-label={out ? 'Hide the stats' : 'Show the stats'}
+          onClick={() => (out ? setLeaving(true) : showPanel(true))}
+        >
+          <svg viewBox="0 0 8 8" width="16" height="16" shapeRendering="crispEdges" aria-hidden="true">
+            <path fill="currentColor" d={ICONS.calculator} />
+          </svg>
+          <svg className="stats-mark-arrow" viewBox="0 0 4 7" width="8" height="14" shapeRendering="crispEdges" aria-hidden="true">
+            <path fill="currentColor" d="M0 0h1v1h-1zM1 1h1v1h-1zM2 2h1v1h-1zM3 3h1v1h-1zM2 4h1v1h-1zM1 5h1v1h-1zM0 6h1v1h-1z" />
+          </svg>
+        </button>
       )}
-    </div>
+      {desktop && panel && (
+        <aside
+          className={`stats-side plain ${leaving ? 'leaving' : ''}`}
+          aria-label="Stats of the build"
+          // Animations of what is inside the panel end here too; only its own counts.
+          onAnimationEnd={(e) => leaving && e.target === e.currentTarget && showPanel(false)}
+        >
+          <h2>Stats</h2>
+          <StatTotals build={build} />
+        </aside>
+      )}
+    </>
   );
 }

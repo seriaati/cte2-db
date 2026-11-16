@@ -128,7 +128,10 @@ body.editor-page {
   gap: 4px 6px;
 }
 
+/* Seven tabs with their icons and counts: drawn a little tighter than the database's, they fit one row beside the stats panel. */
 .editor-tabs .tab {
+  gap: 8px;
+  padding: 0 8px;
   border: 0;
   cursor: pointer;
 }
@@ -151,18 +154,102 @@ body.editor-page {
   color: #ff6b5e;
 }
 
-.tab-tools {
-  display: flex;
-  gap: 8px;
-}
-
-.tab-tools .btn {
-  min-height: 38px;
-}
-
 .editor-main {
   padding-block: 28px 72px;
   animation: enter 0.18s ease-out;
+}
+
+/* On a desktop the build's stats can stay in view: a panel of its own down the right side of the
+   page, the way the database has its sidebar on the left. The editor keeps to the room beside it. */
+body.editor-page {
+  transition: padding-right 0.18s ease-out;
+}
+
+body.editor-page:has(.stats-side:not(.leaving)) {
+  padding-right: 340px;
+}
+
+.stats-side {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: 340px;
+  overflow-y: auto;
+  padding: 22px 16px 40px;
+  background: var(--rail);
+  border-left: 2px solid var(--line);
+  scrollbar-width: thin;
+  animation: pull-out 0.18s ease-out;
+}
+
+.stats-side.leaving {
+  animation: tuck-away 0.18s ease-out forwards;
+}
+
+@keyframes pull-out {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes tuck-away {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* The bookmark sits on the panel's edge, over its border, and at the edge of the page while the panel is away. */
+.stats-mark {
+  position: fixed;
+  top: 96px;
+  right: 0;
+  z-index: 3;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 12px 5px;
+  background: var(--rail);
+  border: 2px solid var(--line);
+  border-right: 0;
+  color: var(--muted);
+  cursor: pointer;
+  transition: right 0.18s ease-out;
+}
+
+.stats-mark:hover {
+  color: var(--ink);
+}
+
+.stats-mark.out {
+  right: 338px;
+}
+
+.stats-mark:not(.out) .stats-mark-arrow {
+  transform: scaleX(-1);
+}
+
+.stats-side .totals-main {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 16px 0;
+}
+
+.stats-side .totals-main div {
+  padding: 10px 12px;
+}
+
+.stats-side .totals-main dd {
+  font-size: 26px;
+}
+
+.stats-side .group {
+  margin-top: 26px;
+}
+
+.stats-side .group h2 {
+  font-size: 24px;
+}
+
+.stats-side .totals {
+  font-size: 14.5px;
 }
 
 .editor-main h1 {
@@ -175,6 +262,16 @@ body.editor-page {
 
 .count.over {
   background: #ff6b5e;
+}
+
+.title-row .tab-reset {
+  margin-left: auto;
+}
+
+.tree-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .editor-notice {

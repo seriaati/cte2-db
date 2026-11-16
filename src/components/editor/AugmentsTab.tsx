@@ -5,7 +5,7 @@ import { StatLines } from '../StatLine';
 import { Loading, Picker, Slot, useSection, type Choice, type TabProps } from './shared';
 import { useTotals } from './totals';
 
-export default function AugmentsTab({ build, change, rolls }: TabProps) {
+export default function AugmentsTab({ build, change, rolls, reset }: TabProps) {
   const data = useSection('sockets');
   const totals = useTotals(build);
   const [picking, setPicking] = useState(false);
@@ -39,6 +39,7 @@ export default function AugmentsTab({ build, change, rolls }: TabProps) {
         <span className={`count ${reserved > capacity ? 'over' : ''}`}>
           {reserved} / {capacity} capacity
         </span>
+        {reset}
       </div>
       <p className="note">
         A character has {limits.base} augment capacity to begin with. Augment Capacity from the rest of the build raises it, up to {limits.max}, and stats that change what an augment

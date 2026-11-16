@@ -11,6 +11,8 @@ export interface TabProps {
   change: (patch: Partial<Build>) => void;
   // Whether rolls are shown and can be set; off, every part is at its best roll.
   rolls: boolean;
+  // The button that empties this part of the build, for the tab to put by its heading.
+  reset: ReactNode;
 }
 
 const loaded = new Map<string, unknown>();

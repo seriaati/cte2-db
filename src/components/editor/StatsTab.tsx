@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 import { pointsAt } from '../../lib/buildRules';
 import { NumberField, type TabProps } from './shared';
 
-export default function StatsTab({ core, build, change }: TabProps) {
+export default function StatsTab({ core, build, change, reset }: TabProps) {
   const pool = core.points.stats;
   const total = pointsAt(pool, build.level, build.bonus.stats);
   const spent = Object.values(build.stats).reduce((sum, n) => sum + n, 0);
@@ -19,6 +19,7 @@ export default function StatsTab({ core, build, change }: TabProps) {
         <span className={`count ${left < 0 ? 'over' : ''}`}>
           {spent} / {total} points
         </span>
+        {reset}
       </div>
       <div className="controls">
         {pool.maxBonus > 0 && (

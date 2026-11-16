@@ -13,19 +13,23 @@ export function connected(tree: TalentTree, nodes: number[]): number[] {
   return rooted(tree, neighbours(tree), taken).size === taken.size ? [...taken] : [];
 }
 
-export default function TalentsTab({ core, build, change }: TabProps) {
+export default function TalentsTab({ core, build, change, reset }: TabProps) {
   const [id, setId] = useState<TreeId>('talents');
   const tree = useSection(id);
   const nodes = useMemo(() => (tree ? connected(tree, build.trees[id]) : []), [tree, build.trees[id]]);
 
+  // This tab has no heading of its own, so the button that empties all three trees sits by the tree picker.
   const nav = (
-    <div className="seg" role="group" aria-labelledby="tree-label">
-      {TREES.map((t) => (
-        <button key={t} className="btn" type="button" aria-pressed={t === id} onClick={() => setId(t)}>
-          {LABELS[t]}
-          <span className="seg-count">{build.trees[t].length}</span>
-        </button>
-      ))}
+    <div className="tree-nav">
+      <div className="seg" role="group" aria-labelledby="tree-label">
+        {TREES.map((t) => (
+          <button key={t} className="btn" type="button" aria-pressed={t === id} onClick={() => setId(t)}>
+            {LABELS[t]}
+            <span className="seg-count">{build.trees[t].length}</span>
+          </button>
+        ))}
+      </div>
+      {reset}
     </div>
   );
 

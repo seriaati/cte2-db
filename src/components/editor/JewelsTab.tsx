@@ -52,7 +52,7 @@ export function jewelParts(data: Sections['sockets'], jewel: Jewel): { part: Par
   return [...placed(jewel.affixes, about.pool, about.slots), ...placed(jewel.affixes, about.own, about.ownSlots), ...placed(jewel.corruption, data.jewels.affixes.corruption, 2)];
 }
 
-export default function JewelsTab({ core, build, change, rolls }: TabProps) {
+export default function JewelsTab({ core, build, change, rolls, reset }: TabProps) {
   const data = useSection('sockets');
   const [picking, setPicking] = useState<{ jewel: number; pool: 'affix' | 'own' | 'corruption' } | 'kind' | null>(null);
   if (!data) return <Loading />;
@@ -87,6 +87,7 @@ export default function JewelsTab({ core, build, change, rolls }: TabProps) {
         <span className={`count ${build.jewels.length > sockets ? 'over' : ''}`}>
           {build.jewels.length} / {sockets} sockets
         </span>
+        {reset}
       </div>
       <p className="note">Jewel sockets come from talents (search the talent tree for "Jewel Sockets") and from a few uniques, up to {MAX_JEWELS}.</p>
 

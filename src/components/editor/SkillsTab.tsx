@@ -16,7 +16,7 @@ type Perk = Class['perks'][number];
 const perkName = (perk: Perk, level: number) =>
   perk.spell?.name ?? perk.stats.map((s) => formatRange(s, rolled(s, 100, level), rolled(s, 100, level))).map((l) => `${l.value} ${l.label}`.trim())[0];
 
-export default function SkillsTab({ core, build, change, rolls }: TabProps) {
+export default function SkillsTab({ core, build, change, rolls, reset }: TabProps) {
   const data = useSection('skills');
   const totals = useTotals(build);
   const [selected, setSelected] = useState('');
@@ -206,6 +206,7 @@ export default function SkillsTab({ core, build, change, rolls }: TabProps) {
               {pool.spent} / {pool.total} {pool.label.toLowerCase()}
             </span>
           ))}
+          {reset}
         </div>
 
         <div className="controls">

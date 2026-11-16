@@ -5,7 +5,7 @@ import { CodexEditor } from './CodexEditor';
 import { ItemEditor, nameOf, readItem, spriteOf } from './ItemEditor';
 import { Loading, Picker, useSection, type Choice, type TabProps } from './shared';
 
-export default function GearTab({ core, build, change, rolls }: TabProps) {
+export default function GearTab({ core, build, change, rolls, reset }: TabProps) {
   const data = useSection('gear');
   const [slot, setSlot] = useState<GearSlot | 'codex'>('weapon');
   const [choosing, setChoosing] = useState(false);
@@ -36,6 +36,7 @@ export default function GearTab({ core, build, change, rolls }: TabProps) {
     <div style={{ '--rar': 'var(--ink)' } as CSSProperties}>
       <div className="title-row">
         <h1>Gear</h1>
+        {reset}
       </div>
       <div className="gear-layout">
         <ul className="gear-slots">
