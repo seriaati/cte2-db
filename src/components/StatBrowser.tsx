@@ -12,24 +12,22 @@ export default function StatBrowser({ stats, sourceNames }: Props) {
   const [query, setQuery] = useQuery();
   const [source, setSource] = useState('');
 
-  const groups = useMemo(() => {
+  const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const rows = stats.filter(
+    return stats.filter(
       (s) =>
         (!source || (source === 'none' ? !s.sources.length : s.sources.includes(source))) &&
         (!q || s.name.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q)),
     );
-    return [
-      { label: 'On this site', rows: rows.filter((s) => s.sources.length) },
-      { label: 'Other stats', rows: rows.filter((s) => !s.sources.length) },
-    ].filter((g) => g.rows.length);
   }, [stats, source, query]);
 
   return (
     <div className="content">
       <div className="title-row">
         <h1>Stats</h1>
-        <span className="context">{source === 'none' ? 'Not listed' : source || 'All stats'}</span>
+        <span className="context">
+          {source === 'none' ? 'Not listed' : source || 'All stats'} / {rows.length}
+        </span>
       </div>
 
       <div className="controls">
@@ -50,20 +48,17 @@ export default function StatBrowser({ stats, sourceNames }: Props) {
         />
       </div>
 
-      {groups.length === 0 && <p className="empty">Nothing matches.</p>}
-      {groups.map((group) => (
-        <section key={group.label} className="group">
-          <div className="group-head">
-            <h2>{group.label}</h2>
-            <span className="count">{group.rows.length}</span>
-          </div>
+      {rows.length === 0 ? (
+        <p className="empty">Nothing matches.</p>
+      ) : (
+        <section className="group">
           <div className="row stat head cap" aria-hidden="true">
             <span>Stat</span>
             <span>What it does</span>
             <span>Found on</span>
           </div>
           <ul>
-            {group.rows.map((stat) => (
+            {rows.map((stat) => (
               <li key={`${stat.name}\n${stat.desc}`} className="row stat">
                 <span className="name">{stat.name}</span>
                 <span className="desc">{stat.desc}</span>
@@ -78,7 +73,7 @@ export default function StatBrowser({ stats, sourceNames }: Props) {
             ))}
           </ul>
         </section>
-      ))}
+      )}
     </div>
   );
 }
