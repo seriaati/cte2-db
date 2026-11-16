@@ -1,0 +1,355 @@
+{
+  "angelic_blessing": {
+    "id": "angelic_blessing",
+    "uniques": [
+      "manald_heal",
+      "nagelring"
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 25,
+            "max": 25,
+            "stat": "elemental_resist"
+          },
+          {
+            "type": "FLAT",
+            "min": 25,
+            "max": 25,
+            "stat": "chaos_resist"
+          }
+        ]
+      }
+    ]
+  },
+  "arctic_gear": {
+    "id": "arctic_gear",
+    "uniques": [
+      "arctic_horn",
+      "arctic_furs",
+      "arctic_binding",
+      "arctic_trophy"
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 5,
+            "max": 5,
+            "stat": "health"
+          }
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 25,
+            "max": 25,
+            "stat": "phys_to_water"
+          }
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 1,
+            "max": 1,
+            "stat": "flat_water_added_damage"
+          },
+          {
+            "type": "FLAT",
+            "min": 20,
+            "max": 20,
+            "stat": "magic_find"
+          }
+        ]
+      }
+    ]
+  },
+  "empty": {
+    "bonuses": [],
+    "id": "empty",
+    "uniques": []
+  },
+  "genjis_vigilance": {
+    "id": "genjis_vigilance",
+    "uniques": [
+      "genji_kabuto",
+      "genji_domaru",
+      "genji_tsutsu_hakama",
+      "genji_sune_ate"
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 12,
+            "max": 12,
+            "stat": "learn_slice"
+          }
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 15,
+            "max": 15,
+            "stat": "move_speed"
+          }
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 10,
+            "max": 10,
+            "stat": "dmg_reduction_chance"
+          }
+        ]
+      }
+    ]
+  },
+  "granats_ruination": {
+    "id": "granats_ruination",
+    "uniques": [
+      "granats_desire",
+      "granats_persistence"
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 1,
+            "max": 1,
+            "stat": "total_damage_per_perc_of_health"
+          }
+        ]
+      }
+    ]
+  },
+  "grave_caller": {
+    "id": "grave_caller",
+    "uniques": [
+      "sidhebreath",
+      "bones_of_ullr",
+      "wall_of_the_eyeless"
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 1,
+            "max": 1,
+            "stat": "max_undead_summons"
+          }
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": [
+          {
+            "type": "MORE",
+            "min": 10,
+            "max": 10,
+            "stat": "summon_damage"
+          }
+        ]
+      }
+    ]
+  },
+  "jubbans_legacy": {
+    "id": "jubbans_legacy",
+    "uniques": [
+      "jubbans_dream",
+      "jubbans_embrace",
+      "jubbans_comfort",
+      "jubbans_path"
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 20,
+            "max": 20,
+            "stat": "increase_healing"
+          }
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 10,
+            "max": 10,
+            "stat": "skill_speed"
+          }
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 25,
+            "max": 25,
+            "stat": "inc_effect_of_positive_buff_given"
+          }
+        ]
+      }
+    ]
+  },
+  "last_tracker": {
+    "id": "last_tracker",
+    "uniques": [
+      "last_tracker_armor_helmet",
+      "last_tracker_armor_chestplate",
+      "last_tracker_armor_leggings",
+      "last_tracker_armor_boots"
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 1,
+            "max": 1,
+            "stat": "learn_bola_throw"
+          }
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 3,
+            "max": 3,
+            "stat": "critical_hit"
+          }
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 20,
+            "max": 20,
+            "stat": "endurance_charge_on_crit"
+          }
+        ]
+      }
+    ]
+  },
+  "nebulas_dominance": {
+    "id": "nebulas_dominance",
+    "uniques": [
+      "mage_hunter_helmet",
+      "mage_hunter_chestplate",
+      "mage_hunter_leggings",
+      "mage_hunter_boots"
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 8,
+            "max": 8,
+            "stat": "physical_resist"
+          }
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 25,
+            "max": 25,
+            "stat": "magic_find"
+          }
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": [
+          {
+            "type": "MORE",
+            "min": 10,
+            "max": 10,
+            "stat": "all_elemental_damage"
+          }
+        ]
+      }
+    ]
+  },
+  "oath_of_mahj": {
+    "id": "oath_of_mahj",
+    "uniques": [
+      "oath_of_mahj_helmet",
+      "oath_of_mahj_chestplate",
+      "oath_of_mahj_leggings",
+      "oath_of_mahj_boots"
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": [
+          {
+            "type": "PERCENT",
+            "min": 10,
+            "max": 10,
+            "stat": "health"
+          }
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 1,
+            "max": 1,
+            "stat": "max_totems"
+          }
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": [
+          {
+            "type": "FLAT",
+            "min": 15,
+            "max": 15,
+            "stat": "mana_per_perc_of_health"
+          }
+        ]
+      }
+    ]
+  }
+}

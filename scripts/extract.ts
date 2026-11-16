@@ -9,6 +9,7 @@ const REGISTRIES = [
   'mmorpg_affixes',
   'mmorpg_aura',
   'mmorpg_base_gear_types',
+  'mmorpg_base_stats',
   'mmorpg_chaos_stat',
   'mmorpg_exile_effect',
   'mmorpg_game_balance',
@@ -19,6 +20,7 @@ const REGISTRIES = [
   'mmorpg_perk',
   'mmorpg_runes',
   'mmorpg_runeword',
+  'mmorpg_sets',
   'mmorpg_spell_school',
   'mmorpg_spells',
   'mmorpg_stat',
@@ -27,6 +29,7 @@ const REGISTRIES = [
   'mmorpg_talent_tree',
   'mmorpg_unique_gears',
   'mmorpg_value_calc',
+  'mmorpg_weapon_type',
 ];
 const LANG = 'assets/mmorpg/lang/en_us.json';
 const OUT = join(import.meta.dirname, '../src/data');
