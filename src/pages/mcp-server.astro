@@ -23,7 +23,7 @@ const prompts = [
 <Layout title="CTE2 MCP Server | Craft to Exile 2 Database" description="Connect Claude, ChatGPT and other AI assistants to the Craft to Exile 2 database through its MCP server: the address and setup for each client.">
   <h1>MCP server</h1>
   <p class="lead">Add this address to an AI assistant and it can look things up in this database while it answers you.</p>
-  <pre class="code address">{address}</pre>
+  <button class="code address" type="button" title="Click to copy">{address}</button>
   <p class="cap">Streamable HTTP / No sign-in</p>
 
   <section class="group">
@@ -53,4 +53,21 @@ const prompts = [
       {prompts.map((prompt) => <li>{prompt}</li>)}
     </ul>
   </section>
+
+  <script>
+    // Listens on the document because page changes swap the body.
+    document.addEventListener('click', async (e) => {
+      const button = (e.target as Element).closest('.address');
+      if (!button) return;
+      const address = button.textContent!;
+      // The clipboard is off limits on pages not served over HTTPS; there the address is shown to copy by hand.
+      try {
+        await navigator.clipboard.writeText(address);
+        button.classList.add('copied');
+        setTimeout(() => button.classList.remove('copied'), 1500);
+      } catch {
+        prompt('Copy this address', address);
+      }
+    });
+  </script>
 </Layout>

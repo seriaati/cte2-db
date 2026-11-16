@@ -8,12 +8,29 @@
 }
 
 .code.address {
+  display: block;
+  position: relative;
   width: fit-content;
   max-width: 100%;
   margin: 24px 0 10px;
   border-color: var(--ink);
   font-size: 17px;
   box-shadow: 4px 4px 0 #000;
+  cursor: pointer;
+}
+
+/* The address stays in place, hidden, so the box keeps its width while it says Copied. */
+.address.copied {
+  color: transparent;
+}
+
+.address.copied::after {
+  content: 'Copied';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
 }
 
 .pairs {
