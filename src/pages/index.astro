@@ -14,14 +14,16 @@ const source = [pack.version && `Craft to Exile 2 ${pack.version}`, pack.mod && 
 
 <Layout>
   <script type="application/ld+json" slot="head" set:html={structuredData} />
-  <h1>CTE2 Database</h1>
-  <p class="cap home-source">{source.join(' / ')}</p>
-  <div class="home-search">
-    <input class="in" type="search" placeholder="Search pages, items, stats" aria-label="Search" autocomplete="off" spellcheck="false" enterkeyhint="go" />
-    <div class="search-results"></div>
+  <div class="home">
+    <h1>CTE2 Database</h1>
+    <p class="cap home-source">{source.join(' / ')}</p>
+    <div class="home-search">
+      <input class="in" type="search" placeholder="Search pages, items, stats" aria-label="Search" autocomplete="off" spellcheck="false" enterkeyhint="go" />
+      <div class="search-results"></div>
+    </div>
+    <section class="home-recent" hidden>
+      <h2 class="cap">Recently viewed</h2>
+      <div class="recent-rows"></div>
+    </section>
   </div>
-  <section class="home-recent" hidden>
-    <h2 class="cap">Recently viewed</h2>
-    <div class="recent-rows"></div>
-  </section>
 </Layout>
