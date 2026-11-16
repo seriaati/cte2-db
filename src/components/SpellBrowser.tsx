@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import type { StatMod } from '../lib/affix';
 import type { Link } from '../lib/effects';
 import { calcText, cost, spellStat, type Spell } from '../lib/spellRules';
+import { useQuery } from '../lib/useQuery';
 import { useStored } from '../lib/useStored';
 import { Dropdown, LevelStepper } from './controls';
 import { LinkTags } from './LinkTags';
@@ -18,7 +19,7 @@ interface Props {
 }
 
 export default function SpellBrowser({ spells, effects, classIcons, bonusLevels, costScaling, maxLevel }: Props) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useQuery();
   const [school, setSchool] = useState('');
   const [level, setLevel] = useStored('level', maxLevel);
   const [rankId, setRankId] = useState('Max');

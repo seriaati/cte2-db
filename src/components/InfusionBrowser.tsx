@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { canRoll, formatStat, type Affix, type Base, type Rarity } from '../lib/affix';
+import { useQuery } from '../lib/useQuery';
 import { useStored } from '../lib/useStored';
 import { gearLabel, gearOptions, GearRail, GearSelect, LevelStepper, RaritySwatches } from './controls';
 import { StatLine } from './StatLine';
@@ -13,7 +14,7 @@ interface Props {
 }
 
 export default function InfusionBrowser({ infusions, bases, rarities, tagNames, maxLevel }: Props) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useQuery();
   const [gear, setGear] = useState<string[]>([]);
   const [rarityId, setRarityId] = useStored('rarity', rarities.at(-1)!.id);
   const [level, setLevel] = useStored('level', maxLevel);

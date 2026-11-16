@@ -1,4 +1,5 @@
-// Server-side only: everything the site lists, as plain text an AI can search. Used by functions/mcp.ts.
+// Server-side only: everything the site lists, as plain text an AI can search. Used by functions/mcp.ts;
+// the site's own search index (pages/search.json.ts) borrows the stat lines.
 import { canRoll, formatRange, formatStat, rolled, type Affix, type Rarity, type StatMod } from './affix';
 import { auras } from './auras';
 import { baseGear, reqScaling } from './bases';
@@ -23,8 +24,8 @@ interface Entry {
   lines: string[];
 }
 
-const show = (line: { value: string; label: string }) => `${line.value} ${line.label}`.trim();
-const statLines = (mods: StatMod[], rolls: Rarity, level: number) => mods.map((s) => show(formatStat(s, rolls, level)));
+export const show = (line: { value: string; label: string }) => `${line.value} ${line.label}`.trim();
+export const statLines = (mods: StatMod[], rolls: Rarity, level: number) => mods.map((s) => show(formatStat(s, rolls, level)));
 
 const rollsOn = (affix: Affix) => {
   const fits = bases.filter((b) => canRoll(affix, b));
@@ -38,12 +39,12 @@ const FAMILIES = [
   ['Armor', 'On armor and off-hand'],
   ['Jewelry', 'On jewelry'],
 ] as const;
-const familyLines = (item: FamilyStats, rolls: Rarity, level: number) =>
+export const familyLines = (item: FamilyStats, rolls: Rarity, level: number) =>
   FAMILIES.filter(([id]) => item[id].length).map(([id, label]) => `${label}: ${statLines(item[id], rolls, level).join(', ')}`);
 
 const drop = (item: { drops: boolean; dropLevel: number }) => (item.drops ? `Drops from monsters of level ${item.dropLevel} and up` : 'Not a random drop');
 
-const TREES = {
+export const TREES = {
   talents: { name: 'Talents', path: '/talents', tree: talents, links: neighbours(talents) },
   ascendancy: { name: 'Ascendancy', path: '/talents/ascendancy', tree: ascendancy, links: neighbours(ascendancy) },
   atlas: { name: 'Atlas passives', path: '/talents/atlas', tree: atlas, links: neighbours(atlas) },
@@ -56,7 +57,7 @@ function nodeAt(id: string) {
   return found?.tree.nodes[Number(index)] ? { key, found, index: Number(index) } : null;
 }
 
-const perkStats = (perk: Perk, level: number) => perk.stats.map((s) => show(formatRange(s, rolled(s, 100, level), rolled(s, 100, level))));
+export const perkStats = (perk: Perk, level: number) => perk.stats.map((s) => show(formatRange(s, rolled(s, 100, level), rolled(s, 100, level))));
 const perkLines = (perk: Perk, level: number) => [
   ...(perk.type === 'MAJOR' ? ['Game changer'] : []),
   ...(perk.entry ? ['Entry point: can be the first talent taken'] : []),
@@ -64,12 +65,16 @@ const perkLines = (perk: Perk, level: number) => [
   ...perkStats(perk, level),
 ];
 
+export const rollsAt = (rarity: Rarity) => ({
+  whole: { ...rarity, minPercent: 0, maxPercent: 100 },
+  // GearInfusionData.getPercent: an infusion doesn't roll, it sits at the top of its rarity's range.
+  top: { ...rarity, minPercent: rarity.maxPercent },
+  base: rollWindows(planRarities.find((r) => r.id === rarity.id)!).base,
+});
+
 // Each list is worked out the way its page on the site does it.
 function entries(level: number, rarity: Rarity): Entry[] {
-  const whole = { ...rarity, minPercent: 0, maxPercent: 100 };
-  // GearInfusionData.getPercent: an infusion doesn't roll, it sits at the top of its rarity's range.
-  const top = { ...rarity, minPercent: rarity.maxPercent };
-  const baseRolls = rollWindows(planRarities.find((r) => r.id === rarity.id)!).base;
+  const { whole, top, base: baseRolls } = rollsAt(rarity);
   const requirement = reqScaling.base + reqScaling.perLevel * (level - 1);
 
   return [

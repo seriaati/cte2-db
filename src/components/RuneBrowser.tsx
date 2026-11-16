@@ -3,6 +3,7 @@ import { formatStat, type Base, type Rarity } from '../lib/affix';
 import type { Rune, Runeword } from '../lib/runes';
 import { Dropdown, gearLabel, gearOptions, GearRail, GearSelect, LevelStepper } from './controls';
 import { StatLine } from './StatLine';
+import { useQuery } from '../lib/useQuery';
 import { useStored } from '../lib/useStored';
 
 interface Props {
@@ -32,7 +33,7 @@ const KINDS = [
 const text = (line: { value: string; label: string }) => `${line.value} ${line.label}`.toLowerCase();
 
 export default function RuneBrowser({ runes, runewords, bases, slotNames, tagNames, rarity, maxLevel }: Props) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useQuery();
   const [gear, setGear] = useState<string[]>([]);
   const [runeId, setRuneId] = useState('');
   const [level, setLevel] = useStored('level', maxLevel);

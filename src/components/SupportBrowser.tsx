@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { formatStat, type Rarity } from '../lib/affix';
 import type { Support } from '../lib/supports';
+import { useQuery } from '../lib/useQuery';
 import { useStored } from '../lib/useStored';
 import { LevelStepper, RaritySwatches } from './controls';
 import { StatLine } from './StatLine';
@@ -14,7 +15,7 @@ interface Props {
 const STYLES = ['STR', 'DEX', 'INT'];
 
 export default function SupportBrowser({ supports, rarities, maxLevel }: Props) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useQuery();
   const [style, setStyle] = useState('');
   const [rarityId, setRarityId] = useStored('rarity', rarities.at(-1)!.id);
   const [level, setLevel] = useStored('level', maxLevel);

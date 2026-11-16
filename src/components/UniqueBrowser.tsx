@@ -3,6 +3,7 @@ import { formatStat, type Base, type Rarity } from '../lib/affix';
 import type { Source, Unique } from '../lib/uniques';
 import { Dropdown, gearLabel, gearOptions, GearRail, GearSelect, LevelStepper } from './controls';
 import { StatLine } from './StatLine';
+import { useQuery } from '../lib/useQuery';
 import { useStored } from '../lib/useStored';
 
 interface Props {
@@ -22,7 +23,7 @@ const FAMILIES = [
 ];
 
 export default function UniqueBrowser({ uniques, bases, sources, rarity, tagNames, maxLevel }: Props) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useQuery();
   const [gear, setGear] = useState<string[]>([]);
   const [sourceId, setSourceId] = useState('');
   const [level, setLevel] = useStored('level', maxLevel);

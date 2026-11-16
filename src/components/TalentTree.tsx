@@ -2,6 +2,7 @@ import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { formatRange, rolled } from '../lib/affix';
 import { blocked, canRemove, decodeBuild, encodeBuild, neighbours } from '../lib/talentRules';
 import type { TalentTree as Tree } from '../lib/talents';
+import { useQuery } from '../lib/useQuery';
 import { useStored } from '../lib/useStored';
 import { LevelStepper } from './controls';
 import { StatLine } from './StatLine';
@@ -74,7 +75,7 @@ export default function TalentTree({ id, tree, maxLevel }: Props) {
   const { points } = tree;
   // Level only matters where it gives points or grows a stat, which on the atlas tree it never does.
   const levelled = points.perLevel > 0 || tree.perks.some((perk) => perk.stats.some((s) => s.scaling));
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useQuery();
   const [level, setLevel] = useStored('level', maxLevel);
   // Trees that give no points per level are planned with every point they can ever have.
   const [bonus, setBonus] = useStored(`${id}Bonus`, points.perLevel ? 0 : points.maxBonus);

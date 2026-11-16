@@ -989,3 +989,142 @@ li .pct {
   }
 
 }
+
+/* Site search */
+
+.search-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px;
+}
+
+.search-toggle kbd {
+  margin-left: auto;
+  font: inherit;
+  font-size: 16px;
+  color: var(--muted);
+}
+
+/* On a phone the button sits beside the menu button, within the same thumb reach. */
+@media (max-width: 1219px) {
+  .search-toggle {
+    position: fixed;
+    right: 76px;
+    bottom: 16px;
+    z-index: 6;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    box-shadow: 4px 4px 0 #000;
+  }
+
+  .search-toggle span,
+  .search-toggle kbd {
+    display: none;
+  }
+
+  .search-toggle svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.search {
+  width: min(640px, calc(100vw - 32px));
+  max-height: 84dvh;
+  margin-top: 8dvh;
+  padding: 0;
+  background: var(--panel);
+  border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0 #000;
+  color: var(--ink);
+}
+
+.search[open] {
+  display: flex;
+  flex-direction: column;
+  animation: pop 0.12s ease-out;
+}
+
+.search::backdrop {
+  background: rgb(0 0 0 / 0.6);
+}
+
+.search form {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+}
+
+.search-results {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 12px;
+}
+
+.search-results section {
+  padding-bottom: 12px;
+}
+
+.search-results h2 {
+  padding: 8px 8px 6px;
+}
+
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 4px 8px;
+  /* Keeps the group's heading in view when the arrow keys move to its first row. */
+  scroll-margin: 34px 0 12px;
+  text-decoration: none;
+}
+
+.search-row.active {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.search-row.more {
+  padding-left: 50px;
+}
+
+.search-row strong {
+  display: block;
+  font-weight: 600;
+}
+
+.search-row small {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+.search-row.active small {
+  color: inherit;
+}
+
+.search-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+}
+
+.search-icon img,
+.search-icon i {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+
+.search-icon i {
+  background: url('/talents/icons.webp') calc(var(--icon) * -32px) 0 / auto 32px;
+}

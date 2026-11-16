@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { Stat } from '../lib/stats';
+import { useQuery } from '../lib/useQuery';
 import { Dropdown } from './controls';
 
 interface Props {
@@ -8,7 +9,7 @@ interface Props {
 }
 
 export default function StatBrowser({ stats, sourceNames }: Props) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useQuery();
   const [source, setSource] = useState('');
 
   const groups = useMemo(() => {

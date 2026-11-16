@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { formatRange, rolled } from '../lib/affix';
 import type { Effect } from '../lib/effects';
+import { useQuery } from '../lib/useQuery';
 import { useStored } from '../lib/useStored';
 import { Dropdown, LevelStepper } from './controls';
 import { LinkTags } from './LinkTags';
@@ -18,7 +19,7 @@ const TYPES = [
 ];
 
 export default function EffectBrowser({ effects, tags, maxLevel }: Props) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useQuery();
   const [type, setType] = useState('');
   const [tag, setTag] = useState('');
   const [level, setLevel] = useStored('level', maxLevel);

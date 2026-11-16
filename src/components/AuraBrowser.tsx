@@ -3,6 +3,7 @@ import { formatStat, type Rarity } from '../lib/affix';
 import type { Aura } from '../lib/auras';
 import { LevelStepper, RaritySwatches } from './controls';
 import { StatLine } from './StatLine';
+import { useQuery } from '../lib/useQuery';
 import { useStored } from '../lib/useStored';
 
 interface Props {
@@ -14,7 +15,7 @@ interface Props {
 const STYLES = ['STR', 'DEX', 'INT'];
 
 export default function AuraBrowser({ auras, rarities, maxLevel }: Props) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useQuery();
   const [style, setStyle] = useState('');
   const [rarityId, setRarityId] = useStored('rarity', rarities.at(-1)!.id);
   const [level, setLevel] = useStored('level', maxLevel);

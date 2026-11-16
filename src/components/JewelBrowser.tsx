@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { formatStat, type Rarity } from '../lib/affix';
 import type { JewelAffix, JewelItem, JewelKind } from '../lib/jewels';
+import { useQuery } from '../lib/useQuery';
 import { useStored } from '../lib/useStored';
 import { LevelStepper, RaritySwatches } from './controls';
 import { StatLine } from './StatLine';
@@ -17,7 +18,7 @@ interface Props {
 const short = (item: JewelItem) => item.name.replace(' Jewel', '');
 
 export default function JewelBrowser({ kinds, crafted, eye, affixes, rarities, maxLevel }: Props) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useQuery();
   const [kindId, setKindId] = useState('');
   const [rarityId, setRarityId] = useStored('rarity', rarities.at(-1)!.id);
   const [level, setLevel] = useStored('level', maxLevel);

@@ -1,6 +1,7 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { formatStat } from '../lib/affix';
 import type { Gem, GemRank } from '../lib/gems';
+import { useQuery } from '../lib/useQuery';
 import { StatLine } from './StatLine';
 
 interface Props {
@@ -16,7 +17,7 @@ const KINDS = [
 ] as const;
 
 export default function GemBrowser({ gems, ranks }: Props) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useQuery();
   const [tier, setTier] = useState(0);
   const [kindId, setKindId] = useState('');
 

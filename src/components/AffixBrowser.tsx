@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { canRoll, formatStat, type Affix, type Base, type Rarity } from '../lib/affix';
 import { gearLabel, gearOptions, GearRail, GearSelect, LevelStepper, RaritySwatches } from './controls';
 import { StatLine } from './StatLine';
+import { useQuery } from '../lib/useQuery';
 import { useStored } from '../lib/useStored';
 
 interface Props {
@@ -19,7 +20,7 @@ const TYPES = [
 ] as const;
 
 export default function AffixBrowser({ affixes, bases, rarities, tagNames, maxLevel }: Props) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useQuery();
   const [type, setType] = useState<Affix['type'] | 'all'>('all');
   const [gear, setGear] = useState<string[]>([]);
   const [rarityId, setRarityId] = useStored('rarity', rarities.at(-1)!.id);

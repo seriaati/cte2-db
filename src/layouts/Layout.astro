@@ -88,6 +88,13 @@ const nav: [href: string, label: string, icon: string, count?: number][] = [
           </svg>
           <span>CTE2 Database</span>
         </a>
+        <button class="btn search-toggle" type="button" aria-label="Search" data-search>
+          <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
+            <path fill="currentColor" d="M1 0h3v1h-3zM0 1h1v3h-1zM4 1h1v3h-1zM1 4h4v1h-4zM4 5h2v1h-2zM5 6h2v1h-2zM6 7h2v1h-2z"></path>
+          </svg>
+          <span>Search</span>
+          <kbd>/</kbd>
+        </button>
         <button class="btn menu-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="site-nav" data-menu-toggle>
           <svg viewBox="0 0 7 5" width="21" height="15" shape-rendering="crispEdges" aria-hidden="true">
             <path fill="currentColor" d="M0 0h7v1h-7zM0 2h7v1h-7zM0 4h7v1h-7z"></path>
@@ -108,6 +115,17 @@ const nav: [href: string, label: string, icon: string, count?: number][] = [
         </nav>
       </div>
     </header>
+    <dialog class="search" aria-label="Search">
+      <form method="dialog">
+        <input class="in" type="text" placeholder="Search pages, items, stats" aria-label="Search" autocomplete="off" spellcheck="false" enterkeyhint="go" />
+        <button class="btn" aria-label="Close">
+          <svg viewBox="0 0 5 5" width="15" height="15" shape-rendering="crispEdges" aria-hidden="true">
+            <path fill="currentColor" d="M0 0h1v1h-1zM4 0h1v1h-1zM1 1h1v1h-1zM3 1h1v1h-1zM2 2h1v1h-1zM1 3h1v1h-1zM3 3h1v1h-1zM0 4h1v1h-1zM4 4h1v1h-1z"></path>
+          </svg>
+        </button>
+      </form>
+      <div class="search-results"></div>
+    </dialog>
     <main class="wrap page">
       <slot />
       <footer class="site-footer">
@@ -190,5 +208,6 @@ const nav: [href: string, label: string, icon: string, count?: number][] = [
         update();
       });
     </script>
+    <script src="../lib/siteSearch.ts"></script>
   </body>
 </html>
