@@ -1,0 +1,102 @@
+name: Update pack data
+
+on:
+  schedule:
+    - cron: '23 5 * * *'
+  workflow_dispatch:
+
+env:
+  # CurseForge's own site API, which needs no key. 936875 is Craft to Exile 2.
+  API: https://www.curseforge.com/api/v1/mods
+  PROJECT: 936875
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      file: ${{ steps.latest.outputs.file }}
+      branch: ${{ steps.latest.outputs.branch }}
+    steps:
+      - uses: actions/checkout@v7
+      # Sets its outputs only when there is a release the site isn't on and no pull request for it yet.
+      - id: latest
+        run: |
+          latest=$(curl -fsSL --retry 3 "$API/$PROJECT/files?pageIndex=0&pageSize=20&sort=dateCreated&sortDescending=true" |
+            jq -c '[.data[] | select(.releaseType == 1)] | max_by(.id)')
+          name=$(jq -r .fileName <<<"$latest")
+          file=$(jq -r .id <<<"$latest")
+          branch="pack-update-$file"
+          echo "latest: $name, site: $(jq -r .version src/data/pack.json)"
+          if [[ $name == *"-$(jq -r .version src/data/pack.json).zip" ]]; then exit 0; fi
+          if git ls-remote --exit-code --heads origin "$branch" >/dev/null; then exit 0; fi
+          echo "file=$file" >>"$GITHUB_OUTPUT"
+          echo "branch=$branch" >>"$GITHUB_OUTPUT"
+
+  update:
+    needs: check
+    if: needs.check.outputs.file
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      statuses: write
+    env:
+      FILE: ${{ needs.check.outputs.file }}
+      BRANCH: ${{ needs.check.outputs.branch }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+
+      - name: Download the pack
+        run: |
+          # Laid out like a launcher instance, which is what the extractor reads.
+          INSTANCE=$RUNNER_TEMP/instance
+          echo "INSTANCE=$INSTANCE" >>"$GITHUB_ENV"
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/pack.zip" "$API/$PROJECT/files/$FILE/download"
+          unzip -q "$RUNNER_TEMP/pack.zip" -d "$RUNNER_TEMP/pack"
+          mkdir -p "$INSTANCE/flame"
+          mv "$RUNNER_TEMP/pack/manifest.json" "$INSTANCE/flame/"
+          mv "$RUNNER_TEMP/pack/overrides" "$INSTANCE/minecraft"
+          mkdir -p "$INSTANCE/minecraft/mods"
+
+      - name: Download the mods
+        run: |
+          # The file's real name is the end of the address the download redirects to, percent-encoded.
+          # The extractor layers jars in name order, so they are saved under the names a launcher gives them.
+          fetch() {
+            local url name
+            url=$(curl -fsSL --retry 3 -o "$INSTANCE/minecraft/mods/$2.part" -w '%{url_effective}' "$API/$1/files/$2/download") &&
+              name=${url##*/} &&
+              mv "$INSTANCE/minecraft/mods/$2.part" "$INSTANCE/minecraft/mods/$(printf '%b' "${name//%/\\x}")"
+          }
+          export -f fetch
+          jq -r '.files[] | "\(.projectID) \(.fileID)"' "$INSTANCE/flame/manifest.json" |
+            xargs -P 8 -L 1 bash -c 'fetch "$@"' _
+
+      - run: bun run extract "$INSTANCE"
+
+      - id: build
+        continue-on-error: true
+        run: bun run build
+
+      - name: Open a pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add src/data public
+          if git diff --cached --quiet; then
+            echo 'The new pack changes nothing on the site.'
+            exit 0
+          fi
+          version=$(jq -r .version src/data/pack.json)
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$BRANCH"
+          git commit -m "chore(data): update to CTE2 $version"
+          git push origin "$BRANCH"
+          gh pr create --head "$BRANCH" --title "chore(data): update to CTE2 $version" \
+            --body "Data and images extracted from Craft to Exile 2 $version (Mine and Slash $(jq -r .mod src/data/pack.json))."
+          # Workflows don't run on a pull request opened from a workflow, so the build result is attached here.
+          gh api "repos/$GITHUB_REPOSITORY/statuses/$(git rev-parse HEAD)" -f context=build \
+            -f state=${{ steps.build.outcome }} -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
