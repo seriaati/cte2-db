@@ -28,46 +28,67 @@ export function GearIcon({ icon }: { icon: Icon }) {
   );
 }
 
-interface GearProps {
+export interface GearOption {
+  id: string;
+  name: string;
+  family: string;
+  icon: Icon;
   bases: Base[];
+}
+
+// The gear a page can be filtered by. `entries` says what the page lists for a base: bases it lists
+// nothing for are left out, and a whole family, or the materials of each armor slot, become one
+// option where they all list the same.
+export function gearOptions(bases: Base[], tagNames: Record<string, string>, entries: (base: Base) => string): GearOption[] {
+  const listed = new Map(bases.map((b) => [b, entries(b)] as const).filter(([, list]) => list));
+  const same = (group: Base[]) => group.every((b) => listed.get(b) === listed.get(group[0]));
+  const option = (group: Base[], id = group[0].id, name = group[0].name): GearOption => ({ id, name, family: group[0].family, icon: group[0].icon, bases: group });
+  return FAMILIES.flatMap((f) => {
+    const members = [...listed.keys()].filter((b) => b.family === f.id);
+    if (members.length > 1 && same(members)) return [option(members, f.id, f.label)];
+    const slots = ARMOR_SLOTS.map((s) => members.filter((b) => b.slot === s.id)).filter((group) => group.length);
+    if (f.id === 'Armor' && slots.every(same)) return slots.map((group) => option(group, group[0].slot, tagNames[group[0].slot]));
+    return members.map((b) => option([b]));
+  });
+}
+
+export const gearLabel = (options: GearOption[], selected: string[]) =>
+  selected.length === 0 ? 'All gear' : selected.length === 1 ? options.find((o) => o.id === selected[0])!.name : `${selected.length} gear types`;
+
+interface GearProps {
+  options: GearOption[];
   tagNames: Record<string, string>;
-  value: string;
-  onChange: (baseId: string) => void;
-  // Label for the "no gear chosen" option; leave out when a base is required.
+  selected: string[];
+  onChange: (selected: string[]) => void;
+  // Label for the "no gear chosen" option, which makes the picker a filter: any number of options
+  // can be on, and picking one again turns it off. Leave out when exactly one base is required.
   anyLabel?: string;
 }
 
+const picked = (selected: string[], id: string, many: boolean) => (!many ? [id] : selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id]);
+
 // Desktop gear picker. Hidden below 940px, where GearSelect takes over.
-export function GearRail({ bases, tagNames, value, onChange, anyLabel }: GearProps) {
-  const family = (id: string) => bases.filter((b) => b.family === id);
-  // Armor ids are <material>_<slot>, which lets the rail show them as a material × slot grid.
-  const armor = family('Armor');
-  const materials = [...new Set(armor.map((b) => b.id.slice(0, -b.slot.length - 1)))];
-  const button = (b: Base) => (
-    <button key={b.id} className="gear" type="button" aria-pressed={b.id === value} onClick={() => onChange(b.id)}>
-      <GearIcon icon={b.icon} />
-      {b.name}
+export function GearRail({ options, tagNames, selected, onChange, anyLabel }: GearProps) {
+  const pick = (id: string) => onChange(picked(selected, id, !!anyLabel));
+  const button = (o: GearOption) => (
+    <button key={o.id} className="gear" type="button" aria-pressed={selected.includes(o.id)} onClick={() => pick(o.id)}>
+      <GearIcon icon={o.icon} />
+      {o.name}
     </button>
   );
-
-  return (
-    <aside className="rail" aria-label="Gear type">
-      <div className="rail-title">Gear</div>
-      {anyLabel && (
-        <button className="gear" type="button" aria-pressed={!value} onClick={() => onChange('')}>
-          {anyLabel}
-        </button>
-      )}
-      <div className="cap">Weapons</div>
-      <div className="gear-grid">{family('Weapon').map(button)}</div>
-      <div className="cap">Off-hand</div>
-      <div className="gear-grid">{family('OffHand').map(button)}</div>
-      <div className="cap">Armor</div>
-      <div className="armor-grid">
+  const families = FAMILIES.map((f) => ({ ...f, options: options.filter((o) => o.family === f.id) })).filter((f) => f.options.length);
+  const whole = families.filter((f) => f.options[0].id === f.id);
+  // Armor ids are <material>_<slot>, which lets the rail show them as a material × slot grid.
+  const armorGrid = (armor: GearOption[]) => {
+    const slot = (o: GearOption) => o.bases[0].slot;
+    const materials = [...new Set(armor.map((o) => o.id.slice(0, -slot(o).length - 1)))];
+    const slots = ARMOR_SLOTS.filter((s) => armor.some((o) => slot(o) === s.id));
+    return (
+      <div key="armor-grid" className="armor-grid" style={{ gridTemplateColumns: `minmax(0, 1fr) repeat(${slots.length}, 34px)` }}>
         <span />
-        {ARMOR_SLOTS.map((s) => (
+        {slots.map((s) => (
           <span key={s.id} className="armor-slot">
-            <GearIcon icon={armor.find((b) => b.slot === s.id)!.icon} />
+            <GearIcon icon={armor.find((o) => slot(o) === s.id)!.icon} />
             {s.label}
           </span>
         ))}
@@ -75,35 +96,65 @@ export function GearRail({ bases, tagNames, value, onChange, anyLabel }: GearPro
           <span key={material} className="armor-material">
             {tagNames[material]}
           </span>,
-          ...ARMOR_SLOTS.map((s) => {
-            const b = armor.find((x) => x.id === `${material}_${s.id}`)!;
-            return (
+          ...slots.map((s) => {
+            const o = armor.find((x) => x.id === `${material}_${s.id}`);
+            return o ? (
               <button
-                key={b.id}
+                key={o.id}
                 className="gear cell"
                 type="button"
-                aria-pressed={b.id === value}
-                aria-label={b.name}
-                title={b.name}
-                onClick={() => onChange(b.id)}
+                aria-pressed={selected.includes(o.id)}
+                aria-label={o.name}
+                title={o.name}
+                onClick={() => pick(o.id)}
               />
+            ) : (
+              <span key={`${material}_${s.id}`} />
             );
           }),
         ])}
       </div>
-      <div className="cap">Jewelry</div>
-      <div className="gear-grid">{family('Jewelry').map(button)}</div>
+    );
+  };
+
+  return (
+    <aside className="rail" aria-label="Gear type">
+      <div className="rail-title">Gear</div>
+      {anyLabel && (
+        <button className="gear" type="button" aria-pressed={!selected.length} onClick={() => onChange([])}>
+          {anyLabel}
+        </button>
+      )}
+      {whole.length > 0 && <div className="gear-grid">{whole.map((f) => button(f.options[0]))}</div>}
+      {families
+        .filter((f) => !whole.includes(f))
+        .map((f) => [
+          <div key={f.id} className="cap">
+            {f.label}
+          </div>,
+          f.id === 'Armor' && f.options[0].bases.length === 1 ? armorGrid(f.options) : <div key={`${f.id}-grid`} className="gear-grid">{f.options.map(button)}</div>,
+        ])}
     </aside>
   );
 }
 
-export function GearSelect({ bases, value, onChange, anyLabel }: Omit<GearProps, 'tagNames'>) {
-  const families = FAMILIES.map((f) => ({
-    label: f.label,
-    options: bases.filter((b) => b.family === f.id).map((b) => ({ value: b.id, label: b.name })),
-  }));
-  const groups = anyLabel ? [{ options: [{ value: '', label: anyLabel }] }, ...families] : families;
-  return <Dropdown className="gear-select" label="Gear" value={value} groups={groups} onChange={onChange} />;
+export function GearSelect({ options, selected, onChange, anyLabel }: Omit<GearProps, 'tagNames'>) {
+  const choice = (o: GearOption) => ({ value: o.id, label: o.name });
+  const families = FAMILIES.map((f) => ({ ...f, options: options.filter((o) => o.family === f.id) })).filter((f) => f.options.length);
+  const whole = families.filter((f) => f.options[0].id === f.id);
+  const groups = [
+    { options: [...(anyLabel ? [{ value: '', label: anyLabel }] : []), ...whole.map((f) => choice(f.options[0]))] },
+    ...families.filter((f) => !whole.includes(f)).map((f) => ({ label: f.label, options: f.options.map(choice) })),
+  ].filter((g) => g.options.length);
+  return (
+    <Dropdown
+      className="gear-select"
+      label="Gear"
+      value={anyLabel ? (selected.length ? selected : ['']) : selected[0]}
+      groups={groups}
+      onChange={(id) => onChange(id ? picked(selected, id, !!anyLabel) : [])}
+    />
+  );
 }
 
 interface OptionGroup {
@@ -111,14 +162,17 @@ interface OptionGroup {
   options: { value: string; label: string }[];
 }
 
-export function Dropdown(props: { label: string; value: string; groups: OptionGroup[]; onChange: (value: string) => void; className?: string }) {
+// With a list as its value the dropdown takes several: it stays open, and each pick is passed on for the caller to turn on or off.
+export function Dropdown(props: { label: string; value: string | string[]; groups: OptionGroup[]; onChange: (value: string) => void; className?: string }) {
   const { label, value, groups, onChange, className = '' } = props;
+  const many = Array.isArray(value);
+  const chosen = [value].flat();
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const root = useRef<HTMLDivElement>(null);
   const id = useId();
   const options = groups.flatMap((g) => g.options);
-  const selected = options.findIndex((o) => o.value === value);
+  const selected = options.findIndex((o) => o.value === chosen[0]);
 
   // Safari doesn't focus a clicked button, so blur alone can't be relied on to close the list.
   useEffect(() => {
@@ -140,7 +194,7 @@ export function Dropdown(props: { label: string; value: string; groups: OptionGr
   };
   const pick = (i: number) => {
     onChange(options[i].value);
-    setOpen(false);
+    if (!many) setOpen(false);
   };
   const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape') setOpen(false);
@@ -170,14 +224,14 @@ export function Dropdown(props: { label: string; value: string; groups: OptionGr
         onKeyDown={onKeyDown}
         onBlur={() => setOpen(false)}
       >
-        <span id={`${id}-value`}>{options[selected]?.label}</span>
+        <span id={`${id}-value`}>{chosen.length > 1 ? `${chosen.length} selected` : options[selected]?.label}</span>
         <svg viewBox="0 0 10 6" width="10" height="6" aria-hidden="true">
           <path d="M0 0h2v2H0zM2 2h2v2H2zM4 4h2v2H4zM6 2h2v2H6zM8 0h2v2H8z" fill="currentColor" />
         </svg>
       </button>
       {open && (
         // Keeping the pointer from moving focus lets the button's blur close the list only on real exits.
-        <ul className="dropdown-list" role="listbox" aria-labelledby={`${id}-label`} onPointerDown={(e) => e.preventDefault()}>
+        <ul className="dropdown-list" role="listbox" aria-multiselectable={many} aria-labelledby={`${id}-label`} onPointerDown={(e) => e.preventDefault()}>
           {groups.map((g, gi) => [
             g.label && (
               <li key={`group-${gi}`} className="cap" role="presentation">
@@ -191,7 +245,7 @@ export function Dropdown(props: { label: string; value: string; groups: OptionGr
                   key={o.value}
                   id={`${id}-${i}`}
                   role="option"
-                  aria-selected={i === selected}
+                  aria-selected={chosen.includes(o.value)}
                   className={i === active ? 'active' : undefined}
                   onPointerEnter={() => setActive(i)}
                   onClick={() => pick(i)}

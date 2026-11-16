@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { canRoll, formatStat, type Affix, type Base, type Rarity } from '../lib/affix';
 import { useStored } from '../lib/useStored';
-import { GearRail, GearSelect, LevelStepper, RaritySwatches } from './controls';
+import { gearLabel, gearOptions, GearRail, GearSelect, LevelStepper, RaritySwatches } from './controls';
 import { StatLine } from './StatLine';
 
 interface Props {
@@ -12,17 +12,16 @@ interface Props {
   maxLevel: number;
 }
 
-// Each infusion names the one gear tag it fits, in the order gear is listed elsewhere.
-const FITS = ['weapon_family', 'offhand_family', 'helmet', 'chest', 'pants', 'boots', 'necklace', 'ring'];
-const FIT_NAMES: Record<string, string> = { weapon_family: 'Weapons', offhand_family: 'Off-hand' };
-
 export default function InfusionBrowser({ infusions, bases, rarities, tagNames, maxLevel }: Props) {
   const [query, setQuery] = useState('');
-  const [baseId, setBaseId] = useState('');
+  const [gear, setGear] = useState<string[]>([]);
   const [rarityId, setRarityId] = useStored('rarity', rarities.at(-1)!.id);
   const [level, setLevel] = useStored('level', maxLevel);
 
-  const base = bases.find((b) => b.id === baseId);
+  const options = useMemo(
+    () => gearOptions(bases, tagNames, (b) => infusions.filter((a) => canRoll(a, b)).map((a) => a.id).join()),
+    [bases, tagNames, infusions],
+  );
   const rarity = rarities.find((r) => r.id === rarityId) ?? rarities.at(-1)!;
 
   useEffect(() => {
@@ -33,26 +32,28 @@ export default function InfusionBrowser({ infusions, bases, rarities, tagNames, 
     const q = query.trim().toLowerCase();
     // GearInfusionData.getPercent: an infusion doesn't roll, it sits at the top of its rarity's range.
     const fixed = { ...rarity, minPercent: rarity.maxPercent };
-    const pool = infusions.filter((a) => !base || canRoll(a, base));
-    const totalWeight = pool.reduce((sum, a) => sum + a.weight, 0);
-    const rows = pool
-      .map((affix) => ({ affix, lines: affix.stats.map((s) => formatStat(s, fixed, level)), chance: affix.weight / totalWeight }))
-      .filter((r) => !q || r.lines.some((l) => `${l.value} ${l.label}`.toLowerCase().includes(q)));
-    if (base) return rows.length || q ? [{ label: `On ${base.name}`, rows }] : [];
-    return FITS.map((tag) => ({ label: FIT_NAMES[tag] ?? tagNames[tag], rows: rows.filter((r) => r.affix.included.includes(tag)) })).filter(
-      (g) => g.rows.length,
-    );
-  }, [infusions, base, rarity, level, query]);
+    return options
+      .filter((o) => !gear.length || gear.includes(o.id))
+      .map((o) => {
+        const pool = infusions.filter((a) => canRoll(a, o.bases[0]));
+        const totalWeight = pool.reduce((sum, a) => sum + a.weight, 0);
+        const rows = pool
+          .map((affix) => ({ affix, lines: affix.stats.map((s) => formatStat(s, fixed, level)), chance: affix.weight / totalWeight }))
+          .filter((r) => !q || r.lines.some((l) => `${l.value} ${l.label}`.toLowerCase().includes(q)));
+        return { label: o.name, rows };
+      })
+      .filter((g) => g.rows.length);
+  }, [infusions, options, gear, rarity, level, query]);
 
   return (
     <div className="browser">
-      <GearRail bases={bases} tagNames={tagNames} value={baseId} onChange={setBaseId} anyLabel="All gear" />
+      <GearRail options={options} tagNames={tagNames} selected={gear} onChange={setGear} anyLabel="All gear" />
 
       <div className="content">
         <div className="title-row">
           <h1>Infusions</h1>
           <span className="context">
-            {base?.name ?? 'All gear'} / <span className="rar">{rarity.name}</span> / Lv {level}
+            {gearLabel(options, gear)} / <span className="rar">{rarity.name}</span> / Lv {level}
           </span>
         </div>
 
@@ -61,12 +62,12 @@ export default function InfusionBrowser({ infusions, bases, rarities, tagNames, 
             <span className="cap">Search</span>
             <input className="in" type="search" placeholder="Stat" value={query} onChange={(e) => setQuery(e.target.value)} />
           </label>
-          <GearSelect bases={bases} value={baseId} onChange={setBaseId} anyLabel="All gear" />
+          <GearSelect options={options} selected={gear} onChange={setGear} anyLabel="All gear" />
           <LevelStepper value={level} max={maxLevel} onChange={setLevel} />
           <RaritySwatches rarities={rarities} value={rarityId} onChange={setRarityId} />
         </div>
 
-        {groups.length === 0 && <p className="empty">{base && !query ? `No infusions fit ${base.name}.` : 'Nothing matches.'}</p>}
+        {groups.length === 0 && <p className="empty">Nothing matches.</p>}
         {groups.map((group) => (
           <section key={group.label} className="group">
             <div className="group-head">
@@ -77,9 +78,8 @@ export default function InfusionBrowser({ infusions, bases, rarities, tagNames, 
               <span>
                 Gives at {rarity.name}, lv {level}
               </span>
-              {base && <span className="pct">Chance</span>}
+              <span className="pct">Chance</span>
             </div>
-            {group.rows.length === 0 && <p className="empty">Nothing matches.</p>}
             <ul>
               {group.rows.map(({ affix, lines, chance }) => (
                 <li key={affix.id} className="row infusion">
@@ -90,7 +90,7 @@ export default function InfusionBrowser({ infusions, bases, rarities, tagNames, 
                       </div>
                     ))}
                   </div>
-                  {base && <span className="pct">{(chance * 100).toFixed(1)}%</span>}
+                  <span className="pct">{(chance * 100).toFixed(1)}%</span>
                 </li>
               ))}
             </ul>

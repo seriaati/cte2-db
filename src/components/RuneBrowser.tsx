@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { formatStat, type Base, type Rarity } from '../lib/affix';
 import type { Rune, Runeword } from '../lib/runes';
-import { Dropdown, GearRail, GearSelect, LevelStepper } from './controls';
+import { Dropdown, gearLabel, gearOptions, GearRail, GearSelect, LevelStepper } from './controls';
 import { StatLine } from './StatLine';
 import { useStored } from '../lib/useStored';
 
@@ -33,17 +33,22 @@ const text = (line: { value: string; label: string }) => `${line.value} ${line.l
 
 export default function RuneBrowser({ runes, runewords, bases, slotNames, tagNames, rarity, maxLevel }: Props) {
   const [query, setQuery] = useState('');
-  const [baseId, setBaseId] = useState('');
+  const [gear, setGear] = useState<string[]>([]);
   const [runeId, setRuneId] = useState('');
   const [level, setLevel] = useStored('level', maxLevel);
 
-  const base = bases.find((b) => b.id === baseId);
+  const options = useMemo(
+    () => gearOptions(bases, tagNames, (b) => runewords.filter((w) => w.slots.includes(b.slot)).map((w) => w.id).join()),
+    [bases, tagNames, runewords],
+  );
+  const chosen = useMemo(() => options.filter((o) => gear.includes(o.id)), [options, gear]);
+  const fits = (word: Runeword, bases: Base[]) => bases.some((b) => word.slots.includes(b.slot));
+  const kinds = KINDS.filter((k) => !chosen.length || chosen.some((o) => k.id === (o.family === 'OffHand' ? 'Armor' : o.family)));
   const picked = runes.find((r) => r.id === runeId);
   const q = query.trim().toLowerCase();
 
   const runeRows = useMemo(() => {
-    const kinds = KINDS.filter((k) => !base || k.id === (base.family === 'OffHand' ? 'Armor' : base.family));
-    const usable = runewords.filter((w) => !base || w.slots.includes(base.slot));
+    const usable = runewords.filter((w) => !chosen.length || chosen.some((o) => fits(w, o.bases)));
     return runes
       .map((rune) => {
         // Kinds of gear that get the same stats from the rune share one entry.
@@ -57,11 +62,11 @@ export default function RuneBrowser({ runes, runewords, bases, slotNames, tagNam
         return { rune, stats, uses: usable.filter((w) => w.runes.includes(rune.id)).length };
       })
       .filter((r) => !q || r.rune.name.toLowerCase().includes(q) || r.stats.some((s) => s.lines.some((l) => text(l).includes(q))));
-  }, [runes, runewords, base, rarity, level, q]);
+  }, [runes, runewords, chosen, rarity, level, q]);
 
   const groups = useMemo(() => {
     const rows = runewords
-      .filter((w) => (!base || w.slots.includes(base.slot)) && (!runeId || w.runes.includes(runeId)))
+      .filter((w) => !runeId || w.runes.includes(runeId))
       .map((word) => ({ word, lines: word.stats.map((s) => formatStat(s, rarity, level)) }))
       .filter(
         (r) =>
@@ -71,21 +76,21 @@ export default function RuneBrowser({ runes, runewords, bases, slotNames, tagNam
           r.word.runes.some((id) => runes.find((x) => x.id === id)!.name.toLowerCase().includes(q)),
       )
       .sort((a, b) => a.word.runes.length - b.word.runes.length || a.word.name.localeCompare(b.word.name));
-    const all = base
-      ? [{ id: base.id, label: base.name, rows }]
+    const all = chosen.length
+      ? chosen.map((o) => ({ id: o.id, label: o.name, rows: rows.filter((r) => fits(r.word, o.bases)) }))
       : FAMILIES.map((f) => ({ ...f, rows: rows.filter((r) => r.word.family === f.id) }));
     return all.filter((g) => g.rows.length);
-  }, [runes, runewords, base, runeId, rarity, level, q]);
+  }, [runes, runewords, chosen, runeId, rarity, level, q]);
 
   return (
     <div className="browser">
-      <GearRail bases={bases} tagNames={tagNames} value={baseId} onChange={setBaseId} anyLabel="All gear" />
+      <GearRail options={options} tagNames={tagNames} selected={gear} onChange={setGear} anyLabel="All gear" />
 
       <div className="content">
         <div className="title-row">
           <h1>Runes</h1>
           <span className="context">
-            {base?.name ?? 'All gear'} / <span className="rar">{picked?.name ?? 'Any rune'}</span> / Lv {level}
+            {gearLabel(options, gear)} / <span className="rar">{picked?.name ?? 'Any rune'}</span> / Lv {level}
           </span>
         </div>
 
@@ -94,7 +99,7 @@ export default function RuneBrowser({ runes, runewords, bases, slotNames, tagNam
             <span className="cap">Search</span>
             <input className="in" type="search" placeholder="Name or stat" value={query} onChange={(e) => setQuery(e.target.value)} />
           </label>
-          <GearSelect bases={bases} value={baseId} onChange={setBaseId} anyLabel="All gear" />
+          <GearSelect options={options} selected={gear} onChange={setGear} anyLabel="All gear" />
           <Dropdown
             className="with-rune"
             label="Runewords with"
@@ -105,7 +110,7 @@ export default function RuneBrowser({ runes, runewords, bases, slotNames, tagNam
           <LevelStepper value={level} max={maxLevel} onChange={setLevel} />
         </div>
 
-        <section key={baseId} className="group">
+        <section key={`${gear}`} className="group">
           <div className="group-head">
             <h2>Runes</h2>
             <span className="count">{runeRows.length}</span>
@@ -133,9 +138,9 @@ export default function RuneBrowser({ runes, runewords, bases, slotNames, tagNam
                     )}
                   </div>
                 </div>
-                <div className={`stats ${base ? '' : 'by-gear'}`}>
+                <div className={`stats ${kinds.length === 1 ? '' : 'by-gear'}`}>
                   {stats.map((s) => [
-                    !base && (
+                    kinds.length > 1 && (
                       <span key={s.labels[0]} className="cap">
                         {s.labels.length === KINDS.length ? 'Any gear' : s.labels.join(', ')}
                       </span>
@@ -159,7 +164,7 @@ export default function RuneBrowser({ runes, runewords, bases, slotNames, tagNam
         <div id="runewords" />
         {groups.length === 0 && <p className="empty">No runeword matches.</p>}
         {groups.map((group) => (
-          <section key={`${group.id}/${baseId}`} className="group">
+          <section key={`${group.id}/${gear}`} className="group">
             <div className="group-head">
               <h2>{group.label} runewords</h2>
               <span className="count">{group.rows.length}</span>

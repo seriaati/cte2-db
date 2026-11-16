@@ -17,7 +17,7 @@ import {
   type PlanRarity,
 } from '../lib/plannerRules';
 import type { Rune, Runeword } from '../lib/runes';
-import { GearRail, GearSelect, LevelStepper, RaritySwatches } from './controls';
+import { gearOptions, GearRail, GearSelect, LevelStepper, RaritySwatches } from './controls';
 import { Sockets, socketPart, type Socketed } from './planner/Sockets';
 import { StatLine, StatLines } from './StatLine';
 import { useStored } from '../lib/useStored';
@@ -136,6 +136,7 @@ export default function GearPlanner({ affixes, infusions, bases, rarities, runes
   const plan = useSwap<HTMLDivElement>(baseId);
 
   const base = bases.find((b) => b.id === baseId)!;
+  const gear = gearOptions(bases, tagNames, (b) => b.id);
   const rarity = rarities.find((r) => r.id === rarityId) ?? tiers.at(-1)!;
   const rolls = rollWindows(rarity);
   const rollable = affixes.filter((a) => canRoll(a, base));
@@ -267,7 +268,7 @@ export default function GearPlanner({ affixes, infusions, bases, rarities, runes
 
   return (
     <div className="browser">
-      <GearRail bases={bases} tagNames={tagNames} value={baseId} onChange={changeBase} />
+      <GearRail options={gear} tagNames={tagNames} selected={[baseId]} onChange={([id]) => changeBase(id)} />
 
       <div className="content">
         <div className="title-row">
@@ -282,7 +283,7 @@ export default function GearPlanner({ affixes, infusions, bases, rarities, runes
             <span className="cap">Search</span>
             <input className="in" type="search" placeholder="Name or stat" value={search} onChange={(e) => setSearch(e.target.value)} />
           </label>
-          <GearSelect bases={bases} value={baseId} onChange={changeBase} />
+          <GearSelect options={gear} selected={[baseId]} onChange={([id]) => changeBase(id)} />
           <LevelStepper value={level} max={maxLevel} onChange={setLevel} />
           <RaritySwatches rarities={rarities} value={rarityId} onChange={changeRarity} />
         </div>

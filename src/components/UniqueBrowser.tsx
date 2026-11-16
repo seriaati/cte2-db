@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { formatStat, type Base, type Rarity } from '../lib/affix';
 import type { Source, Unique } from '../lib/uniques';
-import { Dropdown, GearRail, GearSelect, LevelStepper } from './controls';
+import { Dropdown, gearLabel, gearOptions, GearRail, GearSelect, LevelStepper } from './controls';
 import { StatLine } from './StatLine';
 import { useStored } from '../lib/useStored';
 
@@ -23,17 +23,21 @@ const FAMILIES = [
 
 export default function UniqueBrowser({ uniques, bases, sources, rarity, tagNames, maxLevel }: Props) {
   const [query, setQuery] = useState('');
-  const [baseId, setBaseId] = useState('');
+  const [gear, setGear] = useState<string[]>([]);
   const [sourceId, setSourceId] = useState('');
   const [level, setLevel] = useStored('level', maxLevel);
 
-  const base = bases.find((b) => b.id === baseId);
+  const options = useMemo(
+    () => gearOptions(bases, tagNames, (b) => uniques.filter((u) => u.base === b.id).map((u) => u.id).join()),
+    [bases, tagNames, uniques],
+  );
+  const picked = useMemo(() => options.filter((o) => gear.includes(o.id)), [options, gear]);
   const source = sources.find((s) => s.id === sourceId);
 
   const groups = useMemo(() => {
     const q = query.trim().toLowerCase();
     const rows = uniques
-      .filter((u) => (!base || u.base === base.id) && (!sourceId || u.source === sourceId))
+      .filter((u) => !sourceId || u.source === sourceId)
       .map((unique) => ({
         unique,
         baseIndex: bases.findIndex((b) => b.id === unique.base),
@@ -42,21 +46,21 @@ export default function UniqueBrowser({ uniques, bases, sources, rarity, tagName
       }))
       .filter((r) => !q || [r.unique.name, ...r.lines.map((l) => `${l.value} ${l.label}`)].some((s) => s.toLowerCase().includes(q)))
       .sort((a, b) => a.baseIndex - b.baseIndex || a.unique.minLevel - b.unique.minLevel || a.unique.name.localeCompare(b.unique.name));
-    const all = base
-      ? [{ id: base.id, label: base.name, rows }]
+    const all = picked.length
+      ? picked.map((o) => ({ id: o.id, label: o.name, rows: rows.filter((r) => o.bases.includes(bases[r.baseIndex])) }))
       : FAMILIES.map((f) => ({ ...f, rows: rows.filter((r) => bases[r.baseIndex].family === f.id) }));
     return all.filter((g) => g.rows.length);
-  }, [uniques, bases, sources, base, sourceId, rarity, level, query]);
+  }, [uniques, bases, sources, picked, sourceId, rarity, level, query]);
 
   return (
     <div className="browser">
-      <GearRail bases={bases} tagNames={tagNames} value={baseId} onChange={setBaseId} anyLabel="All gear" />
+      <GearRail options={options} tagNames={tagNames} selected={gear} onChange={setGear} anyLabel="All gear" />
 
       <div className="content">
         <div className="title-row">
           <h1>Uniques</h1>
           <span className="context">
-            {base?.name ?? 'All gear'} / <span className="rar">{source?.name ?? 'All sources'}</span> / Lv {level}
+            {gearLabel(options, gear)} / <span className="rar">{source?.name ?? 'All sources'}</span> / Lv {level}
           </span>
         </div>
 
@@ -65,7 +69,7 @@ export default function UniqueBrowser({ uniques, bases, sources, rarity, tagName
             <span className="cap">Search</span>
             <input className="in" type="search" placeholder="Name or stat" value={query} onChange={(e) => setQuery(e.target.value)} />
           </label>
-          <GearSelect bases={bases} value={baseId} onChange={setBaseId} anyLabel="All gear" />
+          <GearSelect options={options} selected={gear} onChange={setGear} anyLabel="All gear" />
           <Dropdown
             className="source"
             label="Source"
@@ -78,7 +82,7 @@ export default function UniqueBrowser({ uniques, bases, sources, rarity, tagName
 
         {groups.length === 0 && <p className="empty">Nothing matches.</p>}
         {groups.map((group) => (
-          <section key={`${group.id}/${baseId}/${sourceId}`} className="group">
+          <section key={`${group.id}/${gear}/${sourceId}`} className="group">
             <div className="group-head">
               <h2>{group.label}</h2>
               <span className="count">{group.rows.length}</span>

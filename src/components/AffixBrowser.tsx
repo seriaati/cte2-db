@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { canRoll, formatStat, type Affix, type Base, type Rarity } from '../lib/affix';
-import { GearRail, GearSelect, LevelStepper, RaritySwatches } from './controls';
+import { gearLabel, gearOptions, GearRail, GearSelect, LevelStepper, RaritySwatches } from './controls';
 import { StatLine } from './StatLine';
 import { useStored } from '../lib/useStored';
 
@@ -21,11 +21,17 @@ const TYPES = [
 export default function AffixBrowser({ affixes, bases, rarities, tagNames, maxLevel }: Props) {
   const [query, setQuery] = useState('');
   const [type, setType] = useState<Affix['type'] | 'all'>('all');
-  const [baseId, setBaseId] = useState('');
+  const [gear, setGear] = useState<string[]>([]);
   const [rarityId, setRarityId] = useStored('rarity', rarities.at(-1)!.id);
   const [level, setLevel] = useStored('level', maxLevel);
 
-  const base = bases.find((b) => b.id === baseId);
+  const options = useMemo(
+    () => gearOptions(bases, tagNames, (b) => affixes.filter((a) => canRoll(a, b)).map((a) => a.id).join()),
+    [bases, tagNames, affixes],
+  );
+  const picked = useMemo(() => options.filter((o) => gear.includes(o.id)).flatMap((o) => o.bases), [options, gear]);
+  // The odds of an affix only mean something on one piece of gear.
+  const base = picked.length === 1 ? picked[0] : undefined;
   const rarity = rarities.find((r) => r.id === rarityId) ?? rarities.at(-1)!;
 
   useEffect(() => {
@@ -35,7 +41,7 @@ export default function AffixBrowser({ affixes, bases, rarities, tagNames, maxLe
   const groups = useMemo(() => {
     const q = query.trim().toLowerCase();
     return TYPES.filter((t) => type === 'all' || type === t.id).map((t) => {
-      const pool = affixes.filter((a) => a.type === t.id && (!base || canRoll(a, base)));
+      const pool = affixes.filter((a) => a.type === t.id && (!picked.length || picked.some((b) => canRoll(a, b))));
       // Implicits roll across their whole range whatever the rarity.
       const roll = t.id === 'implicit' ? { ...rarity, minPercent: 0, maxPercent: 100 } : rarity;
       const totalWeight = pool.reduce((sum, a) => sum + a.weight, 0);
@@ -49,17 +55,17 @@ export default function AffixBrowser({ affixes, bases, rarities, tagNames, maxLe
         .sort((a, b) => (base ? b.chance - a.chance : 0) || a.affix.name.localeCompare(b.affix.name));
       return { ...t, rows };
     });
-  }, [affixes, base, rarity, level, type, query]);
+  }, [affixes, picked, base, rarity, level, type, query]);
 
   return (
     <div className="browser">
-      <GearRail bases={bases} tagNames={tagNames} value={baseId} onChange={setBaseId} anyLabel="All gear" />
+      <GearRail options={options} tagNames={tagNames} selected={gear} onChange={setGear} anyLabel="All gear" />
 
       <div className="content">
         <div className="title-row">
           <h1>Affixes</h1>
           <span className="context">
-            {base?.name ?? 'All gear'} / <span className="rar">{rarity.name}</span> / Lv {level}
+            {gearLabel(options, gear)} / <span className="rar">{rarity.name}</span> / Lv {level}
           </span>
         </div>
 
@@ -68,7 +74,7 @@ export default function AffixBrowser({ affixes, bases, rarities, tagNames, maxLe
             <span className="cap">Search</span>
             <input className="in" type="search" placeholder="Name or stat" value={query} onChange={(e) => setQuery(e.target.value)} />
           </label>
-          <GearSelect bases={bases} value={baseId} onChange={setBaseId} anyLabel="All gear" />
+          <GearSelect options={options} selected={gear} onChange={setGear} anyLabel="All gear" />
           <LevelStepper value={level} max={maxLevel} onChange={setLevel} />
           <RaritySwatches rarities={rarities} value={rarityId} onChange={setRarityId} />
           <div className="field">
@@ -86,7 +92,7 @@ export default function AffixBrowser({ affixes, bases, rarities, tagNames, maxLe
         </div>
 
         {groups.map((group) => (
-          <section key={`${group.id}/${baseId}`} className="group">
+          <section key={`${group.id}/${gear}`} className="group">
             <div className="group-head">
               <h2>{group.label}</h2>
               <span className="count">{group.rows.length}</span>
