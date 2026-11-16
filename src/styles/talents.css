@@ -57,6 +57,13 @@
   user-select: none;
 }
 
+/* With the sidebar there is no header above the page, so the tree gets that height back. */
+@media (min-width: 1220px) {
+  .tree-frame {
+    height: clamp(420px, calc(100vh - 308px), 900px);
+  }
+}
+
 .tree-frame:active {
   cursor: grabbing;
 }

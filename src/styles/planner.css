@@ -234,7 +234,7 @@ button.opt[aria-pressed='true'] .mark {
 }
 
 /* Beside the parts, a long card would run off the bottom of the window with no way to reach it. */
-@media (min-width: 1221px) {
+@media (min-width: 1461px) {
   .item {
     max-height: calc(100vh - 32px);
     overflow-y: auto;
