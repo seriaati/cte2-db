@@ -233,9 +233,9 @@
   },
   "charm": {
     "spells": [
-      "power_chord",
       "chaos_burst",
-      "cursed_power_chord"
+      "cursed_power_chord",
+      "power_chord"
     ],
     "effects": [],
     "shrines": [],
@@ -291,11 +291,11 @@
   },
   "combo_extender": {
     "spells": [
-      "rallying_sweep",
       "anti_gravity_smash",
       "eighth_gate",
-      "spirit_offensive",
       "flowing_river_rush",
+      "rallying_sweep",
+      "spirit_offensive",
       "triple_blitz"
     ],
     "effects": [],
@@ -306,11 +306,11 @@
   },
   "combo_linker": {
     "spells": [
-      "elemental_assault",
-      "sweeping_blow",
-      "piercing_strike",
       "debilitating_blow",
-      "goading_strike"
+      "elemental_assault",
+      "goading_strike",
+      "piercing_strike",
+      "sweeping_blow"
     ],
     "effects": [],
     "shrines": [],
@@ -400,8 +400,8 @@
   },
   "defender_stance": {
     "spells": [
-      "fighter_stance",
-      "defender_stance"
+      "defender_stance",
+      "fighter_stance"
     ],
     "effects": [],
     "shrines": [],
@@ -512,11 +512,11 @@
       "fire_trap",
       "flame_strike",
       "magma_flower",
-      "merc_fire_trap",
-      "noise",
       "magma_orb",
+      "merc_fire_trap",
+      "merc_flame_strike",
       "merc_magma_orb",
-      "merc_flame_strike"
+      "noise"
     ],
     "effects": [],
     "shrines": [],
@@ -636,12 +636,12 @@
     "effects": [],
     "shrines": [],
     "stats": [
+      "exile_effect_to_target_frenzy_charge_when_hit",
       "frenzy_charge_on_crit",
       "frenzy_charge_on_hit",
       "frenzy_charge_on_kill",
-      "exile_effect_to_target_frenzy_charge_when_hit",
-      "gain_frenzy_charges_every_10s",
-      "frenzy_charge_when_hit"
+      "frenzy_charge_when_hit",
+      "gain_frenzy_charges_every_10s"
     ]
   },
   "frost_blade": {
@@ -1011,10 +1011,10 @@
   },
   "overheat": {
     "spells": [
+      "fire_wall",
       "fireball",
-      "meteor",
       "magma_orb",
-      "fire_wall"
+      "meteor"
     ],
     "effects": [],
     "shrines": [],
@@ -1131,9 +1131,9 @@
     "effects": [],
     "shrines": [],
     "stats": [
+      "exile_effect_to_source_power_charge_on_kill",
       "power_charge_on_crit",
-      "power_charge_on_hit",
-      "exile_effect_to_source_power_charge_on_kill"
+      "power_charge_on_hit"
     ]
   },
   "power_surge": {
@@ -1241,8 +1241,8 @@
     "effects": [],
     "shrines": [],
     "stats": [
-      "reckless_defender_when_phys_hit",
-      "reckless_defender"
+      "reckless_defender",
+      "reckless_defender_when_phys_hit"
     ]
   },
   "redemption": {
@@ -1265,8 +1265,8 @@
   },
   "rejuvenation": {
     "spells": [
-      "rejuvenation",
-      "nature_balm"
+      "nature_balm",
+      "rejuvenation"
     ],
     "effects": [],
     "shrines": [],
@@ -1380,13 +1380,13 @@
   },
   "shred": {
     "spells": [
-      "pull",
-      "shred",
-      "quake",
-      "piercing_strike",
-      "puncture",
+      "cursed_quake",
       "merc_shred",
-      "cursed_quake"
+      "piercing_strike",
+      "pull",
+      "puncture",
+      "quake",
+      "shred"
     ],
     "effects": [],
     "shrines": [],
@@ -1476,41 +1476,41 @@
   },
   "slow": {
     "spells": [
+      "banner_of_the_blizzard",
+      "banner_of_the_frozen_guard",
       "blizzard",
       "boomerang",
       "charged_bolt",
       "chilling_field",
       "chilling_touch",
+      "chronobreak",
+      "comeuppance",
+      "cursed_quake",
+      "cursed_timewinder",
+      "ensnaring_melody",
       "frost_flower",
+      "frost_orbs",
       "frost_trap",
       "frostball",
       "frozen_orb",
       "gale_wind",
-      "ritardando",
-      "whirlwind",
-      "noise",
-      "ensnaring_melody",
-      "quake",
-      "shadow_step",
-      "parallel_convergence",
-      "timewinder",
-      "time_dilation",
-      "chronobreak",
-      "comeuppance",
-      "putrid_breath",
-      "rime_reaver",
-      "vortex_skewer",
       "glacial_dash",
-      "banner_of_the_frozen_guard",
-      "banner_of_the_blizzard",
-      "merc_frost_trap",
       "merc_charged_bolt",
       "merc_chilling_field",
+      "merc_frost_trap",
       "merc_frozen_orb",
       "merc_quake",
-      "cursed_timewinder",
-      "cursed_quake",
-      "frost_orbs"
+      "noise",
+      "parallel_convergence",
+      "putrid_breath",
+      "quake",
+      "rime_reaver",
+      "ritardando",
+      "shadow_step",
+      "time_dilation",
+      "timewinder",
+      "vortex_skewer",
+      "whirlwind"
     ],
     "effects": [
       "time_dilation"
@@ -1522,12 +1522,12 @@
   },
   "snow_tracked": {
     "spells": [
-      "vortex_skewer",
-      "glacial_dash",
       "banner_of_the_hunt",
-      "whiteout_sovereign",
+      "glacial_condemnation",
+      "glacial_dash",
       "tailwind_sweep",
-      "glacial_condemnation"
+      "vortex_skewer",
+      "whiteout_sovereign"
     ],
     "effects": [],
     "shrines": [],
@@ -1597,13 +1597,13 @@
   },
   "static": {
     "spells": [
+      "battery_fusillade",
       "chain_lightning",
       "charged_bolt",
+      "cursed_lightning_nova",
       "lightning_nova",
       "lightning_totem",
-      "battery_fusillade",
-      "merc_charged_bolt",
-      "cursed_lightning_nova"
+      "merc_charged_bolt"
     ],
     "effects": [],
     "shrines": [],
@@ -1611,29 +1611,29 @@
   },
   "stun": {
     "spells": [
+      "avalanche_vault",
       "boomerang",
       "charge",
+      "chronobreak",
+      "cursed_axe_throw",
       "explosive_arrow",
+      "flowing_river_rush",
       "gale_wind",
       "gong_strike",
+      "ice_tipped_spear_stun",
+      "meditate",
       "merc_gong_strike",
       "merc_pull",
-      "pull",
-      "tidal_strike",
       "noise",
-      "meditate",
-      "sweeping_blow",
       "omnislash",
-      "flowing_river_rush",
-      "phase_dive",
       "parallel_convergence",
+      "phase_dive",
+      "pull",
       "pulsar_singularity_trap",
-      "chronobreak",
       "reckoners_flail",
-      "winters_grasp",
-      "avalanche_vault",
-      "cursed_axe_throw",
-      "ice_tipped_spear_stun"
+      "sweeping_blow",
+      "tidal_strike",
+      "winters_grasp"
     ],
     "effects": [
       "encased",
@@ -1778,8 +1778,8 @@
     "effects": [],
     "shrines": [],
     "stats": [
-      "wrath_when_hit",
-      "wrath_on_kill"
+      "wrath_on_kill",
+      "wrath_when_hit"
     ]
   },
   "zen": {

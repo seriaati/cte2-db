@@ -214,6 +214,8 @@ for (const [id, stat] of Object.entries(registries.mmorpg_stat as Record<string,
     if (gives?.ser?.startsWith('give_exile_effect')) source(gives.effect, 'stats', id);
   }
 }
+// Folders are read in whatever order the disk lists them, so the lists are sorted to come out the same on every machine.
+Object.values(effect_sources).forEach((kinds) => Object.values(kinds).forEach((ids) => ids.sort()));
 
 // For the home page: which pack and mod version the data is from. The launcher keeps the pack's
 // manifest beside the game folder; without one the pack version is left out.
