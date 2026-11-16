@@ -130,6 +130,13 @@ export function augmentCost(stats: Map<string, Total>, aura: { id: string; reser
   return Math.trunc(f(aura.reserves * f(1 + change / 100)));
 }
 
+// SpellCastingData.calcSpellLevels: a learned skill gains the levels that stats give to all skills
+// and to skills of its tags, up to a cap. They count for what the skill does, not for its support slots.
+export function bonusSkillLevels(stats: Map<string, Total>, tags: string[], max: number): number {
+  const levels = ['all', ...tags].reduce((sum, tag) => Math.trunc(sum + (stats.get(`plus_lvl_${tag}_spells`)?.value ?? 0)), 0);
+  return clamp(levels, 0, max);
+}
+
 // PlayerStatUtils.addNewbieElementalResists, which the pack leaves on (ENABLE_MINUS_RESISTS_PER_LEVEL).
 export function newbieResists(level: number): Exact[] {
   const value = level > 74 ? -25 : level > 49 ? 0 : level > 24 ? 25 : 50;

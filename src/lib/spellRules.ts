@@ -38,6 +38,8 @@ export interface Spell {
   // Cooldown, cast time and the rest of what doesn't change with level.
   facts: [label: string, value: string][];
   tags: string[];
+  // The same tags by id, which the stats that raise a kind of skill's level go by.
+  tagIds: string[];
   stats: StatMod[];
 }
 

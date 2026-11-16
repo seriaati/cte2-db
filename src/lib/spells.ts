@@ -112,6 +112,7 @@ export const spells: Spell[] = Object.values(schoolData)
           channel: s.config.channel_skill,
           facts: facts(s),
           tags: s.config.tags.tags.map((tag) => text(`mmorpg.tag.spell.${tag}`, tag)),
+          tagIds: s.config.tags.tags,
           stats: s.statsForSkillGem.map(statMod),
         };
       }),

@@ -3,9 +3,11 @@ import { formatRange, rolled } from '../../lib/affix';
 import { MAX_CLASSES, SOLO_CLASS, SUPPORT_SLOTS, exactly, maxRank, pointsAt, supportSlots, type Build, type Skill } from '../../lib/buildRules';
 import type { Sections } from '../../lib/builds';
 import { calcText, cost } from '../../lib/spellRules';
+import { bonusSkillLevels } from '../../lib/statRules';
 import { Dropdown } from '../controls';
 import { StatLine, StatLines } from '../StatLine';
 import { Loading, NumberField, Picker, Slot, useSection, type Choice, type TabProps } from './shared';
+import { useTotals } from './totals';
 
 type Class = Sections['skills']['classes'][number];
 type Perk = Class['perks'][number];
@@ -16,6 +18,7 @@ const perkName = (perk: Perk, level: number) =>
 
 export default function SkillsTab({ core, build, change, rolls }: TabProps) {
   const data = useSection('skills');
+  const totals = useTotals(build);
   const [selected, setSelected] = useState('');
   const [hovered, setHovered] = useState('');
   const [slot, setSlot] = useState(0);
@@ -26,6 +29,8 @@ export default function SkillsTab({ core, build, change, rolls }: TabProps) {
   const classes = build.classes.flatMap((id) => data.classes.find((c) => c.id === id) ?? []);
   const perks = new Map(classes.flatMap((c) => c.perks.map((perk) => [perk.id, perk] as const)));
   const rank = (id: string) => (perks.has(id) ? (build.perks[id] ?? 0) : 0);
+  // The levels the rest of the build adds to a learned spell; none until its stats are worked out.
+  const bonus = (perk: Perk) => (totals && perk.spell && rank(perk.id) ? bonusSkillLevels(totals.stats, perk.spell.tagIds, data.bonusLevels) : 0);
   const spentOn = (spells: boolean) => [...perks.values()].filter((p) => !!p.spell === spells).reduce((sum, p) => sum + rank(p.id), 0);
   const pools = (['spells', 'passives'] as const).map((id) => ({
     id,
@@ -102,7 +107,13 @@ export default function SkillsTab({ core, build, change, rolls }: TabProps) {
     const cap = maxRank(perk, level);
     const spell = perk.spell;
     // An unlearned perk is described at its first level.
-    const shownAt = Math.max(1, at);
+    const shownAt = Math.max(1, at + bonus(perk));
+    const levelCap = (
+      <span className="cap">
+        At level {shownAt}
+        {bonus(perk) > 0 && ` (${at} + ${bonus(perk)} from the build)`}
+      </span>
+    );
     const top = spell ? spell.maxLevel + data.bonusLevels : 0;
     const fill = (desc: string) =>
       desc.split(/\[calc:(\w+)\]/).map((piece, i) =>
@@ -143,7 +154,7 @@ export default function SkillsTab({ core, build, change, rolls }: TabProps) {
         {spell ? (
           <>
             <div className="item-part">
-              <span className="cap">At level {shownAt}</span>
+              {levelCap}
               <p className="spell-desc">{fill(spell.desc)}</p>
               {spell.linked && (
                 <p className="spell-desc">
@@ -173,7 +184,7 @@ export default function SkillsTab({ core, build, change, rolls }: TabProps) {
           </>
         ) : (
           <div className="item-part">
-            <span className="cap">At level {shownAt}</span>
+            {levelCap}
             {perk.stats.map((s, i) => (
               <span key={i} className="line">
                 <StatLine line={formatRange(s, rolled(s, 100, level) * shownAt, rolled(s, 100, level) * shownAt)} />
@@ -273,7 +284,8 @@ export default function SkillsTab({ core, build, change, rolls }: TabProps) {
                 <div className="hot-skill">
                   <strong>{skillPerk.spell!.name}</strong>
                   <span className="cap">
-                    Level {rank(skillPerk.id)} / {open} of {SUPPORT_SLOTS} support slots open
+                    Level {rank(skillPerk.id) + bonus(skillPerk)}
+                    {bonus(skillPerk) > 0 && ` (${rank(skillPerk.id)} + ${bonus(skillPerk)})`} / {open} of {SUPPORT_SLOTS} support slots open
                   </span>
                   <button className="btn" type="button" onClick={() => setPicking({ slot })}>
                     Change
