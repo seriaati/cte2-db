@@ -22,34 +22,24 @@ const REGISTRIES = [
 const LANG = 'assets/mmorpg/lang/en_us.json';
 const OUT = join(import.meta.dirname, '../src/data');
 
-// Gear icons are traced from in-game textures. Most gear slots have a white glyph inside their
-// "soul" item texture; the slots listed here have none and borrow another texture.
-type IconMode = 'white' | 'opaque' | 'outline';
+// Gear icons are traced from in-game textures: most gear slots have a white glyph inside their
+// "soul" item texture. The slots listed here have none, so theirs are drawn by hand to match.
 const SOUL_ICON = (slot: string) => `assets/mmorpg/textures/item/stat_soul/${slot}.png`;
-const ICON_SOURCES: Record<string, [path: string, mode: IconMode]> = {
-  elytra: ['assets/curios/textures/slot/empty_elytra_slot.png', 'opaque'],
-  head: ['assets/curios/textures/slot/empty_head_slot.png', 'opaque'],
-  tome: ['assets/mmorpg/textures/item/offhand/tome/iron.png', 'outline'],
-  totem: [SOUL_ICON('totem'), 'outline'],
+const DRAWN_ICONS: Record<string, string[]> = {
+  elytra: ['.##..##.', '###..###', '###..###', '###..###', '###..###', '##....##', '##....##', '#......#'],
+  head: ['....#...', '...##...', '..###...', '..####..', '.#####..', '########', '.######.'],
+  tome: ['#######.', '#.#####.', '#.#####.', '#.#..##.', '#.#..##.', '#.#####.', '#######.', '.######.'],
+  totem: ['..####..', '..#..#..', '..####..', '#.####.#', '########', '..####..', '..####..', '...##...'],
 };
 
-// Turns the chosen pixels into an SVG path of one-pixel-high runs, cropped to their bounding box.
-function traceIcon(png: Buffer, mode: IconMode) {
-  const { width, height, data } = PNG.sync.read(png);
-  const solid = (x: number, y: number) => x >= 0 && x < width && y >= 0 && y < height && data[(y * width + x) * 4 + 3] > 100;
-  const lit = (x: number, y: number) => {
-    if (!solid(x, y) || mode === 'opaque') return solid(x, y);
-    const i = (y * width + x) * 4;
-    // The coin behind the glyph has translucent white highlights; only fully opaque white is glyph.
-    if (mode === 'white') return data[i + 3] > 200 && Math.min(data[i], data[i + 1], data[i + 2]) >= 235;
-    return !(solid(x + 1, y) && solid(x - 1, y) && solid(x, y + 1) && solid(x, y - 1));
-  };
+// Turns the lit pixels into an SVG path of one-pixel-high runs, cropped to their bounding box.
+function tracePixels(width: number, height: number, lit: (x: number, y: number) => boolean) {
   const runs: [x: number, y: number, length: number][] = [];
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       if (!lit(x, y)) continue;
       const start = x;
-      while (lit(x + 1, y)) x++;
+      while (x + 1 < width && lit(x + 1, y)) x++;
       runs.push([start, y, x - start + 1]);
     }
   }
@@ -60,6 +50,15 @@ function traceIcon(png: Buffer, mode: IconMode) {
     w: Math.max(...runs.map(([x, , n]) => x + n)) - left,
     h: Math.max(...runs.map(([, y]) => y)) - top + 1,
   };
+}
+
+function traceGlyph(png: Buffer) {
+  const { width, height, data } = PNG.sync.read(png);
+  return tracePixels(width, height, (x, y) => {
+    const i = (y * width + x) * 4;
+    // The coin behind the glyph has translucent white highlights; only fully opaque white is glyph.
+    return data[i + 3] > 200 && Math.min(data[i], data[i + 1], data[i + 2]) >= 235;
+  });
 }
 
 // pack-relative path -> lazy file content
@@ -121,9 +120,11 @@ for (const layer of layers) {
 
 const icons: Record<string, unknown> = {};
 for (const slot of Object.keys(registries.mmorpg_gear_slot)) {
-  const [path, mode] = ICON_SOURCES[slot] ?? [SOUL_ICON(slot), 'white'];
-  const read = layers.findLast((layer) => layer.has(path))!.get(path)!;
-  icons[slot] = traceIcon(read(), mode);
+  const drawn = DRAWN_ICONS[slot];
+  const path = SOUL_ICON(slot);
+  icons[slot] = drawn
+    ? tracePixels(drawn[0].length, drawn.length, (x, y) => drawn[y][x] === '#')
+    : traceGlyph(layers.findLast((layer) => layer.has(path))!.get(path)!());
 }
 
 // Perk icons for the talent tree pages, packed into one row of 32px cells. Most icons are 16px
