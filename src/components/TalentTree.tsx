@@ -1,6 +1,6 @@
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { formatRange, rolled } from '../lib/affix';
-import { blocked, canRemove, decodeBuild, encodeBuild, neighbours } from '../lib/talentRules';
+import { blocked, decodeBuild, encodeBuild, neighbours, rooted, route } from '../lib/talentRules';
 import type { TalentTree as Tree } from '../lib/talents';
 import { useQuery } from '../lib/useQuery';
 import { useStored } from '../lib/useStored';
@@ -131,10 +131,17 @@ export function TreeEditor({ tree, level, bonus, nodes: stored, onBonus: setBonu
     () => new Set(hasPoints ? tree.nodes.flatMap((_, i) => (taken.has(i) || blocked(tree, links, taken, i) ? [] : [i])) : []),
     [tree, links, taken, hasPoints],
   );
+  // The taken nodes that stay when one goes: those that still reach an entry node without it.
+  const without = (i: number) => rooted(tree, links, new Set(stored.filter((n) => n !== i)));
+  // A click on a taken node gives it back along with everything that hangs on it; a click on any
+  // other takes it and the nodes on the way to it, when there are points for all of them.
   const toggle = (i: number) => {
     if (taken.has(i)) {
-      if (canRemove(tree, links, taken, i)) setStored(stored.filter((n) => n !== i));
-    } else if (open.has(i)) setStored([...stored, i]);
+      const kept = without(i);
+      return setStored(stored.filter((n) => kept.has(n)));
+    }
+    const path = route(tree, links, taken, i);
+    if (path && taken.size + path.length <= total) setStored([...stored, ...path]);
   };
 
   // InCalcStatData.add in Mine and Slash: flat and increased values add up, "more" values multiply.
@@ -271,13 +278,18 @@ export function TreeEditor({ tree, level, bonus, nodes: stored, onBonus: setBonu
     });
   };
 
-  // What stands in the way of clicking a node, in words. The tooltip already spells out a one-of-a-kind clash.
+  // What a click on a node would do beyond taking or giving back that one node, or why it would do
+  // nothing. The tooltip already spells out a one-of-a-kind clash.
   const hint = (i: number) => {
-    if (taken.has(i)) return canRemove(tree, links, taken, i) ? '' : 'Other talents you have taken connect through this one.';
-    const why = blocked(tree, links, taken, i);
-    if (why === 'start') return 'Start with one of the talents marked yellow.';
-    if (why === 'link') return 'Not linked to a talent you have taken.';
-    return why || hasPoints ? '' : 'No points left.';
+    if (taken.has(i)) {
+      const others = taken.size - 1 - without(i).size;
+      return others ? `Taking it back also takes back ${others} ${others > 1 ? 'talents that connect' : 'talent that connects'} through it.` : '';
+    }
+    const path = route(tree, links, taken, i);
+    if (!path) return blocked(tree, links, taken, i) === 'kind' ? '' : 'No route leads here from the talents you have taken.';
+    const left = total - taken.size;
+    if (path.length > left) return path.length > 1 ? `Takes ${path.length} points to reach, and ${Math.max(0, left)} ${left === 1 ? 'is' : 'are'} left.` : 'No points left.';
+    return path.length > 1 ? `Takes ${path.length} points: the talents on the way here are taken too.` : '';
   };
 
   const tip = () => {

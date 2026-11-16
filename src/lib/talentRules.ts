@@ -22,20 +22,33 @@ export function blocked(tree: TalentTree, links: number[][], taken: Set<number>,
   return null;
 }
 
-// A taken node can go only if each taken node next to it still reaches an entry node without it.
-export function canRemove(tree: TalentTree, links: number[][], taken: Set<number>, node: number): boolean {
-  const reachesEntry = (from: number) => {
-    const seen = new Set<number>();
-    const queue = [...links[from]];
-    for (const n of queue) {
-      if (n === node || !taken.has(n) || seen.has(n)) continue;
-      if (perkOf(tree, n).entry) return true;
-      seen.add(n);
-      queue.push(...links[n]);
+// The nodes to take, nearest first, to get from what is taken to a node: as few as there can be,
+// and of the routes that short always the first one found, so a click gives the same route every
+// time. With nothing taken yet the route sets out from an entry node. It never passes through a
+// one-of-a-kind talent, which keeps it off other entry points. Null when nothing gets there.
+export function route(tree: TalentTree, links: number[][], taken: Set<number>, target: number): number[] | null {
+  const { oneKind } = perkOf(tree, target);
+  if (taken.has(target) || (oneKind && [...taken].some((n) => perkOf(tree, n).oneKind === oneKind))) return null;
+  const from = new Map<number, number | null>();
+  const entries = taken.size || perkOf(tree, target).entry ? [] : tree.nodes.flatMap((_, n) => (perkOf(tree, n).entry ? [n] : []));
+  for (const n of entries) from.set(n, null);
+  // An entry node can be taken whatever it is next to.
+  if (perkOf(tree, target).entry) from.set(target, null);
+  const queue = [...[...taken].sort((a, b) => a - b), ...entries];
+  for (const n of queue) {
+    if (from.has(target)) break;
+    for (const next of links[n]) {
+      if (taken.has(next) || from.has(next) || (next !== target && perkOf(tree, next).oneKind)) continue;
+      from.set(next, taken.has(n) ? null : n);
+      queue.push(next);
     }
-    return false;
-  };
-  return links[node].every((n) => !taken.has(n) || perkOf(tree, n).entry || reachesEntry(n));
+  }
+  if (!from.has(target)) return null;
+  const path: number[] = [];
+  for (let n: number | null = target; n !== null; n = from.get(n)!) path.unshift(n);
+  // The entry node a route sets out from may be of the same one-of-a-kind group as where it is going.
+  const kinds = path.map((n) => perkOf(tree, n).oneKind).filter(Boolean);
+  return new Set(kinds).size === kinds.length ? path : null;
 }
 
 // The taken nodes that reach a taken entry node through other taken nodes. A build holds together when that is all of them.
