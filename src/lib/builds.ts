@@ -14,6 +14,7 @@ import setData from '../data/sets.json';
 import schoolData from '../data/spell_school.json';
 import statData from '../data/stat.json';
 import compatData from '../data/stat_compat.json';
+import talentIconData from '../data/talent_icons.json';
 import uniqueData from '../data/unique_gears.json';
 import weaponData from '../data/weapon_type.json';
 import type { Affix, StatMod } from './affix';
@@ -52,7 +53,13 @@ export const core = {
   pack: packData.version,
   attributes: Object.entries(statData as Record<string, { ser?: string }>)
     .filter(([, stat]) => stat.ser === 'core_stat')
-    .map(([id]) => ({ id, name: text(`mmorpg.stat.${id}`, id), desc: text(`mmorpg.stat_desc.${id}`, '') })),
+    // The game's icon for an attribute, which the talent icon sheet has a cell for because talents use it too.
+    .map(([id]) => ({
+      id,
+      name: text(`mmorpg.stat.${id}`, id),
+      desc: text(`mmorpg.stat_desc.${id}`, ''),
+      icon: (talentIconData as Record<string, number>)[`mmorpg:textures/gui/stat_icons/core/${id}.png`],
+    })),
   // The character level each of a skill's five support slots opens at.
   linkLevels: [balance.link_1_lvl, balance.link_2_lvl, balance.link_3_lvl, balance.link_4_lvl, balance.link_5_lvl],
   // Jewel sockets come from a few talents and uniques: for each tree the nodes that give one, and

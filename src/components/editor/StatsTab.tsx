@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { pointsAt } from '../../lib/buildRules';
 import { NumberField, type TabProps } from './shared';
 
@@ -31,7 +32,10 @@ export default function StatsTab({ core, build, change }: TabProps) {
           return (
             <li key={stat.id} className="attribute">
               <div>
-                <h2>{stat.name}</h2>
+                <h2>
+                  <span className="perk-icon" style={{ '--icon': stat.icon } as CSSProperties} />
+                  {stat.name}
+                </h2>
                 <p>{stat.desc}</p>
               </div>
               <div className="stepper">

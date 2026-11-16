@@ -424,6 +424,12 @@ body.editor-page {
   flex: 1 1 320px;
 }
 
+.attribute h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .attribute p {
   margin: 8px 0 0;
   color: var(--muted);
