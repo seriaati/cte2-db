@@ -29,7 +29,7 @@ const {
 } = Astro.props;
 const path = Astro.url.pathname;
 const url = new URL(path, Astro.site);
-const image = new URL('/og.png', Astro.site);
+const image = new URL('/og-2.png', Astro.site);
 // Each icon is drawn on an 8 x 8 pixel grid. The number is how many entries the page lists.
 const nav: [href: string, label: string, icon: string, count?: number][] = [
   ['/planner', 'Gear planner', 'M1 1h7v1h-7zM0 2h8v1h-8zM2 3h5v1h-5zM3 4h3v1h-3zM3 5h3v1h-3zM2 6h5v1h-5zM1 7h7v1h-7z'],
