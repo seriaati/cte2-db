@@ -1,0 +1,30 @@
+---
+import BuildEditor from '../components/editor/BuildEditor.tsx';
+import Head from '../layouts/Head.astro';
+import { core } from '../lib/builds';
+import '../styles/lists.css';
+import '../styles/planner.css';
+import '../styles/spells.css';
+import '../styles/talents.css';
+import '../styles/build.css';
+---
+
+<html lang="en">
+  <head>
+    <Head
+      title="CTE2 Build Editor | Craft to Exile 2 Database"
+      description="Plan a whole Craft to Exile 2 character: classes, spells and the hotbar, talents, ascendancy and atlas, stat points, gear, augments and jewels. Save builds in the browser, and export them as files to keep or share."
+    />
+  </head>
+  <body class="editor-page">
+    <BuildEditor client:only="react" core={core}>
+      <div slot="fallback" class="editor-loading">
+        <h1>Build editor</h1>
+        <p class="lead">
+          Plan a whole Craft to Exile 2 character: classes, spells and the hotbar, talents, ascendancy and atlas, stat points, gear, augments and jewels.
+        </p>
+        <a class="btn" href="/">Back to the database</a>
+      </div>
+    </BuildEditor>
+  </body>
+</html>

@@ -19,7 +19,7 @@ export interface StatMod {
 export interface Affix {
   id: string;
   name: string;
-  type: 'prefix' | 'suffix' | 'implicit' | 'enchant';
+  type: 'prefix' | 'suffix' | 'implicit' | 'enchant' | 'chaos_stat' | 'jewel_corruption';
   weight: number;
   requireAll: boolean;
   included: string[];

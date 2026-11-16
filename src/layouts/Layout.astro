@@ -22,6 +22,7 @@ const { title, description } = Astro.props;
 const path = Astro.url.pathname;
 // Each icon is drawn on an 8 x 8 pixel grid. The number is how many entries the page lists.
 const nav: [href: string, label: string, icon: string, count?: number][] = [
+  ['/build', 'Build editor', 'M2 0h4v1h-4zM2 1h4v1h-4zM3 2h2v1h-2zM1 3h6v1h-6zM0 4h1v1h-1zM2 4h4v1h-4zM7 4h1v1h-1zM2 5h4v1h-4zM2 6h1v1h-1zM5 6h1v1h-1zM2 7h1v1h-1zM5 7h1v1h-1z'],
   ['/planner', 'Gear planner', 'M1 1h7v1h-7zM0 2h8v1h-8zM2 3h5v1h-5zM3 4h3v1h-3zM3 5h3v1h-3zM2 6h5v1h-5zM1 7h7v1h-7z'],
   ['/affixes', 'Affixes', 'M0 0h4v1h-4zM0 1h1v1h-1zM2 1h3v1h-3zM0 2h6v1h-6zM0 3h7v1h-7zM1 4h6v1h-6zM2 5h4v1h-4zM3 6h2v1h-2z', affixes.length],
   ['/bases', 'Base gear', 'M1 1h2v1h-2zM5 1h2v1h-2zM0 2h2v1h-2zM3 2h2v1h-2zM6 2h2v1h-2zM0 3h8v1h-8zM2 4h4v1h-4zM2 5h4v1h-4zM2 6h4v1h-4z', bases.length],
@@ -74,7 +75,8 @@ const nav: [href: string, label: string, icon: string, count?: number][] = [
         <nav id="site-nav" aria-label="Sections">
           {
             nav.map(([href, label, icon, count]) => (
-              <a class="tab" href={href} aria-current={path.startsWith(href) ? 'page' : undefined}>
+              // The build editor is a page of its own, outside this layout, so the link to it loads it whole.
+              <a class="tab" href={href} aria-current={path.startsWith(href) ? 'page' : undefined} data-astro-reload={href === '/build' || undefined}>
                 <svg viewBox="0 0 8 8" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">
                   <path fill="currentColor" d={icon} />
                 </svg>

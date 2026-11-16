@@ -4,6 +4,7 @@ import baseData from '../data/base_gear_types.json';
 import rarityData from '../data/gear_rarity.json';
 import { affixes, bases, rarities, statMod } from './gear';
 import { runed } from './runes';
+import type { Rarity } from './affix';
 import type { PlanAffix, PlanBase, PlanRarity } from './plannerRules';
 
 const rawAffixes = affixData as Record<string, { only_one_per_item: boolean }>;
@@ -22,8 +23,7 @@ const rawRarities = rarityData as Record<
 
 export const planBases: PlanBase[] = bases.map((b) => ({ ...b, stats: rawBases[b.id].base_stats.map(statMod) }));
 
-// Runed gear is planned like any other rarity: it has no affix slots, but more sockets and runewords.
-export const planRarities: PlanRarity[] = [...rarities, runed].map((r) => {
+export function planRarity(r: Rarity): PlanRarity {
   const raw = rawRarities[r.id];
   return {
     ...r,
@@ -35,7 +35,10 @@ export const planRarities: PlanRarity[] = [...rarities, runed].map((r) => {
     maxRunes: raw.max_runes,
     runewords: raw.can_have_runewords,
   };
-});
+}
+
+// Runed gear is planned like any other rarity: it has no affix slots, but more sockets and runewords.
+export const planRarities: PlanRarity[] = [...rarities, runed].map(planRarity);
 
 // A weight of 0 never wins the game's weighted roll, so those can't end up on a drop.
 export const planAffixes: PlanAffix[] = affixes

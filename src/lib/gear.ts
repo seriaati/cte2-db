@@ -75,7 +75,7 @@ export const rarities: Rarity[] = Object.values(rarityData)
 
 const GEAR_AFFIX_TYPES = ['prefix', 'suffix', 'implicit'];
 
-const affixesOf = (types: string[]): Affix[] =>
+export const affixesOf = (types: string[]): Affix[] =>
   Object.values(affixData)
     .filter((a) => types.includes(a.type))
     .map((a) => {
