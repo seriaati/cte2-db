@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '23 5 * * *'
   workflow_dispatch:
+    inputs:
+      file:
+        description: CurseForge file id of a pack release to extract, instead of checking for a new one
 
 env:
   # CurseForge's own site API, which needs no key. 936875 is Craft to Exile 2.
@@ -20,14 +23,19 @@ jobs:
       - uses: actions/checkout@v7
       # Sets its outputs only when there is a release the site isn't on and no pull request for it yet.
       - id: latest
+        env:
+          INPUT_FILE: ${{ inputs.file }}
         run: |
-          latest=$(curl -fsSL --retry 3 "$API/$PROJECT/files?pageIndex=0&pageSize=20&sort=dateCreated&sortDescending=true" |
-            jq -c '[.data[] | select(.releaseType == 1)] | max_by(.id)')
-          name=$(jq -r .fileName <<<"$latest")
-          file=$(jq -r .id <<<"$latest")
+          file=$INPUT_FILE
+          if [[ -z $file ]]; then
+            latest=$(curl -fsSL --retry 3 "$API/$PROJECT/files?pageIndex=0&pageSize=20&sort=dateCreated&sortDescending=true" |
+              jq -c '[.data[] | select(.releaseType == 1)] | max_by(.id)')
+            name=$(jq -r .fileName <<<"$latest")
+            file=$(jq -r .id <<<"$latest")
+            echo "latest: $name, site: $(jq -r .version src/data/pack.json)"
+            if [[ $name == *"-$(jq -r .version src/data/pack.json).zip" ]]; then exit 0; fi
+          fi
           branch="pack-update-$file"
-          echo "latest: $name, site: $(jq -r .version src/data/pack.json)"
-          if [[ $name == *"-$(jq -r .version src/data/pack.json).zip" ]]; then exit 0; fi
           if git ls-remote --exit-code --heads origin "$branch" >/dev/null; then exit 0; fi
           echo "file=$file" >>"$GITHUB_OUTPUT"
           echo "branch=$branch" >>"$GITHUB_OUTPUT"
