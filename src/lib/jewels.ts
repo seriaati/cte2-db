@@ -1,6 +1,5 @@
 // Build-time only, like gear.ts. Components may import the types from here, but only with `import type`.
 import affixData from '../data/affixes.json';
-import rarityData from '../data/gear_rarity.json';
 import type { StatMod } from './affix';
 import { statMod, text } from './gear';
 import { sprite } from './items';
@@ -50,8 +49,3 @@ export const jewelAffixes = {
   crafted: pool('crafted_jewel_unique'),
   eye: pool('watcher_eye'),
 };
-
-// JewelItemData.generateAffixes in Mine and Slash: one affix, plus one for every two the rarity gives gear.
-export const affixCounts: Record<string, number> = Object.fromEntries(
-  Object.values(rarityData).map((r) => [r.guid, 1 + Math.floor(r.min_affixes / 2)]),
-);

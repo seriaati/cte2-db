@@ -1,10 +1,10 @@
 ---
 import GemBrowser from '../components/GemBrowser.tsx';
 import Layout from '../layouts/Layout.astro';
-import { gemlessRarities, gems, ranks } from '../lib/gems';
+import { gems, ranks } from '../lib/gems';
 import '../styles/lists.css';
 ---
 
 <Layout title="CTE2 Gems | Craft to Exile 2 Database" description="Every socketable gem in Craft to Exile 2 at each rank: what it gives on weapons, armor and jewelry, and when it drops.">
-  <GemBrowser client:load gems={gems} ranks={ranks} gemlessRarities={gemlessRarities} />
+  <GemBrowser client:load gems={gems} ranks={ranks} />
 </Layout>

@@ -46,7 +46,7 @@
 .tree-frame {
   position: relative;
   /* Sized to end at the bottom of the window, since the wheel zooms the tree instead of scrolling the page. */
-  height: clamp(420px, calc(100vh - 370px), 900px);
+  height: clamp(420px, calc(100vh - 312px), 900px);
   margin-top: 24px;
   /* clip, not hidden: focusing a talent must not scroll the frame out from under the pan and zoom. */
   overflow: clip;
@@ -60,7 +60,7 @@
 /* With the sidebar there is no header above the page, so the tree gets that height back. */
 @media (min-width: 1220px) {
   .tree-frame {
-    height: clamp(420px, calc(100vh - 308px), 900px);
+    height: clamp(420px, calc(100vh - 250px), 900px);
   }
 }
 

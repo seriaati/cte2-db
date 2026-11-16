@@ -7,14 +7,13 @@ import { StatLine } from './StatLine';
 
 interface Props {
   supports: Support[];
-  slotLevels: number[];
   rarities: Rarity[];
   maxLevel: number;
 }
 
 const STYLES = ['STR', 'DEX', 'INT'];
 
-export default function SupportBrowser({ supports, slotLevels, rarities, maxLevel }: Props) {
+export default function SupportBrowser({ supports, rarities, maxLevel }: Props) {
   const [query, setQuery] = useState('');
   const [style, setStyle] = useState('');
   const [rarityId, setRarityId] = useStored('rarity', rarities.at(-1)!.id);
@@ -36,7 +35,6 @@ export default function SupportBrowser({ supports, slotLevels, rarities, maxLeve
     return [...new Set(rows.map((r) => r.support.minLevel))].map((minLevel) => ({ minLevel, rows: rows.filter((r) => r.support.minLevel === minLevel) }));
   }, [supports, style, rarity, level, query]);
 
-  const slots = slotLevels.filter((l) => l <= level).length;
 
   return (
     <div className="content">
@@ -46,7 +44,6 @@ export default function SupportBrowser({ supports, slotLevels, rarities, maxLeve
           <span className="rar">{rarity.name}</span> / Lv {level}
         </span>
       </div>
-      <p className="lead">Support gems go into a skill's support slots and boost that skill alone.</p>
 
       <div className="controls">
         <label className="field grow">
@@ -68,17 +65,6 @@ export default function SupportBrowser({ supports, slotLevels, rarities, maxLeve
         <LevelStepper value={level} max={maxLevel} onChange={setLevel} />
         <RaritySwatches rarities={rarities} value={rarityId} onChange={setRarityId} />
       </div>
-
-      <p className="note">
-        The level here is your own: you can use a support gem once you reach its level, and its flat values grow as you
-        level up. The gem's rarity sets where in the range its stats roll. A skill gets one support slot for every 4
-        levels you put into it, up to {slotLevels.length}. Your own level caps it too: slots open at level{' '}
-        {slotLevels.slice(0, -1).join(', ')} and {slotLevels.at(-1)}, which makes {slots} at level {level}. Each
-        support multiplies the skill's resource cost by the amount shown, and the multipliers stack. A skill can't hold two of the same
-        support, or two of a kind where a gem says only one is allowed. Style only decides the colour of the gem: red
-        for STR, green for DEX, blue for INT. Support gems drop from monsters above level 5 that are at least the gem's
-        level.
-      </p>
 
       {groups.length === 0 && <p className="empty">Nothing matches.</p>}
       {groups.map((group) => (

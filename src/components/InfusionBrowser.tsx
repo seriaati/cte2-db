@@ -55,7 +55,6 @@ export default function InfusionBrowser({ infusions, bases, rarities, tagNames, 
             {base?.name ?? 'All gear'} / <span className="rar">{rarity.name}</span> / Lv {level}
           </span>
         </div>
-        <p className="lead">The extra stat an Infusion scroll adds to a piece of gear, on top of its affixes.</p>
 
         <div className="controls">
           <label className="field grow">
@@ -66,14 +65,6 @@ export default function InfusionBrowser({ infusions, bases, rarities, tagNames, 
           <LevelStepper value={level} max={maxLevel} onChange={setLevel} />
           <RaritySwatches rarities={rarities} value={rarityId} onChange={setRarityId} />
         </div>
-
-        <p className="note">
-          Infusion scrolls come from the Infusing profession, one kind each for weapons, off-hand, armor and jewelry.
-          The first success gives the item one of the infusions below at random; after that each success raises its
-          rarity one step, so it has to go Common, Uncommon and so on in order. An attempt works half the time and an
-          item only gets ten attempts. The value doesn't roll: it is fixed by the infusion's rarity and the gear's
-          level.
-        </p>
 
         {groups.length === 0 && <p className="empty">{base && !query ? `No infusions fit ${base.name}.` : 'Nothing matches.'}</p>}
         {groups.map((group) => (

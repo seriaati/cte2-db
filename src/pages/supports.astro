@@ -2,10 +2,10 @@
 import SupportBrowser from '../components/SupportBrowser.tsx';
 import Layout from '../layouts/Layout.astro';
 import { maxLevel, rarities } from '../lib/gear';
-import { slotLevels, supports } from '../lib/supports';
+import { supports } from '../lib/supports';
 import '../styles/lists.css';
 ---
 
 <Layout title="CTE2 Support Gems | Craft to Exile 2 Database" description="Every Support gem in Craft to Exile 2, with its stats by rarity and level, its resource cost multiplier and the level it needs.">
-  <SupportBrowser client:load supports={supports} slotLevels={slotLevels} rarities={rarities} maxLevel={maxLevel} />
+  <SupportBrowser client:load supports={supports} rarities={rarities} maxLevel={maxLevel} />
 </Layout>

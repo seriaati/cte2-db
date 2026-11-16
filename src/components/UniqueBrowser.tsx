@@ -59,7 +59,6 @@ export default function UniqueBrowser({ uniques, bases, sources, rarity, tagName
             {base?.name ?? 'All gear'} / <span className="rar">{source?.name ?? 'All sources'}</span> / Lv {level}
           </span>
         </div>
-        <p className="lead">Every unique item in Craft to Exile 2, with its stats and where it drops.</p>
 
         <div className="controls">
           <label className="field grow">
@@ -76,13 +75,6 @@ export default function UniqueBrowser({ uniques, bases, sources, rarity, tagName
           />
           <LevelStepper value={level} max={maxLevel} onChange={setLevel} />
         </div>
-
-        <p className="note">
-          Stats show the full roll range at the chosen item level; only flat values grow with level. A unique can drop
-          once the monsters you fight reach its drop level. A map tier limits it to maps of that tier or higher, and a
-          named source such as Prophecy limits it to that content. Uniques marked Not a drop never roll as loot: the
-          pack attaches them to a specific item instead.
-        </p>
 
         {groups.length === 0 && <p className="empty">Nothing matches.</p>}
         {groups.map((group) => (

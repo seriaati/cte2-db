@@ -199,29 +199,12 @@ export default function GearPlanner({ affixes, infusions, bases, rarities, runes
             {base.name} / <span className="rar">{rarity.name}</span> / Lv {level}
           </span>
         </div>
-        <p className="lead">
-          Put one piece of gear together part by part: base, rarity, implicit, prefixes, suffixes, sockets and an
-          infusion. Each list only shows what that piece can get.
-        </p>
 
         <div className="controls">
           <GearSelect bases={bases} value={baseId} onChange={changeBase} />
           <LevelStepper value={level} max={maxLevel} onChange={setLevel} />
           <RaritySwatches rarities={rarities} value={rarityId} onChange={changeRarity} />
         </div>
-
-        <p className="note">
-          {rarity.affixCount === 0 ? (
-            `${rarity.name} gear has no prefixes or suffixes. Its stats come from its runes and the runeword they form.`
-          ) : (
-            <>
-              {rarity.name} gear rolls {rarity.affixCount} {rarity.affixCount === 1 ? 'affix' : 'affixes'}: {parts[0].slots}{' '}
-              prefix, {parts[1].slots} suffix. Each affix rolls its own tier, anywhere from {rarities[0].name} up to the
-              item's rarity, and the tier sets how much of a stat's range it can reach. Ranges here are for the top
-              tier, {rarity.name}. Chance is for a single roll, out of what the slot can still roll.
-            </>
-          )}
-        </p>
 
         <div className="plan" ref={plan}>
           <div className="parts">
@@ -335,10 +318,6 @@ export default function GearPlanner({ affixes, infusions, bases, rarities, runes
                 <p className="empty">No infusions fit {base.name}.</p>
               ) : (
                 <>
-                  <p className="note part-note">
-                    Added with Infusion scrolls. It has its own rarity, apart from the item's, and its value doesn't
-                    roll. Chance is for the first successful scroll.
-                  </p>
                   <div className="controls part-controls">
                     <RaritySwatches label="Infusion rarity" rarities={tiers} value={infusionRarity.id} onChange={setInfusionRarityId} />
                   </div>

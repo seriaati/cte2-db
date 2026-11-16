@@ -43,9 +43,6 @@ export default function AuraBrowser({ auras, rarities, maxLevel }: Props) {
           <span className="rar">{rarity.name}</span> / Lv {level}
         </span>
       </div>
-      <p className="lead">
-        Augment gems are passive bonuses you equip, paid for out of your Augment Capacity.
-      </p>
 
       <div className="controls">
         <label className="field grow">
@@ -67,14 +64,6 @@ export default function AuraBrowser({ auras, rarities, maxLevel }: Props) {
         <LevelStepper value={level} max={maxLevel} onChange={setLevel} />
         <RaritySwatches rarities={rarities} value={rarityId} onChange={setRarityId} />
       </div>
-
-      <p className="note">
-        The level here is your own: you can equip an augment once you reach its level, and its flat values grow as you
-        level up. The gem's rarity sets where in the range its stats roll. Each augment reserves the amount shown out
-        of your Augment Capacity, which starts at 100, and the ones you equip can't add up to more than you have. You
-        can't equip two of the same augment. Style only decides the colour of the gem: red for STR, green for DEX,
-        purple for INT. Augments drop from monsters above level 10 that are at least the augment's level.
-      </p>
 
       {groups.length === 0 && <p className="empty">Nothing matches.</p>}
       {groups.map((group) => (

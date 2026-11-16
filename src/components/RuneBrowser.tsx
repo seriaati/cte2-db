@@ -12,8 +12,6 @@ interface Props {
   slotNames: Record<string, string>;
   tagNames: Record<string, string>;
   rarity: Rarity;
-  runedSockets: { min: number; max: number };
-  uniquesTakeRunes: boolean;
   maxLevel: number;
 }
 
@@ -33,7 +31,7 @@ const KINDS = [
 
 const text = (line: { value: string; label: string }) => `${line.value} ${line.label}`.toLowerCase();
 
-export default function RuneBrowser({ runes, runewords, bases, slotNames, tagNames, rarity, runedSockets, uniquesTakeRunes, maxLevel }: Props) {
+export default function RuneBrowser({ runes, runewords, bases, slotNames, tagNames, rarity, maxLevel }: Props) {
   const [query, setQuery] = useState('');
   const [baseId, setBaseId] = useState('');
   const [runeId, setRuneId] = useState('');
@@ -90,7 +88,6 @@ export default function RuneBrowser({ runes, runewords, bases, slotNames, tagNam
             {base?.name ?? 'All gear'} / <span className="rar">{picked?.name ?? 'Any rune'}</span> / Lv {level}
           </span>
         </div>
-        <p className="lead">Every rune in Craft to Exile 2, what it gives on each kind of gear, and the runewords the runes spell.</p>
 
         <div className="controls">
           <label className="field grow">
@@ -107,15 +104,6 @@ export default function RuneBrowser({ runes, runewords, bases, slotNames, tagNam
           />
           <LevelStepper value={level} max={maxLevel} onChange={setLevel} />
         </div>
-
-        <p className="note">
-          A rune goes into an empty socket, and what it gives depends on the kind of gear; off-hand items count as
-          armor. Its value rolls anywhere in the range shown when you socket it, and flat values grow with the gear's
-          level. Each rune fits once per item: using the same rune again rerolls it and keeps the higher roll.
-          {!uniquesTakeRunes && ' Unique gear takes no runes.'} A rune can drop once the monsters you fight reach its
-          drop level. Runes marked Not a random drop never roll as loot; in this version of the pack they come from
-          bosses and quests.
-        </p>
 
         <section key={baseId} className="group">
           <div className="group-head">
@@ -168,14 +156,7 @@ export default function RuneBrowser({ runes, runewords, bases, slotNames, tagNam
           </ul>
         </section>
 
-        <p className="note" id="runewords">
-          A runeword only forms on {rarity.name} gear, a rarity of its own that comes with {runedSockets.min} to{' '}
-          {runedSockets.max} sockets. Socket the runes in the order shown, with no other rune in between, into one of the
-          gear types listed; the runeword appears when the last one goes in. Its stats roll once, anywhere in the range
-          shown, and flat values grow with the gear's level. If the sockets spell more than one runeword, the one with
-          the most runes counts. Click a rune to see every runeword that uses it.
-        </p>
-
+        <div id="runewords" />
         {groups.length === 0 && <p className="empty">No runeword matches.</p>}
         {groups.map((group) => (
           <section key={`${group.id}/${baseId}`} className="group">

@@ -10,7 +10,6 @@ interface Props {
   // Which of TREES this is; a build is saved under this name.
   id: string;
   // The page's own opening sentence.
-  intro: string;
   tree: Tree;
   maxLevel: number;
 }
@@ -71,7 +70,7 @@ const nodeOf = (e: React.SyntheticEvent) => {
   return el ? Number(el.dataset.node) : null;
 };
 
-export default function TalentTree({ id, intro, tree, maxLevel }: Props) {
+export default function TalentTree({ id, tree, maxLevel }: Props) {
   const { points } = tree;
   // Level only matters where it gives points or grows a stat, which on the atlas tree it never does.
   const levelled = points.perLevel > 0 || tree.perks.some((perk) => perk.stats.some((s) => s.scaling));
@@ -331,9 +330,6 @@ export default function TalentTree({ id, intro, tree, maxLevel }: Props) {
         <h1>{TREES.find(([name]) => name === id)![2]}</h1>
         {levelled && <span className="context">Lv {level}</span>}
       </div>
-      <p className="lead">
-        {intro} Click talents to spend your points, and search for a stat to light up every talent that gives it.
-      </p>
 
       <div ref={app} className={`tree-app ${full ? 'full' : ''}`}>
         <div className="controls">

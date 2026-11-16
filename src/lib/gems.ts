@@ -1,5 +1,4 @@
 // Build-time only, like gear.ts. Components may import the types from here, but only with `import type`.
-import rarityData from '../data/gear_rarity.json';
 import gemData from '../data/gems.json';
 import type { Rarity } from './affix';
 import { maxLevel, rarities, text } from './gear';
@@ -51,8 +50,3 @@ export const gems: Gem[] = all.map((g) => ({
   dropLevel: floatInt(maxLevel, g.min_lvl_multi),
   drops: g.weight > 0,
 }));
-
-// GemItem's socketing check refuses gear whose rarity allows no gems.
-export const gemlessRarities: string[] = Object.values(rarityData)
-  .filter((r) => r.max_gems <= 0)
-  .map((r) => text(`mmorpg.rarity.${r.guid}`, r.guid));

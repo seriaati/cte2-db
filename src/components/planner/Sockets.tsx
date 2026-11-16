@@ -72,11 +72,6 @@ export function Sockets({ base, rarity, level, rolls, sockets, onChange, runewor
           {sockets.length}/{rarity.sockets}
         </span>
       </div>
-      <p className="note part-note">
-        {rarity.name} gear can have up to {rarity.sockets} {rarity.sockets === 1 ? 'socket' : 'sockets'}, holding{' '}
-        {rarity.maxGems > 0 ? `gems or up to ${rarity.maxRunes} runes` : 'runes only'}. A rune fits once per item and rolls
-        anywhere in its range.{rarity.runewords && ' The right runes next to each other, in order, form a runeword.'}
-      </p>
 
       <ul className="slots">
         {Array.from({ length: rarity.sockets }, (_, i) => {

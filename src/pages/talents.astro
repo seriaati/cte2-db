@@ -7,5 +7,5 @@ import '../styles/talents.css';
 ---
 
 <Layout title="CTE2 Talents | Craft to Exile 2 Database" description="The Craft to Exile 2 talent tree: spend your points to plan a build, see what each talent gives and search the tree by stat.">
-  <TalentTree client:load id="talents" intro={`All ${talents.nodes.length} talents in the tree, laid out as they are in game.`} tree={talents} maxLevel={maxLevel} />
+  <TalentTree client:load id="talents" tree={talents} maxLevel={maxLevel} />
 </Layout>

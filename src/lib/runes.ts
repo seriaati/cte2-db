@@ -3,7 +3,6 @@ import rarityData from '../data/gear_rarity.json';
 import slotData from '../data/gear_slot.json';
 import runeData from '../data/runes.json';
 import runewordData from '../data/runeword.json';
-import uniqueData from '../data/unique_gears.json';
 import type { Rarity, StatMod } from './affix';
 import { maxLevel, statMod, text } from './gear';
 import { familyStats, floatInt, sprite, type FamilyStats } from './items';
@@ -71,8 +70,3 @@ export const runed: Rarity = {
   minPercent: 0,
   maxPercent: 100,
 };
-
-export const runedSockets = rarity.sockets;
-
-// A unique only takes runes if its data says so.
-export const uniquesTakeRunes = Object.values(uniqueData).some((u) => u.runable);

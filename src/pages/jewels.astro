@@ -2,10 +2,10 @@
 import JewelBrowser from '../components/JewelBrowser.tsx';
 import Layout from '../layouts/Layout.astro';
 import { maxLevel, rarities } from '../lib/gear';
-import { abyssalEye, affixCounts, craftedJewel, jewelAffixes, jewelKinds } from '../lib/jewels';
+import { abyssalEye, craftedJewel, jewelAffixes, jewelKinds } from '../lib/jewels';
 import '../styles/lists.css';
 ---
 
 <Layout title="CTE2 Jewels | Craft to Exile 2 Database" description="Every stat a jewel can roll in Craft to Exile 2: jewel affixes by rarity and level, corruptions, the crafted unique jewel and the Abyssal Eye.">
-  <JewelBrowser client:load kinds={jewelKinds} crafted={craftedJewel} eye={abyssalEye} affixes={jewelAffixes} affixCounts={affixCounts} rarities={rarities} maxLevel={maxLevel} />
+  <JewelBrowser client:load kinds={jewelKinds} crafted={craftedJewel} eye={abyssalEye} affixes={jewelAffixes} rarities={rarities} maxLevel={maxLevel} />
 </Layout>

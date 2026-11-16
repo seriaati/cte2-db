@@ -6,7 +6,6 @@ import { StatLine } from './StatLine';
 interface Props {
   gems: Gem[];
   ranks: GemRank[];
-  gemlessRarities: string[];
 }
 
 // The three stat lists a gem carries. Off-hand gear uses the armor one.
@@ -16,7 +15,7 @@ const KINDS = [
   { id: 'Jewelry', label: 'Jewelry' },
 ] as const;
 
-export default function GemBrowser({ gems, ranks, gemlessRarities }: Props) {
+export default function GemBrowser({ gems, ranks }: Props) {
   const [query, setQuery] = useState('');
   const [tier, setTier] = useState(0);
   const [kindId, setKindId] = useState('');
@@ -44,7 +43,6 @@ export default function GemBrowser({ gems, ranks, gemlessRarities }: Props) {
           <span className="rar">{rank.name}</span> / {kinds.length === 1 ? kinds[0].label : 'All gear'}
         </span>
       </div>
-      <p className="lead">The gems you socket into gear in Craft to Exile 2, and what each one gives on a weapon, armor or jewelry.</p>
 
       <div className="controls">
         <label className="field grow">
@@ -76,15 +74,6 @@ export default function GemBrowser({ gems, ranks, gemlessRarities }: Props) {
           </div>
         </div>
       </div>
-
-      <p className="note">
-        A gem goes into an empty socket and gives one stat, which depends on the kind of gear; off-hand items count as
-        armor. The value is fixed: it doesn't roll and doesn't grow with level, so only the rank matters.{' '}
-        {gemlessRarities.length > 0 && `${gemlessRarities.join(' and ')} gear takes no gems. `}
-        Three gems of one rank craft into one of the next, except {ranks.at(-1)!.name}, which only drops from pinnacle
-        bosses. A gem can drop once the monsters you fight reach its drop level, and each rank is rarer than the one
-        before.
-      </p>
 
       <section key={tier} className="group">
         <div className="group-head">

@@ -49,17 +49,11 @@ export default function BaseGear({ bases, rarities, tagNames, reqScaling, maxLev
           <span className="rar">{rarity.name}</span> / Lv {level}
         </span>
       </div>
-      <p className="lead">What each piece of gear gives before any affix, and the attributes you need to equip it.</p>
 
       <div className="controls">
         <LevelStepper value={level} max={maxLevel} onChange={setLevel} />
         <RaritySwatches rarities={rarities} value={rarityId} onChange={setRarityId} />
       </div>
-
-      <p className="note">
-        Base stats roll together: one roll between {rolls.minPercent}% and {rolls.maxPercent}% of each range at{' '}
-        {rarity.name}, and flat values grow with item level. Requirements depend on item level only.
-      </p>
 
       <section className="group">
         <div className="group-head">

@@ -1,5 +1,4 @@
 // Build-time only, like gear.ts. Components may import the types from here, but only with `import type`.
-import balanceData from '../data/game_balance.json';
 import supportData from '../data/support_gem.json';
 import type { StatMod } from './affix';
 import { statMod, text } from './gear';
@@ -35,7 +34,3 @@ export const supports: Support[] = Object.values(supportData)
     oneKind: g.one_of_a_kind.replaceAll('_', ' '),
   }))
   .sort((a, b) => a.minLevel - b.minLevel || a.name.localeCompare(b.name));
-
-// GameBalanceConfig.getMaxLinksForLevel: the player levels that unlock a skill's first to fifth support slot.
-const balance = balanceData.original_balance;
-export const slotLevels = [balance.link_1_lvl, balance.link_2_lvl, balance.link_3_lvl, balance.link_4_lvl, balance.link_5_lvl];

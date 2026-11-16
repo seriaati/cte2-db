@@ -63,10 +63,6 @@ export default function AffixBrowser({ affixes, bases, rarities, tagNames, maxLe
             {base?.name ?? 'All gear'} / <span className="rar">{rarity.name}</span> / Lv {level}
           </span>
         </div>
-        <p className="lead">
-          Every prefix, suffix and implicit a piece of gear can roll in Craft to Exile 2, with its roll range and the
-          odds of landing it.
-        </p>
 
         <div className="controls">
           <label className="field grow">
@@ -89,14 +85,6 @@ export default function AffixBrowser({ affixes, bases, rarities, tagNames, maxLe
             </div>
           </div>
         </div>
-
-        <p className="note">
-          {base
-            ? `Chance is for a single roll on ${base.name}, out of every affix of that type it can roll.`
-            : 'Pick a gear type to see only what it can roll and the chance of each affix.'}{' '}
-          Each prefix and suffix rolls its own tier, anywhere from Common up to the item's rarity, so the rarity
-          picker sets the tier these ranges are shown at. Implicits ignore rarity.
-        </p>
 
         {groups.map((group) => (
           <section key={`${group.id}/${baseId}`} className="group">

@@ -30,7 +30,6 @@ export default function StatBrowser({ stats, sourceNames }: Props) {
         <h1>Stats</h1>
         <span className="context">{source === 'none' ? 'Not listed' : source || 'All stats'}</span>
       </div>
-      <p className="lead">Every stat in Craft to Exile 2, what it does, and which lists on this site it shows up in.</p>
 
       <div className="controls">
         <label className="field grow">
@@ -49,11 +48,6 @@ export default function StatBrowser({ stats, sourceNames }: Props) {
           onChange={setSource}
         />
       </div>
-
-      <p className="note">
-        Descriptions are the game's own. Stats under Other come from parts of the game this site doesn't list yet, such
-        as spells and maps. An X in a name stands for the stat's value.
-      </p>
 
       {groups.length === 0 && <p className="empty">Nothing matches.</p>}
       {groups.map((group) => (

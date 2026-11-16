@@ -139,10 +139,6 @@
   grid-template-columns: minmax(180px, 0.42fr) minmax(0, 1fr) 64px;
 }
 
-.note.about {
-  margin: 0 0 16px;
-}
-
 @media (max-width: 1420px) {
   .by-gear {
     grid-template-columns: minmax(0, 1fr);
