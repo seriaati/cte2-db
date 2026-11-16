@@ -789,3 +789,53 @@ body.editor-page {
     grid-area: auto;
   }
 }
+
+/* Calculator */
+
+.note.skipped {
+  margin-top: 10px;
+  color: #ff6b5e;
+}
+
+.totals-main {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 2px;
+  margin: 28px 0;
+}
+
+@media (max-width: 1000px) {
+  .totals-main {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .totals-main {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.totals-main div {
+  padding: 12px 14px;
+  background: var(--panel);
+}
+
+.totals-main dd {
+  margin: 6px 0 0;
+  font: 400 34px/1 var(--pixel);
+}
+
+.totals {
+  columns: 3 300px;
+  column-gap: 32px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.totals li {
+  padding: 5px 0;
+  border-bottom: 2px solid var(--line-row);
+  break-inside: avoid;
+}

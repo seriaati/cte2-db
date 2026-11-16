@@ -20,8 +20,9 @@ export interface JewelAffix {
   weight: number;
   tags: string[];
   stats: StatMod[];
-  // Abyssal Eye affixes only: the augment that has to be on for the stats to count.
+  // Abyssal Eye affixes only: the augment that has to be on for the stats to count, by name and by id.
   aura: string;
+  auraId: string;
 }
 
 const item = (id: string): JewelItem => ({ name: text(`item.mmorpg.jewel.${id}`, id), icon: sprite(`mmorpg:jewel/${id}`) });
@@ -40,6 +41,7 @@ const pool = (type: string): JewelAffix[] =>
       tags: a.requirements.tag_requirements[0].included,
       stats: a.stats.map(statMod),
       aura: a.eye_aura_req && text(`mmorpg.aura.${a.eye_aura_req}`, a.eye_aura_req),
+      auraId: a.eye_aura_req,
     }))
     .sort((a, b) => (a.aura || a.stats[0].name).localeCompare(b.aura || b.stats[0].name));
 

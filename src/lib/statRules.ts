@@ -1,0 +1,137 @@
+// Client-safe: how Mine and Slash adds up what a character's stats come to. Like affix.ts, no data imports here.
+import type { StatMod } from './affix';
+
+export interface StatDef {
+  name: string;
+  percent: boolean;
+  long: boolean;
+  base: number;
+  min: number;
+  max: number;
+  // A damage stat keeps its "more" multipliers beside the value instead of multiplying them in.
+  apart: boolean;
+  // Left off the game's own stat screen.
+  hidden: boolean;
+}
+
+// A stat that adds to another once the rest is worked out: a percentage of the other stat, or an
+// amount for every so many points of it.
+export interface Derived {
+  id: string;
+  from: string;
+  to: string;
+  per?: number;
+  priority: number;
+}
+
+export interface StatRules {
+  defs: Record<string, StatDef>;
+  transfers: Record<string, string[]>;
+  // What one point of an attribute gives.
+  core: Record<string, StatMod[]>;
+  derived: Derived[];
+}
+
+export interface Exact {
+  id: string;
+  type: StatMod['type'];
+  value: number;
+}
+
+// Where stats come from matters for augments and jewels: Augment Effect and Jewel Effect add a
+// share of what those give on top.
+export interface Source {
+  kind: 'aura' | 'jewel' | 'other';
+  stats: Exact[];
+}
+const EFFECT: Partial<Record<Source['kind'], string>> = { aura: 'aura_effect', jewel: 'jewel_effect' };
+
+export interface Total {
+  value: number;
+  more: number;
+}
+
+// The game works in 32-bit floats and drops fractions in places, so the sums here do the same.
+const f = Math.fround;
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+// StatCalculation.calc for a character that is casting nothing: support gems only count for their own skill.
+export function totalStats(rules: StatRules, sources: Source[]): Map<string, Total> {
+  const calc = new Map<string, { flat: number; percent: number; multi: number }>();
+  const entry = (id: string) => calc.get(id) ?? calc.set(id, { flat: 0, percent: 0, multi: 1 }).get(id)!;
+  const add = ({ id, type, value }: Exact) => {
+    const e = entry(id);
+    if (type === 'FLAT') e.flat = f(e.flat + value);
+    else if (type === 'PERCENT') e.percent = f(e.percent + value);
+    else e.multi = f(e.multi * f(1 + value / 100));
+  };
+
+  const all = sources.flatMap((source) => source.stats);
+  all.forEach(add);
+  for (const { kind, stats } of sources) {
+    const share = all.filter((mod) => mod.id === EFFECT[kind]).reduce((sum, mod) => sum + mod.value, 0) / 100;
+    if (share) stats.forEach((mod) => add({ ...mod, value: f(mod.value * share) }));
+  }
+
+  for (const [id, from] of [...calc]) {
+    if (!rules.transfers[id]) continue;
+    for (const to of rules.transfers[id]) {
+      const e = entry(to);
+      e.flat = f(e.flat + from.flat);
+      e.percent = f(e.percent + from.percent);
+      // InCalcStatData.addFullyTo: a "more" multiplier is handed over as a difference.
+      e.multi = f(e.multi + 1 - from.multi);
+    }
+    calc.delete(id);
+  }
+
+  const finish = () =>
+    new Map(
+      [...calc].map(([id, e]): [string, Total] => {
+        const def = rules.defs[id];
+        const value = f(f(def.base + e.flat) * f(1 + e.percent / 100));
+        return [id, { value: clamp(def.apart ? value : f(value * e.multi), def.min, def.max), more: def.apart ? e.multi : 1 }];
+      }),
+    );
+
+  // Attributes give their stats for every whole point, counted before those stats are in.
+  const first = finish();
+  for (const [id, mods] of Object.entries(rules.core)) {
+    if (!first.has(id)) continue;
+    const points = Math.trunc(first.get(id)!.value);
+    for (const mod of mods) add({ id: mod.id, type: mod.type, value: f(points * mod.min) });
+  }
+
+  // Derived stats read from a copy, taken afresh each time the priority goes up, and add to the real thing.
+  const stats = finish();
+  const copied = () => new Map([...stats].map(([id, total]) => [id, { ...total }]));
+  let copy = copied();
+  let last: number | undefined;
+  for (const d of rules.derived.filter((d) => first.has(d.id)).sort((a, b) => a.priority - b.priority)) {
+    if (last !== undefined && d.priority > last) copy = copied();
+    last = d.priority;
+    const from = copy.get(d.from)?.value ?? 0;
+    const amount = d.per ? Math.trunc(from / d.per) * first.get(d.id)!.value : from * ((copy.get(d.id)?.value ?? 0) / 100);
+    const to = stats.get(d.to) ?? stats.set(d.to, { value: 0, more: 1 }).get(d.to)!;
+    to.value = clamp(f(to.value + amount), rules.defs[d.to].min, rules.defs[d.to].max);
+  }
+  return stats;
+}
+
+// GemInventoryHelper.getTotalSpirit: capacity that works out below 1 falls back to what everyone starts with.
+export function augmentCapacity(rules: StatRules, stats: Map<string, Total>): number {
+  const capacity = Math.trunc(stats.get('spirit_cost')?.value ?? 0);
+  return capacity < 1 ? rules.defs.spirit_cost.base : capacity;
+}
+
+// GemInventoryHelper.getSpiritReserved: each augment has a stat of its own that changes what it takes up.
+export function augmentCost(stats: Map<string, Total>, aura: { id: string; reserves: number }): number {
+  const change = stats.get(`${aura.id}_aura_cost`)?.value ?? 0;
+  return Math.trunc(f(aura.reserves * f(1 + change / 100)));
+}
+
+// PlayerStatUtils.addNewbieElementalResists, which the pack leaves on (ENABLE_MINUS_RESISTS_PER_LEVEL).
+export function newbieResists(level: number): Exact[] {
+  const value = level > 74 ? -25 : level > 49 ? 0 : level > 24 ? 25 : 50;
+  return ['fire', 'water', 'lightning', 'chaos'].map((element) => ({ id: `${element}_resist`, type: 'FLAT', value }));
+}

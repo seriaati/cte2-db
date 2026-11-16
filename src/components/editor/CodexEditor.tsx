@@ -23,6 +23,29 @@ function piecesWorn(data: Gear, build: Build, codex: Codex) {
   return Object.values(counted).reduce((sum, n) => sum + n, 0);
 }
 
+// The build's codex as game data still knows it: what it gives, and how much of it the worn gear earns.
+export function readCodex(data: Gear, build: Build) {
+  const { codex } = build;
+  const kind = codex && data.codex.kinds.find((k) => k.id === codex.id);
+  if (!codex || !kind) return null;
+  const tiers = data.rarities.filter((r) => !r.runewords);
+  const rarity = tiers.find((r) => r.id === codex.rarity) ?? tiers.at(-1)!;
+  const limits = data.codex.rarities[rarity.id];
+  const slots = codex.slots.slice(0, limits.slots);
+  const pool = data.codex.affixes.filter((a) => kind.affixTypes.includes(a.type));
+  return {
+    codex,
+    kind,
+    rarity,
+    limits,
+    slots,
+    percent: codexPercent({ ...codex, slots }, limits.statMulti),
+    pool,
+    affixes: codex.affixes.flatMap((id) => pool.find((a) => a.id === id) ?? []).slice(0, limits.affixes),
+    worn: piecesWorn(data, build, codex),
+  };
+}
+
 interface Props {
   data: Gear;
   build: Build;
@@ -32,8 +55,7 @@ interface Props {
 
 export function CodexEditor({ data, build, maxLevel, onChange }: Props) {
   const [picking, setPicking] = useState<'kind' | 'affix' | null>(null);
-  const { codex } = build;
-  const kind = codex && data.codex.kinds.find((k) => k.id === codex.id);
+  const read = readCodex(data, build);
   const tiers = data.rarities.filter((r) => !r.runewords);
 
   // A codex asks for a number of pieces its rarity allows.
@@ -43,9 +65,9 @@ export function CodexEditor({ data, build, maxLevel, onChange }: Props) {
   };
   const kinds = (): Choice[] => data.codex.kinds.map((k) => ({ id: k.id, name: k.name, icon: data.codex.icon, part: { stats: k.mods, rolls: exactly(100), level: build.level } }));
   const chooseKind = (id: string) =>
-    onChange(codex ? { ...codex, id, affixes: [] } : { id, rarity: tiers.at(-1)!.id, level: build.level, pieces: fit({ normal: 0, unique: 0, runed: 0 }, tiers.at(-1)!.id), slots: [], affixes: [] });
+    onChange(build.codex ? { ...build.codex, id, affixes: [] } : { id, rarity: tiers.at(-1)!.id, level: build.level, pieces: fit({ normal: 0, unique: 0, runed: 0 }, tiers.at(-1)!.id), slots: [], affixes: [] });
 
-  if (!codex || !kind) {
+  if (!read) {
     return (
       <div className="empty-part">
         <p>No codex. A codex gives its stats while the rest of the gear is the mix of rarities it asks for.</p>
@@ -57,15 +79,9 @@ export function CodexEditor({ data, build, maxLevel, onChange }: Props) {
     );
   }
 
-  const rarity = tiers.find((r) => r.id === codex.rarity) ?? tiers.at(-1)!;
-  const limits = data.codex.rarities[rarity.id];
+  const { codex, kind, rarity, limits, slots, percent, pool, affixes, worn } = read;
   const set = (patch: Partial<Codex>) => onChange({ ...codex, ...patch });
-  const percent = codexPercent({ ...codex, slots: codex.slots.slice(0, limits.slots) }, limits.statMulti);
   const part = (stats: StatMod[]) => ({ stats, rolls: exactly(percent), level: codex.level });
-  const pool = data.codex.affixes.filter((a) => kind.affixTypes.includes(a.type));
-  const affixes = codex.affixes.flatMap((id) => pool.find((a) => a.id === id) ?? []).slice(0, limits.affixes);
-  const worn = piecesWorn(data, build, codex);
-  const slots = codex.slots.slice(0, limits.slots);
   // Off-hand slots are never asked for (Omen.getRandomSlotReq).
   const slotOptions = [...new Set(data.bases.filter((b) => b.family !== 'OffHand').map((b) => b.slot))].map((id) => ({ value: id, label: data.slotNames[id] }));
 

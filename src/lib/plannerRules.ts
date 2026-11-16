@@ -36,7 +36,7 @@ export function matches(query: string, name: string, { stats, rolls, level }: Pa
 
 // Mirrors BaseStatsData.GetAllStats: Gear's Defense and Gear's Weapon Damage on any other part
 // change the matching base stats. Flat amounts are added first, then each percentage multiplies.
-const MODIFIES: Record<string, string[]> = {
+export const MODIFIES: Record<string, string[]> = {
   gear_defense: ['armor', 'dodge', 'magic_shield'],
   gear_weapon_damage: ['weapon_damage'],
 };

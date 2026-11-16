@@ -60,6 +60,29 @@ export function readItem(data: Gear, item: Item) {
 export const nameOf = (parts: NonNullable<ReturnType<typeof readItem>>) =>
   parts.unique?.name ?? itemName(parts.base, parts.implicit, parts.prefix[0], parts.suffix[0]);
 
+const whole = { minPercent: 0, maxPercent: 100 };
+
+// What the item gives at its rolls: the base stats, and every other part, which can change them.
+export function itemParts(parts: NonNullable<ReturnType<typeof readItem>>, item: Item): { base: Part; others: Part[] } {
+  const { base, unique, rarity, implicit, runeword, infusion, infusionRarity } = parts;
+  const { level } = item;
+  // An affix can be of any tier up to the item's rarity, so it rolls anywhere below that rarity's best.
+  const affixWindow = { minPercent: 0, maxPercent: rarity.maxPercent };
+  const at = (stats: StatMod[], percent: number): Part => ({ stats, rolls: exactly(percent), level });
+  return {
+    base: at(base.stats, rollIn(item.baseRoll, rollWindows(rarity).base)),
+    others: [
+      ...(unique ? unique.stats.map((stat, i) => at([stat], item.uniqueRolls?.[i] ?? 100)) : []),
+      ...(implicit ? [at(implicit.stats, rollIn(item.implicit?.roll, whole))] : []),
+      ...(['prefix', 'suffix'] as const).flatMap((type) => parts[type].map((a, i) => at(a.stats, rollIn(item[type][i]?.roll, affixWindow)))),
+      ...parts.sockets.map((s) => socketPart(s, base, exactly(rollIn(s.roll, whole)), level)),
+      ...(runeword ? [at(runeword.stats, rollIn(item.runewordRoll, whole))] : []),
+      ...(infusion ? [at(infusion.stats, infusionRarity.maxPercent)] : []),
+      ...parts.corrupted.map((a, i) => at(a.stats, rollIn(item.corruption!.affixes[i]?.roll, whole))),
+    ],
+  };
+}
+
 // The item's picture; empty for the two vanilla items the pack has no picture of.
 export const spriteOf = (parts: NonNullable<ReturnType<typeof readItem>>) => parts.unique?.sprite ?? parts.base.sprites[parts.rarity.id];
 
@@ -95,23 +118,13 @@ export function ItemEditor({ data, item, rolls, maxLevel, onChange, onSwap, onRe
   const windows = rollWindows(rarity);
   // An affix can be of any tier up to the item's rarity, so it rolls anywhere below that rarity's best.
   const affixWindow = { minPercent: 0, maxPercent: rarity.maxPercent };
-  const whole = { minPercent: 0, maxPercent: 100 };
   const set = (patch: Partial<Item>) => onChange({ ...item, ...patch });
 
   const at = (stats: StatMod[], percent: number, partLevel = level): Part => ({ stats, rolls: exactly(percent), level: partLevel });
   const rollOf = (placed: Rolled | undefined, window = affixWindow) => rollIn(placed?.roll, window);
   const socketed = (s: (typeof sockets)[number]) => socketPart(s, base, exactly(rollIn(s.roll, whole)), level);
 
-  const basePart = at(base.stats, rollIn(item.baseRoll, windows.base));
-  const others: Part[] = [
-    ...(unique ? unique.stats.map((stat, i) => at([stat], item.uniqueRolls?.[i] ?? 100)) : []),
-    ...(implicit ? [at(implicit.stats, rollOf(item.implicit, whole))] : []),
-    ...(['prefix', 'suffix'] as const).flatMap((type) => parts[type].map((a, i) => at(a.stats, rollOf(item[type][i])))),
-    ...sockets.map(socketed),
-    ...(runeword ? [at(runeword.stats, rollIn(item.runewordRoll, whole))] : []),
-    ...(infusion ? [at(infusion.stats, infusionRarity.maxPercent)] : []),
-    ...parts.corrupted.map((a, i) => at(a.stats, rollOf(item.corruption!.affixes[i], whole))),
-  ];
+  const { base: basePart, others } = itemParts(parts, item);
 
   // The roll box of a slot, shown only while rolls are being set.
   const rollBox = (value: number, window: { minPercent: number; maxPercent: number }, onRoll: (roll: number) => void) =>

@@ -117,14 +117,16 @@ export interface Build {
 export const HOTBAR_SLOTS = 8;
 export const SUPPORT_SLOTS = 5;
 export const AUGMENT_SLOTS = 9;
-// AuraCapacity's base: what a character can spend on augments before talents and gear change it.
-export const AUGMENT_CAPACITY = 100;
 const RANKS_PER_SUPPORT_SLOT = 4;
 // JewelSocketStat's cap.
 export const MAX_JEWELS = 9;
 export const MAX_CLASSES = 2;
 // SpellSchoolsData: what a character with a single class gets, as percentages.
 export const SOLO_CLASS = { moreDamage: 10, damageReduction: 5 };
+// A player's hit points before any mod adds to them, which the game counts into health.
+export const VANILLA_HEALTH = 20;
+// PERC_OFFHAND_WEP_STAT in the pack's server config: the share of its stats a weapon gives from the off hand.
+export const OFFHAND_WEAPON_PERCENT = 25;
 
 export interface Limits {
   maxLevel: number;
