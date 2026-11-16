@@ -17,14 +17,14 @@ export interface Points {
 // PlayerPointsType.getFreePoints in Mine and Slash, before any are spent.
 export const pointsAt = (p: Points, level: number, bonus: number) => Math.min(p.maxTotal, p.base + Math.trunc(level * p.perLevel) + bonus);
 
-type Fits = (base: { family: string; slot: string }) => boolean;
+type Fits = (base: { family: string; slot: string; dualWield: boolean }) => boolean;
 const slot = (id: string): Fits => (base) => base.slot === id;
 
 // Where gear is worn, and the kind of gear whose icon stands for the slot. The off hand also takes
-// a second weapon, which the game counts at a quarter strength.
+// a second weapon when it is one that can be dual wielded, which the game counts at a quarter strength.
 export const GEAR_SLOTS = [
   { id: 'weapon', name: 'Weapon', icon: 'sword', fits: ((base) => base.family === 'Weapon') as Fits },
-  { id: 'offhand', name: 'Off hand', icon: 'shield', fits: ((base) => base.family === 'OffHand' || base.family === 'Weapon') as Fits },
+  { id: 'offhand', name: 'Off hand', icon: 'shield', fits: ((base) => base.family === 'OffHand' || base.dualWield) as Fits },
   { id: 'helmet', name: 'Helmet', icon: 'helmet', fits: slot('helmet') },
   { id: 'chest', name: 'Chestplate', icon: 'chest', fits: slot('chest') },
   { id: 'pants', name: 'Pants', icon: 'pants', fits: slot('pants') },
