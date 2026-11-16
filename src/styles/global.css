@@ -157,8 +157,7 @@ ul {
 }
 
 .brand rect.core {
-  fill: var(--rar);
-  transition: fill 0.2s;
+  fill: #d95cd9;
 }
 
 .site-header nav {

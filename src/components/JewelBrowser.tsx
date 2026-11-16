@@ -25,7 +25,6 @@ export default function JewelBrowser({ kinds, crafted, eye, affixes, rarities, m
   const kind = kinds.find((k) => k.id === kindId);
   const rarity = rarities.find((r) => r.id === rarityId) ?? rarities.at(-1)!;
 
-  // The header logo sits outside this component and picks up the rarity colour too.
   useEffect(() => {
     document.documentElement.style.setProperty('--rar', rarity.ink);
   }, [rarity]);

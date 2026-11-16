@@ -23,7 +23,6 @@ export default function GemBrowser({ gems, ranks }: Props) {
   const rank = ranks[tier];
   const kinds = KINDS.filter((k) => !kindId || k.id === kindId);
 
-  // The header logo sits outside this component and picks up the rarity colour too.
   useEffect(() => {
     document.documentElement.style.setProperty('--rar', rank.rarity.ink);
   }, [rank]);

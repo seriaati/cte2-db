@@ -164,7 +164,6 @@ export default function GearPlanner({ affixes, infusions, bases, rarities, runes
     </span>
   ));
 
-  // The header logo sits outside this component and picks up the rarity colour too.
   useEffect(() => {
     document.documentElement.style.setProperty('--rar', rarity.ink);
   }, [rarity]);

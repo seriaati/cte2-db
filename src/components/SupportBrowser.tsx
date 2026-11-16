@@ -21,7 +21,6 @@ export default function SupportBrowser({ supports, rarities, maxLevel }: Props) 
 
   const rarity = rarities.find((r) => r.id === rarityId) ?? rarities.at(-1)!;
 
-  // The header logo sits outside this component and picks up the rarity colour too.
   useEffect(() => {
     document.documentElement.style.setProperty('--rar', rarity.ink);
   }, [rarity]);
