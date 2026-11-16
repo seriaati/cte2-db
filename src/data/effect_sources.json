@@ -374,14 +374,6 @@
     "shrines": [],
     "stats": []
   },
-  "cursed_timewinder": {
-    "spells": [
-      "cursed_timewinder"
-    ],
-    "effects": [],
-    "shrines": [],
-    "stats": []
-  },
   "damnation": {
     "spells": [
       "curse_of_damnation"
@@ -1675,6 +1667,7 @@
   },
   "timewinder": {
     "spells": [
+      "cursed_timewinder",
       "timewinder"
     ],
     "effects": [],

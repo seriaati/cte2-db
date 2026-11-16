@@ -9847,7 +9847,7 @@
         "type": "FLAT",
         "scale_to_lvl": false,
         "stat": "prophecy_coin_find",
-        "v1": -20
+        "v1": -30
       }
     ]
   },

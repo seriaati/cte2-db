@@ -3409,7 +3409,7 @@
           "max": 1,
           "min": 0.7
         },
-        "stat": "weapon_damage"
+        "stat": "health"
       },
       {
         "multi": {

@@ -7751,8 +7751,8 @@
     "stats": [
       {
         "type": "FLAT",
-        "max": 20,
-        "min": 20,
+        "max": 30,
+        "min": 30,
         "stat": "weapon_skill_cdr_per_attack_speed"
       }
     ],
@@ -12959,34 +12959,6 @@
         "max": 15,
         "min": 3,
         "stat": "inc_aoe"
-      }
-    ],
-    "weight": 1000
-  },
-  "of_swiftness": {
-    "type": "suffix",
-    "eye_aura_req": "",
-    "guid": "of_swiftness",
-    "one_of_a_kind": "",
-    "only_one_per_item": true,
-    "requirements": {
-      "tag_requirements": [
-        {
-          "type": "GearSlot",
-          "excluded": [],
-          "included": [
-            "jewelry_family"
-          ],
-          "req_type": "INCLUDES_ANY"
-        }
-      ]
-    },
-    "stats": [
-      {
-        "type": "FLAT",
-        "max": 30,
-        "min": 6,
-        "stat": "attack_cast_speed"
       }
     ],
     "weight": 1000

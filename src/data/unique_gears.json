@@ -8448,8 +8448,8 @@
       },
       {
         "type": "PERCENT",
-        "max": -15,
-        "min": -20,
+        "max": -20,
+        "min": -15,
         "stat": "energy"
       },
       {
@@ -9677,6 +9677,12 @@
         "max": 100,
         "min": 100,
         "stat": "proc_kinetic_blast"
+      },
+      {
+        "type": "FLAT",
+        "max": 16,
+        "min": 16,
+        "stat": "learn_kinetic_blast"
       },
       {
         "type": "FLAT",

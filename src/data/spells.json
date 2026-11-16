@@ -242,7 +242,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -708,7 +708,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -972,7 +972,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -1280,7 +1280,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": true,
@@ -1498,7 +1498,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 4,
       "castingWeapon": "RANGED",
       "channel_skill": true,
@@ -2025,7 +2025,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 20,
       "castingWeapon": "RANGED",
       "channel_skill": true,
@@ -2487,7 +2487,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -2971,7 +2971,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -3539,7 +3539,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 2,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -3944,7 +3944,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -4151,7 +4151,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -4415,7 +4415,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -4676,7 +4676,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -4952,7 +4952,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -5300,7 +5300,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -5554,7 +5554,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -5773,7 +5773,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -6027,7 +6027,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 20,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -6175,7 +6175,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -6602,7 +6602,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -7296,7 +7296,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -7577,7 +7577,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -7905,7 +7905,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -8314,7 +8314,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 20,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -8796,7 +8796,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -8996,7 +8996,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 1,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -9363,7 +9363,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -9588,15 +9588,15 @@
     },
     "config": {
       "aggro_radius": 10,
-      "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
-      "cast_time_ticks": 5,
+      "cast_speed_ticks": 15,
+      "proc_cooldown_ticks": 20,
+      "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
-      "charge_name": "",
-      "charge_regen": 0,
-      "charges": 0,
-      "cooldown_ticks": 60,
+      "charge_name": "bola_throw",
+      "charge_regen": 60,
+      "charges": 3,
+      "cooldown_ticks": 0,
       "ene_cost": {
         "max": 12,
         "min": 9
@@ -9780,7 +9780,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -9967,7 +9967,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 5,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -10508,7 +10508,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -10853,7 +10853,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -11066,7 +11066,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -11202,7 +11202,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -11331,7 +11331,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -11586,7 +11586,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 5,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -11838,7 +11838,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -12364,7 +12364,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -12723,7 +12723,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -13143,7 +13143,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -13917,7 +13917,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 2,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": true,
@@ -14784,7 +14784,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -15232,7 +15232,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -15602,7 +15602,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -16107,7 +16107,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -17899,7 +17899,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -18076,7 +18076,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 5,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -18238,7 +18238,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -18711,7 +18711,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -19421,7 +19421,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -19853,7 +19853,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -20149,7 +20149,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -20393,7 +20393,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -20635,7 +20635,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -20725,7 +20725,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 20,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -20942,7 +20942,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -21415,7 +21415,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -21636,7 +21636,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -22068,7 +22068,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -22492,7 +22492,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 15,
+      "proc_cooldown_ticks": 30,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -22752,7 +22752,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 15,
+      "proc_cooldown_ticks": 30,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -23341,7 +23341,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 30,
+      "proc_cooldown_ticks": 60,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -23621,7 +23621,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 15,
+      "proc_cooldown_ticks": 30,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -23920,7 +23920,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 15,
+      "proc_cooldown_ticks": 30,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -24190,7 +24190,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 15,
+      "proc_cooldown_ticks": 30,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -24719,7 +24719,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 15,
+      "proc_cooldown_ticks": 30,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -25100,7 +25100,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 15,
+      "proc_cooldown_ticks": 30,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -25346,7 +25346,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 15,
+      "proc_cooldown_ticks": 30,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -25513,7 +25513,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 15,
+      "proc_cooldown_ticks": 30,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -25703,7 +25703,7 @@
                     "type": "exile_effect",
                     "map": {
                       "count": 1,
-                      "exile_potion_id": "cursed_timewinder",
+                      "exile_potion_id": "timewinder",
                       "potion_action": "GIVE_STACKS",
                       "potion_dur": 60
                     }
@@ -25878,7 +25878,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 15,
+      "proc_cooldown_ticks": 30,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -25992,7 +25992,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -26645,7 +26645,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -27022,7 +27022,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -27219,7 +27219,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "NON_MAGE_WEAPON",
       "channel_skill": false,
@@ -27719,7 +27719,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -27970,7 +27970,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -28250,7 +28250,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -28413,7 +28413,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 5,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -28649,7 +28649,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 6,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -28808,7 +28808,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -29396,7 +29396,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -29794,7 +29794,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -29947,7 +29947,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 5,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -30259,7 +30259,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -30474,7 +30474,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -30934,7 +30934,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 20,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -31358,7 +31358,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -31804,7 +31804,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -32277,7 +32277,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -32579,7 +32579,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -32843,7 +32843,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -32934,7 +32934,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -33354,7 +33354,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -33937,7 +33937,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -34541,7 +34541,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -35120,7 +35120,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -36125,7 +36125,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -36421,7 +36421,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -36848,7 +36848,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -37283,7 +37283,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -37621,7 +37621,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -38255,7 +38255,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -38383,7 +38383,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -38696,7 +38696,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -38919,7 +38919,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -39214,7 +39214,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -39609,7 +39609,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -39965,7 +39965,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -40526,7 +40526,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -41502,7 +41502,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -42116,7 +42116,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -42683,7 +42683,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -43235,7 +43235,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 20,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -43702,7 +43702,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -43940,7 +43940,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -44302,7 +44302,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -44756,7 +44756,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -45016,7 +45016,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -45711,7 +45711,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -46070,7 +46070,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -46548,7 +46548,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -46908,7 +46908,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -47210,7 +47210,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -47717,7 +47717,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 40,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -47920,7 +47920,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "RANGED",
       "channel_skill": true,
@@ -48135,7 +48135,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -48296,7 +48296,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 60,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -48676,7 +48676,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -49122,7 +49122,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -49251,7 +49251,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -49505,7 +49505,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -49749,7 +49749,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -50122,7 +50122,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -50425,7 +50425,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -50715,7 +50715,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -51101,7 +51101,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -51329,7 +51329,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -51766,7 +51766,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -52339,7 +52339,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -52810,7 +52810,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 1,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -53142,7 +53142,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 5,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -53543,7 +53543,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -53767,7 +53767,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 4,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": true,
@@ -53939,7 +53939,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -54113,7 +54113,7 @@
                 "map": {
                   "pitch": 2,
                   "sound": "minecraft:entity.generic.explode",
-                  "volume": 0.5
+                  "volume": 0.75
                 }
               }
             ],
@@ -54165,7 +54165,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 0,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -54201,14 +54201,14 @@
       "times_to_cast": 1,
       "tracking_radius": 2,
       "tracks": "enemies",
-      "use_support_gems_from": "bolt"
+      "use_support_gems_from": ""
     },
     "default_lvl": 1,
     "disabled_dims": [],
     "effect_tip": "",
     "identifier": "kinetic_blast",
     "loc_name": "Kinetic Blast",
-    "lvl_based_on_spell": "bolt",
+    "lvl_based_on_spell": "",
     "manual_tip": true,
     "max_lvl": 20,
     "min_lvl": 1,
@@ -54703,7 +54703,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -55140,7 +55140,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -55604,7 +55604,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -56185,7 +56185,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -56694,7 +56694,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -57175,7 +57175,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -57524,7 +57524,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -58515,7 +58515,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -58779,15 +58779,15 @@
     },
     "config": {
       "aggro_radius": 10,
-      "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
-      "cast_time_ticks": 5,
+      "cast_speed_ticks": 20,
+      "proc_cooldown_ticks": 20,
+      "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
       "charge_name": "",
       "charge_regen": 0,
       "charges": 0,
-      "cooldown_ticks": 60,
+      "cooldown_ticks": 0,
       "ene_cost": {
         "max": 4,
         "min": 7
@@ -58807,6 +58807,7 @@
       "swing_arm": false,
       "tags": {
         "tags": [
+          "damage",
           "self_damage",
           "area",
           "heal",
@@ -58952,7 +58953,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 160,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -59232,7 +59233,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -59435,7 +59436,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 20,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -59753,7 +59754,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 60,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -60366,7 +60367,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -60632,7 +60633,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -60967,7 +60968,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -61240,7 +61241,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -61542,7 +61543,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -62223,7 +62224,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -62392,7 +62393,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -62666,7 +62667,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -63390,7 +63391,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -63816,7 +63817,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 20,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -64041,7 +64042,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -64260,7 +64261,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -64699,7 +64700,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -64840,7 +64841,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -64989,7 +64990,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -65154,7 +65155,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 100,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -66004,7 +66005,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -66151,7 +66152,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 80,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -66419,7 +66420,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -66814,7 +66815,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -67547,7 +67548,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -67708,7 +67709,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -67974,7 +67975,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -68508,7 +68509,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -68794,7 +68795,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -68953,7 +68954,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -69473,7 +69474,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -69667,7 +69668,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 80,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -70291,7 +70292,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -70693,7 +70694,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -71593,7 +71594,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -72060,7 +72061,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -72234,7 +72235,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 5,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -72372,7 +72373,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -72853,7 +72854,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 20,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -73255,7 +73256,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 24,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -74790,7 +74791,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -75158,7 +75159,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": true,
@@ -75273,7 +75274,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -77205,7 +77206,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -77451,7 +77452,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -77812,7 +77813,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -78114,7 +78115,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -78351,7 +78352,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -78866,7 +78867,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -79494,7 +79495,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -79965,7 +79966,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -80846,7 +80847,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -81129,7 +81130,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -81290,7 +81291,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -81476,7 +81477,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 1,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -81811,7 +81812,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -82125,7 +82126,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -84652,7 +84653,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -84938,7 +84939,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -85196,7 +85197,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 15,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": true,
@@ -85670,7 +85671,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -85788,7 +85789,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -86458,7 +86459,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -86644,7 +86645,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 140,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -87035,7 +87036,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -87312,7 +87313,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -87657,7 +87658,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -87892,7 +87893,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -88418,7 +88419,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -88655,7 +88656,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 40,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -89067,7 +89068,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -89444,7 +89445,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 5,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -89904,7 +89905,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 15,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -90402,7 +90403,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -91310,7 +91311,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -91567,7 +91568,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -91998,7 +91999,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 30,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -92154,7 +92155,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 5,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -92395,7 +92396,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -92861,7 +92862,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 20,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -93141,7 +93142,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -93435,7 +93436,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -93672,7 +93673,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -93823,7 +93824,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -94053,7 +94054,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -94739,7 +94740,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -95117,7 +95118,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -95398,7 +95399,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 5,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -95611,7 +95612,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -96036,7 +96037,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 20,
       "castingWeapon": "RANGED",
       "channel_skill": false,
@@ -96245,7 +96246,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -96572,7 +96573,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -96899,7 +96900,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -98529,7 +98530,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -98751,7 +98752,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 5,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -98853,7 +98854,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -99514,7 +99515,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -99687,7 +99688,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 5,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -99846,7 +99847,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 20,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": true,
@@ -100461,7 +100462,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 20,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -100635,7 +100636,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -100981,7 +100982,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -101327,7 +101328,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -101673,7 +101674,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -102004,7 +102005,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 40,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -102322,7 +102323,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -102769,7 +102770,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 20,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -104191,7 +104192,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -104357,7 +104358,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -104941,7 +104942,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -105172,7 +105173,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -105323,7 +105324,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 5,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -105472,7 +105473,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -105781,7 +105782,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -107005,7 +107006,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MAGE_WEAPON",
       "channel_skill": false,
@@ -107560,7 +107561,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -108044,7 +108045,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -109337,7 +109338,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -109638,7 +109639,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 6,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -109795,7 +109796,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -109956,7 +109957,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -110250,7 +110251,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 20,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -110501,7 +110502,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 5,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -110733,7 +110734,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -111040,7 +111041,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -111375,7 +111376,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -111508,7 +111509,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -111837,7 +111838,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 10,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": true,
@@ -112542,7 +112543,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 15,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -112844,7 +112845,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 5,
+      "proc_cooldown_ticks": 10,
       "cast_time_ticks": 0,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -113102,7 +113103,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "MELEE_WEAPON",
       "channel_skill": false,
@@ -113520,7 +113521,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -113894,7 +113895,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -114346,7 +114347,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -114732,7 +114733,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -115168,7 +115169,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -115697,7 +115698,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -116272,7 +116273,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 20,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -116846,7 +116847,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -117362,7 +117363,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -117925,7 +117926,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -118407,7 +118408,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -118782,7 +118783,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -118991,7 +118992,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 75,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -119087,7 +119088,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -119547,7 +119548,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 10,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -119771,7 +119772,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 0,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 5,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
@@ -119863,7 +119864,7 @@
     "config": {
       "aggro_radius": 10,
       "cast_speed_ticks": 20,
-      "proc_cooldown_ticks": 10,
+      "proc_cooldown_ticks": 20,
       "cast_time_ticks": 0,
       "castingWeapon": "ANY_WEAPON",
       "channel_skill": false,
