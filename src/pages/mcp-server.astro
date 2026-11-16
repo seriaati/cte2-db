@@ -1,0 +1,56 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/mcp.css';
+
+// The endpoint itself is the Cloudflare Pages Function at /mcp, so this page can't live at that address.
+const address = new URL('/mcp', Astro.site).href;
+const clients = [
+  { name: 'Claude Code', code: `claude mcp add --transport http cte2-db ${address}` },
+  { name: 'Claude', steps: 'Settings, then Connectors, then Add custom connector. Paste the address.' },
+  { name: 'ChatGPT', steps: 'Plugins, then the plus button, then Add custom MCP server. Paste the address and pick no authentication.' },
+  { name: 'Codex CLI', code: `codex mcp add cte2-db --url ${address}` },
+  { name: 'Gemini CLI', code: `gemini mcp add --transport http cte2-db ${address}` },
+  { name: 'Anything else', steps: 'Any client that takes a remote MCP server over Streamable HTTP works. Give it the address. There is no key or login.' },
+];
+const prompts = [
+  'Which affixes give crit chance on a staff, and how likely is each one?',
+  'What runewords can I make with an Ano rune, and what gear do they go on?',
+  'Plan a level 60 talent build around fire damage and give me the link.',
+  'Put together a Mythic staff for a fire mage and give me the planner link.',
+];
+---
+
+<Layout title="CTE2 MCP Server | Craft to Exile 2 Database" description="Connect Claude, ChatGPT and other AI assistants to the Craft to Exile 2 database through its MCP server: the address and setup for each client.">
+  <h1>MCP server</h1>
+  <p class="lead">Add this address to an AI assistant and it can look things up in this database while it answers you.</p>
+  <pre class="code address">{address}</pre>
+  <p class="cap">Streamable HTTP / No sign-in</p>
+
+  <section class="group">
+    <div class="group-head">
+      <h2>Connect</h2>
+    </div>
+    <dl class="pairs">
+      {
+        clients.map((client) => (
+          <div>
+            <dt>{client.name}</dt>
+            <dd>
+              {client.steps && <p>{client.steps}</p>}
+              {client.code && <pre class="code">{client.code}</pre>}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="group">
+    <div class="group-head">
+      <h2>Things to ask</h2>
+    </div>
+    <ul class="asks">
+      {prompts.map((prompt) => <li>{prompt}</li>)}
+    </ul>
+  </section>
+</Layout>

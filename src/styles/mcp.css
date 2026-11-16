@@ -1,0 +1,56 @@
+.code {
+  margin: 0;
+  padding: 10px 12px;
+  overflow-x: auto;
+  background: var(--panel);
+  border: 2px solid var(--line);
+  font: 14px/1.5 ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
+}
+
+.code.address {
+  width: fit-content;
+  max-width: 100%;
+  margin: 24px 0 10px;
+  border-color: var(--ink);
+  font-size: 17px;
+  box-shadow: 4px 4px 0 #000;
+}
+
+.pairs {
+  margin: 0;
+  max-width: 900px;
+}
+
+.pairs > div {
+  display: grid;
+  grid-template-columns: 176px minmax(0, 1fr);
+  gap: 6px 16px;
+  padding: 12px;
+  border-bottom: 2px solid var(--line-row);
+}
+
+.pairs dt {
+  font-weight: 600;
+  font-size: 15.5px;
+}
+
+.pairs dd {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.pairs p {
+  margin: 0;
+}
+
+.asks li {
+  padding: 9px 12px;
+  border-bottom: 2px solid var(--line-row);
+  color: var(--ink-2);
+}
+
+@media (max-width: 620px) {
+  .pairs > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
