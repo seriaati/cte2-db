@@ -1,0 +1,254 @@
+{
+  "blood": {
+    "affix_types": [
+      "chaos_stat"
+    ],
+    "id": "blood",
+    "lvl_req": 0.5,
+    "mods": [
+      {
+        "type": "PERCENT",
+        "max": 25,
+        "min": 5,
+        "stat": "health"
+      },
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 2,
+        "stat": "armor"
+      },
+      {
+        "type": "PERCENT",
+        "max": 5,
+        "min": 1,
+        "stat": "strength"
+      }
+    ],
+    "weight": 1000
+  },
+  "echoes": {
+    "affix_types": [
+      "chaos_stat"
+    ],
+    "id": "echoes",
+    "lvl_req": 0.5,
+    "mods": [
+      {
+        "type": "PERCENT",
+        "max": 25,
+        "min": 5,
+        "stat": "magic_shield"
+      },
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 2,
+        "stat": "mana"
+      },
+      {
+        "type": "PERCENT",
+        "max": 5,
+        "min": 1,
+        "stat": "intelligence"
+      }
+    ],
+    "weight": 1000
+  },
+  "fangs": {
+    "affix_types": [
+      "chaos_stat"
+    ],
+    "id": "fangs",
+    "lvl_req": 0.5,
+    "mods": [
+      {
+        "type": "MORE",
+        "max": 10,
+        "min": 2,
+        "stat": "all_physical_damage"
+      },
+      {
+        "type": "PERCENT",
+        "max": 20,
+        "min": 4,
+        "stat": "accuracy"
+      },
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 1,
+        "stat": "physical_resist"
+      }
+    ],
+    "weight": 1000
+  },
+  "flames": {
+    "affix_types": [
+      "chaos_stat"
+    ],
+    "id": "flames",
+    "lvl_req": 0.5,
+    "mods": [
+      {
+        "type": "MORE",
+        "max": 10,
+        "min": 2,
+        "stat": "all_fire_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 3,
+        "stat": "fire_resist"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 0.6,
+        "stat": "max_fire_resist"
+      }
+    ],
+    "weight": 1000
+  },
+  "mirrors": {
+    "affix_types": [
+      "chaos_stat"
+    ],
+    "id": "mirrors",
+    "lvl_req": 0.5,
+    "mods": [
+      {
+        "type": "FLAT",
+        "max": 5,
+        "min": 1,
+        "stat": "dmg_reduction_chance"
+      },
+      {
+        "type": "PERCENT",
+        "max": 10,
+        "min": 2,
+        "stat": "dodge"
+      },
+      {
+        "type": "PERCENT",
+        "max": 5,
+        "min": 1,
+        "stat": "dexterity"
+      }
+    ],
+    "weight": 1000
+  },
+  "shadows": {
+    "affix_types": [
+      "chaos_stat"
+    ],
+    "id": "shadows",
+    "lvl_req": 0.5,
+    "mods": [
+      {
+        "type": "MORE",
+        "max": 10,
+        "min": 2,
+        "stat": "all_chaos_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 10,
+        "min": 2,
+        "stat": "chaos_resist"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 0.6,
+        "stat": "max_chaos_resist"
+      }
+    ],
+    "weight": 1000
+  },
+  "spite": {
+    "affix_types": [
+      "chaos_stat"
+    ],
+    "id": "spite",
+    "lvl_req": 0.5,
+    "mods": [
+      {
+        "type": "FLAT",
+        "max": 25,
+        "min": 5,
+        "stat": "roll_cooldown"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 3,
+        "stat": "resource_regen"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 0.6,
+        "stat": "critical_hit"
+      }
+    ],
+    "weight": 1000
+  },
+  "storms": {
+    "affix_types": [
+      "chaos_stat"
+    ],
+    "id": "storms",
+    "lvl_req": 0.5,
+    "mods": [
+      {
+        "type": "MORE",
+        "max": 10,
+        "min": 2,
+        "stat": "all_lightning_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 3,
+        "stat": "lightning_resist"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 0.6,
+        "stat": "max_lightning_resist"
+      }
+    ],
+    "weight": 1000
+  },
+  "waves": {
+    "affix_types": [
+      "chaos_stat"
+    ],
+    "id": "waves",
+    "lvl_req": 0.5,
+    "mods": [
+      {
+        "type": "MORE",
+        "max": 10,
+        "min": 2,
+        "stat": "all_water_damage"
+      },
+      {
+        "type": "FLAT",
+        "max": 15,
+        "min": 3,
+        "stat": "water_resist"
+      },
+      {
+        "type": "FLAT",
+        "max": 3,
+        "min": 0.6,
+        "stat": "max_water_resist"
+      }
+    ],
+    "weight": 1000
+  }
+}

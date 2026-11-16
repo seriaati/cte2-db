@@ -3,22 +3,26 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { dirname, join, relative, sep } from 'node:path';
 import { PNG } from 'pngjs';
 import sharp from 'sharp';
+import { flatIcon, modelIcon, type Model } from './itemIcon';
 
 const REGISTRIES = [
   'mmorpg_affixes',
   'mmorpg_aura',
   'mmorpg_base_gear_types',
+  'mmorpg_chaos_stat',
   'mmorpg_exile_effect',
   'mmorpg_game_balance',
   'mmorpg_gear_rarity',
   'mmorpg_gear_slot',
   'mmorpg_gems',
+  'mmorpg_omen',
   'mmorpg_perk',
   'mmorpg_runes',
   'mmorpg_runeword',
   'mmorpg_spell_school',
   'mmorpg_spells',
   'mmorpg_stat',
+  'mmorpg_stat_compat',
   'mmorpg_support_gem',
   'mmorpg_talent_tree',
   'mmorpg_unique_gears',
@@ -217,6 +221,45 @@ for (const [id, stat] of Object.entries(registries.mmorpg_stat as Record<string,
 // Folders are read in whatever order the disk lists them, so the lists are sorted to come out the same on every machine.
 Object.values(effect_sources).forEach((kinds) => Object.values(kinds).forEach((ids) => ids.sort()));
 
+// A picture of every item gear can be, for the build editor: item "roe_weapons:axe_0" ends up at
+// public/gear/roe_weapons/axe_0.webp. The two vanilla items among them have no files in the pack and are left out.
+const GEAR = join(import.meta.dirname, '../public/gear');
+const find = (path: string) => layers.findLast((layer) => layer.has(path))?.get(path)!();
+const split = (ref: string) => (ref.includes(':') ? ref.split(':') : ['minecraft', ref]);
+const modelAt = (ref: string): Model | undefined => {
+  const [namespace, path] = split(ref);
+  const json = find(`assets/${namespace}/models/${path}.json`);
+  return json && JSON.parse(json.toString());
+};
+const textureAt = (ref: string) => {
+  const [namespace, path] = split(ref);
+  const png = find(`assets/${namespace}/textures/${path}.png`);
+  return png && PNG.sync.read(png);
+};
+const gearItems = new Set([
+  ...Object.values(registries.mmorpg_base_gear_types).flatMap((base) => (base as { possible_items: { item_id: string }[] }).possible_items.map((item) => item.item_id)),
+  ...Object.values(registries.mmorpg_unique_gears).flatMap((unique) => (unique as { force_item_id: string }).force_item_id || []),
+]);
+const gear_icons: Record<string, string> = {};
+for (const item of [...gearItems].sort()) {
+  const [namespace, path] = item.split(':');
+  // A model takes what it doesn't say itself from its parent, and so on up.
+  const model: Model = {};
+  for (let part = modelAt(`${namespace}:item/${path}`); part; part = part.parent ? modelAt(part.parent) : undefined) {
+    model.textures = { ...part.textures, ...model.textures };
+    model.elements ??= part.elements;
+    model.display ??= part.display;
+  }
+  const textures = Object.fromEntries(Object.entries(model.textures ?? {}).map(([key, ref]) => [key, textureAt(ref)]));
+  const icon = model.elements ? modelIcon(model.elements, model.display?.gui, textures) : textures.layer0 && flatIcon(textures.layer0);
+  if (!icon) continue;
+  const file = join(GEAR, namespace, `${path}.webp`);
+  mkdirSync(dirname(file), { recursive: true });
+  await writeImage(file, PNG.sync.write(icon));
+  gear_icons[item] = `/gear/${namespace}/${path}.webp`;
+}
+console.log(`gear icons: ${Object.keys(gear_icons).length} of ${gearItems.size}`);
+
 // For the home page: which pack and mod version the data is from. The launcher keeps the pack's
 // manifest beside the game folder; without one the pack version is left out.
 const manifest = join(arg, 'flame/manifest.json');
@@ -229,19 +272,20 @@ const sorted = (o: Record<string, unknown>) =>
   Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)));
 
 mkdirSync(OUT, { recursive: true });
-for (const [registry, entries] of Object.entries({ ...registries, lang, icons, effect_sources, pack, talent_icons })) {
+for (const [registry, entries] of Object.entries({ ...registries, lang, icons, effect_sources, pack, talent_icons, gear_icons })) {
   const file = `${registry.replace('mmorpg_', '')}.json`;
   writeFileSync(join(OUT, file), JSON.stringify(sorted(entries), null, 2) + '\n');
   console.log(`${file}: ${Object.keys(entries).length}`);
 }
 
-// Item sprites for the rune, gem, aura, support gem and jewel pages: item "mmorpg:runes/ano" ends up at public/items/runes/ano.webp.
+// Item sprites for the rune, gem, aura, support gem and jewel pages and the build editor: item "mmorpg:runes/ano" ends up at public/items/runes/ano.webp.
 const SPRITES = join(import.meta.dirname, '../public/items');
 const spriteItems = [
   ...[...Object.values(registries.mmorpg_runes), ...Object.values(registries.mmorpg_gems)].map((e) => (e as { item_id: string }).item_id),
   // SkillGemsItems in Mine and Slash: an aura or support gem is one of three items, picked by its style.
   ...['aura', 'support'].flatMap((gem) => ['str', 'dex', 'int'].map((style) => `mmorpg:skill_gems/${gem}/${style}`)),
   ...['str', 'dex', 'int', 'unique_crafted', 'watcher_eye'].map((jewel) => `mmorpg:jewel/${jewel}`),
+  'mmorpg:omen',
 ];
 for (const item of spriteItems) {
   const [namespace, path] = item.split(':');
@@ -267,11 +311,15 @@ console.log(`effect icons: ${effectIcons.length}`);
 
 // Icons for the spells page. A class lists its spells and its passives together; only the spells are in the spell registry.
 const SPELLS = join(import.meta.dirname, '../public/spells');
-const classSpells = Object.values(registries.mmorpg_spell_school)
-  .flatMap((school) => Object.keys((school as { perks: object }).perks))
-  .filter((id) => id in registries.mmorpg_spells);
+const classPerks = Object.values(registries.mmorpg_spell_school).flatMap((school) => Object.keys((school as { perks: object }).perks));
+const classSpells = classPerks.filter((id) => id in registries.mmorpg_spells);
 mkdirSync(SPELLS, { recursive: true });
 for (const id of classSpells) await writeImage(join(SPELLS, `${id}.webp`), texture(`assets/mmorpg/textures/gui/spells/icons/${id}.png`));
+// The build editor also shows each class's passives, whose icons are named by their perks.
+for (const id of classPerks.filter((id) => !classSpells.includes(id))) {
+  const [namespace, path] = perks[id].icon.split(':');
+  await writeImage(join(SPELLS, `${id}.webp`), texture(`assets/${namespace}/${path}`));
+}
 
 const CLASSES = join(import.meta.dirname, '../public/classes');
 mkdirSync(CLASSES, { recursive: true });
