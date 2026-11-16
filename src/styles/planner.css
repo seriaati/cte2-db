@@ -221,6 +221,25 @@ button.opt[aria-pressed='true'] .mark {
   color: var(--ink);
 }
 
+.item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.item-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.item-action {
+  width: auto;
+  padding: 0 6px;
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .item-part .line {
   animation: enter 0.18s ease-out;
 }

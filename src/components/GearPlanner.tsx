@@ -5,8 +5,10 @@ import { useSwap } from '../lib/motion';
 import {
   baseRange,
   changesBase,
+  encodePlan,
   formedRuneword,
   itemName,
+  matches,
   rollWindows,
   slotCount,
   type Part,
@@ -37,6 +39,12 @@ const SLOT_TYPES = [
   { id: 'prefix', label: 'Prefixes', one: 'Prefix' },
   { id: 'suffix', label: 'Suffixes', one: 'Suffix' },
 ] as const;
+
+// The sockets a rarity has room for: it caps how many there are, and how many of them hold gems and runes.
+function socketsFor(rarity: PlanRarity, sockets: Socketed[]) {
+  const kept = { gem: 0, rune: 0 };
+  return sockets.slice(0, rarity.sockets).filter((s) => kept[s.kind]++ < (s.kind === 'gem' ? rarity.maxGems : rarity.maxRunes));
+}
 
 // Odds of each affix on a single roll from the pool, likeliest first.
 function odds<T extends Affix>(pool: T[]) {
@@ -76,11 +84,14 @@ interface OptionListProps<T extends Affix> {
   selected?: T;
   // Infusions have no names in the game, so their list drops the name column.
   unnamed?: boolean;
+  query: string;
   onPick: (affix: T) => void;
 }
 
-function OptionList<T extends Affix>({ heading, options, rolls, level, selected, unnamed, onPick }: OptionListProps<T>) {
+function OptionList<T extends Affix>({ heading, options, rolls, level, selected, unnamed, query, onPick }: OptionListProps<T>) {
   const row = `row opt ${unnamed ? 'unnamed' : ''}`;
+  const shown = options.filter(({ affix }) => matches(query, unnamed ? '' : affix.name, { stats: affix.stats, rolls, level }));
+  if (shown.length === 0) return <p className="empty">Nothing matches.</p>;
   return (
     <>
       <div className={`${row} head cap`} aria-hidden="true">
@@ -89,7 +100,7 @@ function OptionList<T extends Affix>({ heading, options, rolls, level, selected,
         <span className="pct">Chance</span>
       </div>
       <ul>
-        {options.map(({ affix, chance }) => (
+        {shown.map(({ affix, chance }) => (
           <li key={affix.id}>
             <button className={row} type="button" aria-pressed={selected ? affix === selected : undefined} onClick={() => onPick(affix)}>
               {!unnamed && <span className="name">{affix.name}</span>}
@@ -119,6 +130,9 @@ export default function GearPlanner({ affixes, infusions, bases, rarities, runes
   const [infusionId, setInfusionId] = useState('');
   const [infusionRarityId, setInfusionRarityId] = useStored('infusionRarity', tiers.at(-1)!.id);
   const [sockets, setSockets] = useState<Socketed[]>([]);
+  const [search, setSearch] = useState('');
+  const [copied, setCopied] = useState(false);
+  const query = search.trim().toLowerCase();
   const plan = useSwap<HTMLDivElement>(baseId);
 
   const base = bases.find((b) => b.id === baseId)!;
@@ -183,8 +197,72 @@ export default function GearPlanner({ affixes, infusions, bases, rarities, runes
       prefix: picks.prefix.slice(0, slotCount(next, 'prefix')),
       suffix: picks.suffix.slice(0, slotCount(next, 'suffix')),
     });
-    const kept = { gem: 0, rune: 0 };
-    setSockets(sockets.slice(0, next.sockets).filter((s) => kept[s.kind]++ < (s.kind === 'gem' ? next.maxGems : next.maxRunes)));
+    setSockets(socketsFor(next, sockets));
+  };
+
+  // An item opened from a link takes the place of the one on the page, and leaves the address bar
+  // so that a reload doesn't bring it back over later changes. Parts the link's gear can't have are dropped.
+  useEffect(() => {
+    const load = () => {
+      const link = new URLSearchParams(location.hash.slice(1));
+      const list = (key: string) => link.get(key)?.split(',') ?? [];
+      const nextBase = bases.find((b) => b.id === link.get('base'));
+      if (!nextBase) return;
+      history.replaceState(null, '', location.pathname);
+      const nextRarity = rarities.find((r) => r.id === link.get('rarity')) ?? tiers.at(-1)!;
+      const slots = (type: 'prefix' | 'suffix') =>
+        list(type)
+          .flatMap((id) => affixes.find((a) => a.id === id && a.type === type && canRoll(a, nextBase)) ?? [])
+          .filter((a, i, all) => a.repeatable || all.indexOf(a) === i)
+          .slice(0, slotCount(nextRarity, type));
+      const socketed = list('sockets').flatMap((entry): Socketed[] => {
+        const [kind, id] = entry.split(':');
+        const gem = kind === 'gem' && gems.find((g) => g.id === id);
+        const rune = kind === 'rune' && runes.find((r) => r.id === id);
+        return gem ? [{ kind: 'gem', item: gem }] : rune ? [{ kind: 'rune', item: rune }] : [];
+      });
+      setBaseId(nextBase.id);
+      setRarityId(nextRarity.id);
+      setLevel(Math.min(maxLevel, Math.max(1, Number(link.get('level')) || maxLevel)));
+      setImplicitId(link.get('implicit') ?? '');
+      setPicks({ prefix: slots('prefix'), suffix: slots('suffix') });
+      setSockets(socketsFor(nextRarity, socketed));
+      setInfusionId(link.get('infusion') ?? '');
+      if (tiers.some((r) => r.id === link.get('infusionRarity'))) setInfusionRarityId(link.get('infusionRarity')!);
+    };
+    load();
+    addEventListener('hashchange', load);
+    return () => removeEventListener('hashchange', load);
+  }, []);
+
+  const share = async () => {
+    const link = encodePlan({
+      base: baseId,
+      rarity: rarity.id,
+      level,
+      implicit: implicit?.id,
+      prefix: picks.prefix.map((a) => a.id),
+      suffix: picks.suffix.map((a) => a.id),
+      sockets: sockets.map((s) => `${s.kind}:${s.item.id}`),
+      infusion: infusion?.id,
+      infusionRarity: infusionRarity.id,
+    });
+    const url = `${location.origin}${location.pathname}#${link}`;
+    // The clipboard is off limits on pages not served over HTTPS; there the link is shown to copy by hand.
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      prompt('Copy this link', url);
+    }
+  };
+
+  const reset = () => {
+    setImplicitId('');
+    setPicks({ prefix: [], suffix: [] });
+    setSockets([]);
+    setInfusionId('');
   };
 
   return (
@@ -200,6 +278,10 @@ export default function GearPlanner({ affixes, infusions, bases, rarities, runes
         </div>
 
         <div className="controls">
+          <label className="field grow">
+            <span className="cap">Search</span>
+            <input className="in" type="search" placeholder="Name or stat" value={search} onChange={(e) => setSearch(e.target.value)} />
+          </label>
           <GearSelect bases={bases} value={baseId} onChange={changeBase} />
           <LevelStepper value={level} max={maxLevel} onChange={setLevel} />
           <RaritySwatches rarities={rarities} value={rarityId} onChange={changeRarity} />
@@ -234,6 +316,7 @@ export default function GearPlanner({ affixes, infusions, bases, rarities, runes
                   rolls={rolls.implicit}
                   level={level}
                   selected={implicit}
+                  query={query}
                   onPick={(affix) => setImplicitId(affix.id)}
                 />
               </section>
@@ -288,6 +371,7 @@ export default function GearPlanner({ affixes, infusions, bases, rarities, runes
                     options={part.options}
                     rolls={rolls.affix}
                     level={level}
+                    query={query}
                     onPick={(affix) => setPicks({ ...picks, [part.id]: [...part.picked, affix] })}
                   />
                 )}
@@ -306,6 +390,7 @@ export default function GearPlanner({ affixes, infusions, bases, rarities, runes
               gems={gems}
               ranks={ranks}
               runewords={runewords}
+              query={query}
             />
 
             <section id="infusion" className="group" style={infusionInk}>
@@ -340,6 +425,7 @@ export default function GearPlanner({ affixes, infusions, bases, rarities, runes
                       rolls={infusionRolls}
                       level={level}
                       unnamed
+                      query={query}
                       onPick={(affix) => setInfusionId(affix.id)}
                     />
                   )}
@@ -349,7 +435,17 @@ export default function GearPlanner({ affixes, infusions, bases, rarities, runes
           </div>
 
           <aside className="item" aria-label="Planned item">
-            <div className="cap">Planned item</div>
+            <div className="item-head">
+              <span className="cap">Planned item</span>
+              <span className="item-actions">
+                <button className="item-remove item-action" type="button" onClick={share}>
+                  {copied ? 'Copied' : 'Share'}
+                </button>
+                <button className="item-remove item-action" type="button" onClick={reset}>
+                  Reset
+                </button>
+              </span>
+            </div>
             <div className="item-name rar">{itemName(base, implicit, picks.prefix[0], picks.suffix[0])}</div>
             <div className="cap">
               {rarity.name} {base.name} / Lv {level}

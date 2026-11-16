@@ -1,5 +1,5 @@
 // Client-safe types and game rules for the gear planner. Like affix.ts, no data imports here.
-import { rolled, type Affix, type Base, type Rarity, type StatMod } from './affix';
+import { formatStat, rolled, type Affix, type Base, type Rarity, type StatMod } from './affix';
 
 export interface PlanBase extends Base {
   stats: StatMod[];
@@ -26,6 +26,12 @@ export interface Part {
   stats: StatMod[];
   rolls: Rarity;
   level: number;
+}
+
+// Whether the name or a stat line, as shown, contains the lower-case search text.
+export function matches(query: string, name: string, { stats, rolls, level }: Part) {
+  const lines = stats.map((stat) => formatStat(stat, rolls, level)).map((line) => `${line.value} ${line.label}`);
+  return [name, ...lines].some((text) => text.toLowerCase().includes(query));
 }
 
 // Mirrors BaseStatsData.GetAllStats: Gear's Defense and Gear's Weapon Damage on any other part
@@ -73,6 +79,27 @@ export function rollWindows(rarity: PlanRarity): Record<'base' | 'implicit' | 'a
     implicit: { ...rarity, minPercent: 0, maxPercent: 100 },
     affix: rarity,
   };
+}
+
+// What a planner link carries, by id. Sockets are "gem:<id>" or "rune:<id>", in socket order.
+export interface Plan {
+  base: string;
+  rarity: string;
+  level: number;
+  implicit?: string;
+  prefix: string[];
+  suffix: string[];
+  sockets: string[];
+  infusion?: string;
+  infusionRarity?: string;
+}
+
+// The part of a planner link after the #. The planner page reads it back.
+export function encodePlan({ base, rarity, level, implicit, prefix, suffix, sockets, infusion, infusionRarity }: Plan): string {
+  const link = new URLSearchParams({ base, rarity, level: `${level}` });
+  const parts = { implicit, prefix: prefix.join(), suffix: suffix.join(), sockets: sockets.join(), infusion, infusionRarity: infusion && infusionRarity };
+  for (const [key, value] of Object.entries(parts)) if (value) link.set(key, value);
+  return `${link}`;
 }
 
 // Mirrors GearItemData.getFullAffixedName: an implicit's name stands in for the base name, and

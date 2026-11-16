@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Rarity } from '../../lib/affix';
 import type { Gem, GemRank } from '../../lib/gems';
-import type { Part, PlanBase, PlanRarity } from '../../lib/plannerRules';
+import { matches, type Part, type PlanBase, type PlanRarity } from '../../lib/plannerRules';
 import type { Rune, Runeword } from '../../lib/runes';
 import { Dropdown } from '../controls';
 import { StatLines } from '../StatLine';
@@ -28,9 +28,10 @@ interface Props {
   gems: Gem[];
   ranks: GemRank[];
   runewords: Runeword[];
+  query: string;
 }
 
-export function Sockets({ base, rarity, level, rolls, sockets, onChange, runeword, runes, gems, ranks, runewords }: Props) {
+export function Sockets({ base, rarity, level, rolls, sockets, onChange, runeword, runes, gems, ranks, runewords, query }: Props) {
   const [tab, setTab] = useState('');
   const [tier, setTier] = useState(ranks.at(-1)!.tier);
 
@@ -42,8 +43,10 @@ export function Sockets({ base, rarity, level, rolls, sockets, onChange, runewor
   ].filter((t) => t.on);
   const open = tabs.find((t) => t.id === tab) ?? tabs[0];
   const full = sockets.length === rarity.sockets;
-  const fitting = runewords.filter((w) => w.slots.includes(base.slot));
   const rune = (id: string) => runes.find((r) => r.id === id)!;
+  const runeNames = (word: Runeword) => word.runes.map((id) => rune(id).name.replace(' Rune', ''));
+  const fitting = runewords.filter((w) => w.slots.includes(base.slot));
+  const fits = (socketed: Socketed) => matches(query, socketed.item.name, socketPart(socketed, base, rolls, level));
   const add = (socketed: Socketed) => onChange([...sockets, socketed]);
 
   const named = (item: { icon: string; name: string }) => (
@@ -52,6 +55,7 @@ export function Sockets({ base, rarity, level, rolls, sockets, onChange, runewor
       {item.name}
     </span>
   );
+  const list = (options: React.ReactNode[]) => (options.length ? <ul>{options}</ul> : <p className="empty">Nothing matches.</p>);
   const option = (key: string, name: React.ReactNode, stats: React.ReactNode, onPick: () => void) => (
     <li key={key}>
       <button className="row opt pick" type="button" onClick={onPick}>
@@ -133,20 +137,22 @@ export function Sockets({ base, rarity, level, rolls, sockets, onChange, runewor
         fitting.length === 0 ? (
           <p className="empty">No runeword fits {base.name}.</p>
         ) : (
-          <ul>
-            {fitting.map((word) =>
-              option(
-                word.id,
-                word.name,
-                <>
-                  <span className="line cap">{word.runes.map((id) => rune(id).name.replace(' Rune', '')).join(' · ')}</span>
-                  <StatLines stats={word.stats} rolls={rolls} level={level} />
-                </>,
-                // Picking a runeword sockets its runes, in order, in place of what was there.
-                () => onChange(word.runes.map((id) => ({ kind: 'rune', item: rune(id) }))),
+          list(
+            fitting
+              .filter((word) => matches(query, `${word.name} ${runeNames(word).join(' ')}`, { stats: word.stats, rolls, level }))
+              .map((word) =>
+                option(
+                  word.id,
+                  word.name,
+                  <>
+                    <span className="line cap">{runeNames(word).join(' · ')}</span>
+                    <StatLines stats={word.stats} rolls={rolls} level={level} />
+                  </>,
+                  // Picking a runeword sockets its runes, in order, in place of what was there.
+                  () => onChange(word.runes.map((id) => ({ kind: 'rune', item: rune(id) }))),
+                ),
               ),
-            )}
-          </ul>
+          )
         )
       ) : full ? (
         <p className="empty">Every socket is filled. Remove one to socket something else.</p>
@@ -154,28 +160,28 @@ export function Sockets({ base, rarity, level, rolls, sockets, onChange, runewor
         count('gem') >= rarity.maxGems ? (
           <p className="empty">This gear can't hold more gems.</p>
         ) : (
-          <ul>
-            {gems
-              .filter((g) => g.tier === tier)
+          list(
+            gems
+              .filter((g) => g.tier === tier && fits({ kind: 'gem', item: g }))
               .map((gem) =>
                 option(gem.id, named(gem), <StatLines {...socketPart({ kind: 'gem', item: gem }, base, rolls, level)} />, () =>
                   add({ kind: 'gem', item: gem }),
                 ),
-              )}
-          </ul>
+              ),
+          )
         )
       ) : count('rune') >= rarity.maxRunes ? (
         <p className="empty">This gear can't hold more runes.</p>
       ) : (
-        <ul>
-          {runes
-            .filter((r) => !sockets.some((s) => s.item === r))
+        list(
+          runes
+            .filter((r) => !sockets.some((s) => s.item === r) && fits({ kind: 'rune', item: r }))
             .map((r) =>
               option(r.id, named(r), <StatLines {...socketPart({ kind: 'rune', item: r }, base, rolls, level)} />, () =>
                 add({ kind: 'rune', item: r }),
               ),
-            )}
-        </ul>
+            ),
+        )
       )}
     </section>
   );
