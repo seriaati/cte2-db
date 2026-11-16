@@ -6,8 +6,8 @@ import { baseGear, reqScaling } from './bases';
 import { affixes, bases, infusions, maxLevel, rarities, tagNames } from './gear';
 import { gems } from './gems';
 import type { FamilyStats } from './items';
-import { planRarities } from './planner';
-import { rollWindows } from './plannerRules';
+import { planAffixes, planBases, planRarities } from './planner';
+import { encodePlan, formedRuneword, itemName, rollWindows, slotCount } from './plannerRules';
 import { runed, runes, runewords, slotNames } from './runes';
 import { stats } from './stats';
 import { encodeBuild, neighbours, rooted } from './talentRules';
@@ -17,6 +17,7 @@ import { sources, uniqueRarity, uniques } from './uniques';
 export { maxLevel };
 export const CATEGORIES = ['affixes', 'infusions', 'bases', 'uniques', 'runes', 'runewords', 'gems', 'augments', 'talents', 'stats'] as const;
 export const RARITIES = rarities.map((r) => r.id);
+export const PLAN_RARITIES = planRarities.map((r) => r.id);
 
 interface Entry {
   category: (typeof CATEGORIES)[number];
@@ -276,5 +277,103 @@ export function talentBuildLink(origin: string, ids: string[], level = maxLevel,
     ...(added.length
       ? [`Added to join the build up (${added.length}): ${added.map((n) => brief(key, tree, n, level) + (tree.perks[tree.nodes[n][2]].type === 'MAJOR' ? ' (game changer)' : '')).join('; ')}`]
       : []),
+  ].join('\n');
+}
+
+export interface GearPlan {
+  base: string;
+  rarity?: string;
+  level?: number;
+  implicit?: string;
+  prefixes?: string[];
+  suffixes?: string[];
+  sockets?: string[];
+  infusion?: string;
+  infusionRarity?: string;
+}
+
+// A link to the gear planner with the item loaded. Throws, saying what is wrong, for an item the game wouldn't allow.
+export function gearPlanLink(origin: string, plan: GearPlan): string {
+  const same = (a: string, b: string) => a.toLowerCase() === b.trim().toLowerCase();
+  const base = planBases.find((b) => same(b.name, plan.base) || same(b.id, plan.base));
+  if (!base) throw new Error(`"${plan.base}" is not base gear. Search the bases category for the names.`);
+  const rarity = planRarities.find((r) => r.id === (plan.rarity ?? RARITIES.at(-1)))!;
+  const level = plan.level ?? maxLevel;
+  const windows = rollWindows(rarity);
+  const problems: string[] = [];
+
+  // By name as the search gives it, or by id where two affixes that fit the gear share a name.
+  const affix = (name: string, type: 'implicit' | 'prefix' | 'suffix') => {
+    const fits = planAffixes.filter((a) => a.type === type && canRoll(a, base));
+    const byId = fits.filter((a) => same(a.id, name));
+    const found = byId.length ? byId : fits.filter((a) => same(a.name, name));
+    if (found.length === 1) return found;
+    const rolls = type === 'implicit' ? windows.implicit : windows.affix;
+    problems.push(
+      found.length
+        ? `More than one ${type} named "${name}" fits ${base.name}. Give one of these ids instead: ${found.map((a) => `${a.id} (${statLines(a.stats, rolls, level).join(', ')})`).join('; ')}.`
+        : `"${name}" is not ${type === 'implicit' ? 'an' : 'a'} ${type} that rolls on ${base.name}.`,
+    );
+    return [];
+  };
+  const slots = (type: 'prefix' | 'suffix', names: string[] = []) => {
+    const picked = names.flatMap((name) => affix(name, type));
+    const most = slotCount(rarity, type);
+    if (names.length > most) problems.push(`${rarity.name} gear has ${most} ${type} ${most === 1 ? 'slot' : 'slots'}, but ${names.length} were given.`);
+    const twice = picked.filter((a, i) => !a.repeatable && picked.indexOf(a) !== i);
+    if (twice.length) problems.push(`These can only be on an item once: ${twice.map((a) => a.name).join(', ')}.`);
+    return picked;
+  };
+  const implicit = plan.implicit ? affix(plan.implicit, 'implicit')[0] : undefined;
+  const prefixes = slots('prefix', plan.prefixes);
+  const suffixes = slots('suffix', plan.suffixes);
+
+  const socketed = (plan.sockets ?? []).flatMap((name) => {
+    const gem = gems.find((g) => same(g.name, name) || same(g.id, name));
+    const rune = runes.find((r) => same(r.name, name) || same(r.id, name));
+    if (!gem && !rune) problems.push(`"${name}" is not a gem or a rune.`);
+    return gem ? [{ kind: 'gem', item: gem }] : rune ? [{ kind: 'rune', item: rune }] : [];
+  });
+  const count = (kind: string) => socketed.filter((s) => s.kind === kind).length;
+  const runeIds = socketed.filter((s) => s.kind === 'rune').map((s) => s.item.id);
+  if (socketed.length > rarity.sockets) problems.push(`${rarity.name} gear has ${rarity.sockets} sockets, but ${socketed.length} were filled.`);
+  if (count('gem') > rarity.maxGems) problems.push(`${rarity.name} gear holds ${rarity.maxGems} gems at most.`);
+  if (count('rune') > rarity.maxRunes) problems.push(`${rarity.name} gear holds ${rarity.maxRunes} runes at most.`);
+  if (new Set(runeIds).size < runeIds.length) problems.push('A rune fits once per item.');
+  const runeword = rarity.runewords ? formedRuneword(runewords, runeIds, base.slot) : undefined;
+
+  // An infusion has no name, so it goes by a stat it gives.
+  const infusionRarity = rarities.find((r) => r.id === plan.infusionRarity) ?? rarities.at(-1)!;
+  const fitting = infusions.filter((a) => canRoll(a, base));
+  const wanted = plan.infusion?.trim().toLowerCase();
+  const matching = wanted ? fitting.filter((a) => same(a.id, wanted) || a.stats.some((s) => s.name.toLowerCase().includes(wanted))) : [];
+  if (wanted && matching.length !== 1) {
+    const choices = (matching.length ? matching : fitting).map((a) => a.stats.map((s) => s.name).join(' and ')).join('; ');
+    problems.push(`${matching.length ? 'More than one infusion' : 'No infusion'} on ${base.name} gives "${plan.infusion}". ${choices ? `The choices: ${choices}.` : `${base.name} takes no infusion.`}`);
+  }
+  const infusion = matching.length === 1 ? matching[0] : undefined;
+  if (problems.length) throw new Error(problems.join('\n'));
+
+  const link = encodePlan({
+    base: base.id,
+    rarity: rarity.id,
+    level,
+    implicit: implicit?.id,
+    prefix: prefixes.map((a) => a.id),
+    suffix: suffixes.map((a) => a.id),
+    sockets: socketed.map((s) => `${s.kind}:${s.item.id}`),
+    infusion: infusion?.id,
+    infusionRarity: infusionRarity.id,
+  });
+  const named = (list: typeof prefixes) => list.map((a) => `${a.name} (${statLines(a.stats, windows.affix, level).join(', ')})`).join('; ');
+  return [
+    `${origin}/planner#${link}`,
+    `${itemName(base, implicit, prefixes[0], suffixes[0])}: ${rarity.name} ${base.name}, level ${level}.`,
+    ...(implicit ? [`Implicit: ${statLines(implicit.stats, windows.implicit, level).join(', ')}`] : []),
+    ...(prefixes.length ? [`Prefixes: ${named(prefixes)}`] : []),
+    ...(suffixes.length ? [`Suffixes: ${named(suffixes)}`] : []),
+    ...(socketed.length ? [`Sockets: ${socketed.map((s) => s.item.name).join(', ')}`] : []),
+    ...(runeword ? [`Forms the runeword ${runeword.name}: ${statLines(runeword.stats, runed, level).join(', ')}`] : []),
+    ...(infusion ? [`${infusionRarity.name} infusion: ${statLines(infusion.stats, rollsAt(infusionRarity).top, level).join(', ')}`] : []),
   ].join('\n');
 }

@@ -1,7 +1,7 @@
 // Cloudflare Pages Function: serves the MCP endpoint at /mcp next to the static site.
 import { createMcpHandler, McpServer } from '@modelcontextprotocol/server';
 import * as z from 'zod/v4';
-import { CATEGORIES, maxLevel, RARITIES, search, talentBuildLink, talentLinks } from '../src/lib/mcp';
+import { CATEGORIES, gearPlanLink, maxLevel, PLAN_RARITIES, RARITIES, search, talentBuildLink, talentLinks } from '../src/lib/mcp';
 
 const level = z.number().int().min(1).max(maxLevel).optional().describe(`Item or character level the stat values are worked out at. Defaults to ${maxLevel}, the highest.`);
 
@@ -66,6 +66,27 @@ const handler = createMcpHandler(({ requestInfo }) => {
     },
     // The link goes to whichever site this server is running next to, so a local or preview build links to itself.
     async ({ nodes, level, bonus, connect }) => ({ content: [{ type: 'text', text: talentBuildLink(new URL(requestInfo!.url).origin, nodes, level, bonus, connect) }] }),
+  );
+  server.registerTool(
+    'gear_plan_link',
+    {
+      title: 'Make a shareable gear planner link',
+      description:
+        "Turn a planned piece of gear into a link that opens it in the site's gear planner, to hand to the user. Name the base gear and what goes on it, with names as the search tool gives them. The item has to be one the game allows: every affix rolls on that gear, there are no more prefixes, suffixes, sockets, gems or runes than its rarity has room for, and nothing is on it twice unless the game lets it. When it isn't, the answer says what is wrong instead of giving a link.",
+      inputSchema: z.object({
+        base: z.string().describe('Base gear name, e.g. "Staff" or "Cloth Boots".'),
+        rarity: z.enum(PLAN_RARITIES).optional().describe(`The item's rarity, which sets how many affixes and sockets it has and how high the affixes roll. Defaults to ${RARITIES.at(-1)}. Only ${PLAN_RARITIES.at(-1)} gear forms runewords, and it has no affixes.`),
+        level,
+        implicit: z.string().optional().describe("Name of one of the base's implicits. Left out, the planner shows the likeliest one."),
+        prefixes: z.array(z.string()).optional().describe('Prefix names, e.g. ["Scorched"].'),
+        suffixes: z.array(z.string()).optional().describe('Suffix names, e.g. ["of the Drake"].'),
+        sockets: z.array(z.string()).optional().describe('Gems and runes by name, in socket order, e.g. ["Ano Rune", "Grand Ruby"]. The runes of a runeword, in its order, form it.'),
+        infusion: z.string().optional().describe('A stat the infusion gives, e.g. "Fire Damage". Infusions have no names.'),
+        infusion_rarity: z.enum(RARITIES).optional().describe(`The infusion's own rarity. Defaults to ${RARITIES.at(-1)}.`),
+      }),
+      annotations: { readOnlyHint: true },
+    },
+    async ({ infusion_rarity, ...plan }) => ({ content: [{ type: 'text', text: gearPlanLink(new URL(requestInfo!.url).origin, { ...plan, infusionRarity: infusion_rarity }) }] }),
   );
   return server;
 });
