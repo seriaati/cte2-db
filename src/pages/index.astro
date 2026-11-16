@@ -2,11 +2,13 @@
 import pack from '../data/pack.json';
 import Layout from '../layouts/Layout.astro';
 
+const lead = 'A searchable database for the Craft to Exile 2 Minecraft modpack: a gear planner, affixes, uniques, runes, gems, talents, spells and stats.';
 const structuredData = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'CTE2 Database',
-  alternateName: 'Craft to Exile 2 Database',
+  alternateName: ['Craft to Exile 2 Database', 'Craft to Exile 2 Modpack Database', 'CTE2 DB'],
+  description: lead,
   url: Astro.site,
 });
 const source = [pack.version && `Craft to Exile 2 ${pack.version}`, pack.mod && `Mine and Slash ${pack.mod}`].filter(Boolean);
@@ -16,6 +18,7 @@ const source = [pack.version && `Craft to Exile 2 ${pack.version}`, pack.mod && 
   <script type="application/ld+json" slot="head" set:html={structuredData} />
   <div class="home">
     <h1>CTE2 Database</h1>
+    <p class="lead">{lead}</p>
     <p class="cap home-source">{source.join(' / ')}</p>
     <div class="home-search">
       <input class="in" type="search" placeholder="Search pages, items, stats" aria-label="Search" autocomplete="off" spellcheck="false" enterkeyhint="go" />
