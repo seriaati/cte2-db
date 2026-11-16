@@ -1,12 +1,6 @@
 ---
+import pack from '../data/pack.json';
 import Layout from '../layouts/Layout.astro';
-import { effects } from '../lib/effects';
-import { affixes, bases, infusions } from '../lib/gear';
-import { spells } from '../lib/spells';
-import { stats } from '../lib/stats';
-import { supports } from '../lib/supports';
-import { talents } from '../lib/talents';
-import { uniques } from '../lib/uniques';
 
 const structuredData = JSON.stringify({
   '@context': 'https://schema.org',
@@ -15,75 +9,19 @@ const structuredData = JSON.stringify({
   alternateName: 'Craft to Exile 2 Database',
   url: Astro.site,
 });
+const source = [pack.version && `Craft to Exile 2 ${pack.version}`, pack.mod && `Mine and Slash ${pack.mod}`].filter(Boolean);
 ---
 
 <Layout>
   <script type="application/ld+json" slot="head" set:html={structuredData} />
   <h1>CTE2 Database</h1>
-  <p class="lead">
-    Gear data for Craft to Exile 2, taken straight from the modpack's files and laid out so you can search it and
-    plan a build.
-  </p>
-  <div class="blocks">
-    <a class="block" href="/affixes">
-      <strong>Affixes</strong>
-      <p>{affixes.length} prefixes, suffixes and implicits across {bases.length} gear types.</p>
-    </a>
-    <a class="block" href="/planner">
-      <strong>Gear planner</strong>
-      <p>Put one piece of gear together part by part and see what it can roll.</p>
-    </a>
-    <a class="block" href="/bases">
-      <strong>Base gear</strong>
-      <p>Base stats and attribute requirements for every armor material, weapon and off-hand.</p>
-    </a>
-    <a class="block" href="/uniques">
-      <strong>Uniques</strong>
-      <p>{uniques.length} unique items with their stats, drop level and where they drop.</p>
-    </a>
-    <a class="block" href="/runes">
-      <strong>Runes</strong>
-      <p>What each rune gives in weapons, armor and jewelry, and the runewords they make.</p>
-    </a>
-    <a class="block" href="/gems">
-      <strong>Gems</strong>
-      <p>Socket gems by type and tier, with what they give in each kind of gear.</p>
-    </a>
-    <a class="block" href="/auras">
-      <strong>Augments</strong>
-      <p>Every augment gem with its stats and how much capacity it reserves.</p>
-    </a>
-    <a class="block" href="/supports">
-      <strong>Support gems</strong>
-      <p>{supports.length} gems that boost the skill they are socketed into, and what each one costs.</p>
-    </a>
-    <a class="block" href="/infusions">
-      <strong>Infusions</strong>
-      <p>{infusions.length} stats an Infusion scroll can add to gear, by slot and rarity.</p>
-    </a>
-    <a class="block" href="/jewels">
-      <strong>Jewels</strong>
-      <p>What jewels can roll, plus corruptions, the crafted unique jewel and the Abyssal Eye.</p>
-    </a>
-    <a class="block" href="/talents">
-      <strong>Talents</strong>
-      <p>A planner for all {talents.nodes.length} talents, plus the ascendancy and atlas trees.</p>
-    </a>
-    <a class="block" href="/spells">
-      <strong>Spells</strong>
-      <p>{spells.length} class spells with what they do, what they cost and how fast they cast.</p>
-    </a>
-    <a class="block" href="/effects">
-      <strong>Status effects</strong>
-      <p>{effects.length} buffs, debuffs and ailments with their stats per stack and how far they stack.</p>
-    </a>
-    <a class="block" href="/stats">
-      <strong>Stats</strong>
-      <p>{stats.length} stats with the game's description of what each one does.</p>
-    </a>
-    <a class="block" href="/mcp-server">
-      <strong>MCP server</strong>
-      <p>Connect an AI assistant so it can look things up in this database.</p>
-    </a>
+  <p class="cap home-source">{source.join(' / ')}</p>
+  <div class="home-search">
+    <input class="in" type="search" placeholder="Search pages, items, stats" aria-label="Search" autocomplete="off" spellcheck="false" enterkeyhint="go" />
+    <div class="search-results"></div>
   </div>
+  <section class="home-recent" hidden>
+    <h2 class="cap">Recently viewed</h2>
+    <div class="recent-rows"></div>
+  </section>
 </Layout>

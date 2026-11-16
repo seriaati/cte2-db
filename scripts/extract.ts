@@ -215,11 +215,19 @@ for (const [id, stat] of Object.entries(registries.mmorpg_stat as Record<string,
   }
 }
 
+// For the home page: which pack and mod version the data is from. The launcher keeps the pack's
+// manifest beside the game folder; without one the pack version is left out.
+const manifest = join(arg, 'flame/manifest.json');
+const pack = {
+  version: existsSync(manifest) ? (JSON.parse(readFileSync(manifest, 'utf8')).version as string) : '',
+  mod: list(join(mc, 'mods')).flatMap((jar) => /Mine_and_Slash-[\d.]+-([\d.]+)\.jar$/.exec(jar)?.[1] ?? [])[0] ?? '',
+};
+
 const sorted = (o: Record<string, unknown>) =>
   Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)));
 
 mkdirSync(OUT, { recursive: true });
-for (const [registry, entries] of Object.entries({ ...registries, lang, icons, effect_sources, talent_icons })) {
+for (const [registry, entries] of Object.entries({ ...registries, lang, icons, effect_sources, pack, talent_icons })) {
   const file = `${registry.replace('mmorpg_', '')}.json`;
   writeFileSync(join(OUT, file), JSON.stringify(sorted(entries), null, 2) + '\n');
   console.log(`${file}: ${Object.keys(entries).length}`);
