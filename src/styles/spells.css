@@ -1,0 +1,55 @@
+.field.class {
+  flex: 0 1 190px;
+}
+
+.row.spell {
+  grid-template-columns: minmax(170px, 0.34fr) minmax(0, 1fr) 176px;
+  align-items: start;
+}
+
+/* Descriptions come with their own line breaks. */
+.row.spell p {
+  margin: 0 0 8px;
+  white-space: pre-line;
+}
+
+.row.spell .tags {
+  margin-top: 8px;
+}
+
+.facts {
+  margin: 0;
+}
+
+.facts div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.facts dd {
+  margin: 0;
+  text-align: right;
+}
+
+@media (max-width: 620px) {
+  .field.class {
+    flex-grow: 1;
+  }
+
+  .row.spell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'name'
+      'stats'
+      'facts';
+  }
+
+  .facts {
+    grid-area: facts;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 16px;
+  }
+}

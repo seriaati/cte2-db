@@ -1,0 +1,8507 @@
+{
+  "abyssal_aura_self": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "abyssal_aura_self",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.15,
+          "min": 0.15
+        },
+        "stat": "health"
+      },
+      {
+        "multi": {
+          "max": 0.15,
+          "min": 0.15
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "anti_gravity_smash": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.6875,
+        "min": 0.525
+      },
+      "stat": "health"
+    },
+    "id": "anti_gravity_smash",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.6875,
+          "min": 0.525
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "anti_gravity_smash_initial": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.375,
+        "min": 1.05
+      },
+      "stat": "health"
+    },
+    "id": "anti_gravity_smash_initial",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.375,
+          "min": 1.05
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "armageddon": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.2375,
+        "min": 0.935
+      },
+      "stat": "health"
+    },
+    "id": "armageddon",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.2375,
+          "min": 0.935
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "arrow_barrage": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.265,
+        "min": 0.805
+      },
+      "stat": "health"
+    },
+    "id": "arrow_barrage",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.265,
+          "min": 0.805
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "arrow_storm": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.45,
+        "min": 1.95
+      },
+      "stat": "health"
+    },
+    "id": "arrow_storm",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.45,
+          "min": 1.95
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "arrow_totem": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.24,
+        "min": 0.92
+      },
+      "stat": "health"
+    },
+    "id": "arrow_totem",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.24,
+          "min": 0.92
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "asura": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 6,
+        "min": 4.5
+      },
+      "stat": "health"
+    },
+    "id": "asura",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 6,
+          "min": 4.5
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.4,
+          "min": 0.28
+        },
+        "stat": "energy"
+      }
+    ]
+  },
+  "asura_self": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "asura_self",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5,
+          "min": 0.5
+        },
+        "stat": "health"
+      },
+      {
+        "multi": {
+          "max": 0.5,
+          "min": 0.5
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "avalanche_vault": {
+    "base": {
+      "max": 8,
+      "min": 5.6
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.5,
+        "min": 1.05
+      },
+      "stat": "health"
+    },
+    "id": "avalanche_vault",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.5,
+          "min": 1.05
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "awaken_mana": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.25,
+        "min": 0.175
+      },
+      "stat": "health"
+    },
+    "id": "awaken_mana",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.25,
+          "min": 0.175
+        },
+        "stat": "mana"
+      }
+    ]
+  },
+  "banner_of_the_frozen_guard": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.3,
+        "min": 0.945
+      },
+      "stat": "health"
+    },
+    "id": "banner_of_the_frozen_guard",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.3,
+          "min": 0.945
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "banner_of_the_frozen_guard_tracked": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.3,
+        "min": 0.945
+      },
+      "stat": "health"
+    },
+    "id": "banner_of_the_frozen_guard_tracked",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.3,
+          "min": 0.945
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.05,
+          "min": 0.035
+        },
+        "stat": "armor"
+      }
+    ]
+  },
+  "battery_fusillade": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.825,
+        "min": 0.5775
+      },
+      "stat": "health"
+    },
+    "id": "battery_fusillade",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.825,
+          "min": 0.5775
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.09,
+          "min": 0.063
+        },
+        "stat": "mana"
+      }
+    ]
+  },
+  "black_hole": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.6,
+        "min": 1.82
+      },
+      "stat": "health"
+    },
+    "id": "black_hole",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.6,
+          "min": 1.82
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "blessed_hammer": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 4,
+        "min": 2.8
+      },
+      "stat": "health"
+    },
+    "id": "blessed_hammer",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 4,
+          "min": 2.8
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "blizzard": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.8125,
+        "min": 1.26875
+      },
+      "stat": "health"
+    },
+    "id": "blizzard",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.8125,
+          "min": 1.26875
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.06,
+          "min": 0.06
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "blood_boil": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.4,
+        "min": 0.3
+      },
+      "stat": "health"
+    },
+    "id": "blood_boil",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.4,
+          "min": 0.3
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "blood_explosion": {
+    "base": {
+      "max": 4,
+      "min": 4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 3
+      },
+      "stat": "health"
+    },
+    "id": "blood_explosion",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 3
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "blood_harvest": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.02,
+        "min": 0.014
+      },
+      "stat": "health"
+    },
+    "id": "blood_harvest",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.02,
+          "min": 0.014
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "blood_harvest_self": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "blood_harvest_self",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.4,
+          "min": 0.4
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "bolt": {
+    "base": {
+      "max": 1,
+      "min": 1
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.35,
+        "min": 1.35
+      },
+      "stat": "health"
+    },
+    "id": "bolt",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.35,
+          "min": 1.35
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "boomerang": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.8,
+        "min": 1.96
+      },
+      "stat": "health"
+    },
+    "id": "boomerang",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.8,
+          "min": 1.96
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "breath": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.6,
+        "min": 0.2
+      },
+      "stat": "health"
+    },
+    "id": "breath",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.6,
+          "min": 0.2
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cataclysm_big": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 0.7
+      },
+      "stat": "health"
+    },
+    "id": "cataclysm_big",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 0.7
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cataclysm_small": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.5,
+        "min": 0.35
+      },
+      "stat": "health"
+    },
+    "id": "cataclysm_small",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5,
+          "min": 0.35
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "chain_lightning": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.617,
+        "min": 1.1319
+      },
+      "stat": "health"
+    },
+    "id": "chain_lightning",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.617,
+          "min": 1.1319
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.15,
+          "min": 0.105
+        },
+        "stat": "mana"
+      }
+    ]
+  },
+  "chain_lightning_totem": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.0875,
+        "min": 0.7875
+      },
+      "stat": "health"
+    },
+    "id": "chain_lightning_totem",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.0875,
+          "min": 0.7875
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.1,
+          "min": 0.07
+        },
+        "stat": "mana"
+      }
+    ]
+  },
+  "chaos_totem": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.9,
+        "min": 0.63
+      },
+      "stat": "health"
+    },
+    "id": "chaos_totem",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.9,
+          "min": 0.63
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "charge": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.6,
+        "min": 2.1
+      },
+      "stat": "health"
+    },
+    "id": "charge",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.6,
+          "min": 2.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "charged_bolt": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 2.1
+      },
+      "stat": "health"
+    },
+    "id": "charged_bolt",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 2.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "chilling_field": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.875,
+        "min": 1.3125
+      },
+      "stat": "health"
+    },
+    "id": "chilling_field",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.875,
+          "min": 1.3125
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "chilling_touch": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.6,
+        "min": 1.82
+      },
+      "stat": "health"
+    },
+    "id": "chilling_touch",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.6,
+          "min": 1.82
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "chronobreak": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.75,
+        "min": 1.925
+      },
+      "stat": "health"
+    },
+    "id": "chronobreak",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.75,
+          "min": 1.925
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "chronobreak_extra": {
+    "base": {
+      "max": 5,
+      "min": 3.5
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3.4375,
+        "min": 2.40625
+      },
+      "stat": "health"
+    },
+    "id": "chronobreak_extra",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3.4375,
+          "min": 2.40625
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cinder": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.4,
+        "min": 0.3
+      },
+      "stat": "health"
+    },
+    "id": "cinder",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.4,
+          "min": 0.3
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "circle_of_healing": {
+    "base": {
+      "max": 8,
+      "min": 5.6
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.8,
+        "min": 1.5
+      },
+      "stat": "health"
+    },
+    "id": "circle_of_healing",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.8,
+          "min": 1.5
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.12,
+          "min": 0.12
+        },
+        "stat": "energy"
+      }
+    ]
+  },
+  "close_nova": {
+    "base": {
+      "max": 10,
+      "min": 10
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "close_nova",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cold_snap": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.4
+      },
+      "stat": "health"
+    },
+    "id": "cold_snap",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.4
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cold_snap_half": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 0.7
+      },
+      "stat": "health"
+    },
+    "id": "cold_snap_half",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 0.7
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "comeuppance": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3.75,
+        "min": 2.625
+      },
+      "stat": "health"
+    },
+    "id": "comeuppance",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3.75,
+          "min": 2.625
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "curse": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.25,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "curse",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.25,
+          "min": 1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cursed_arrow_barrage": {
+    "base": {
+      "max": 2,
+      "min": 2
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.45,
+        "min": 1.45
+      },
+      "stat": "health"
+    },
+    "id": "cursed_arrow_barrage",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.45,
+          "min": 1.45
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cursed_axe_throw": {
+    "base": {
+      "max": 2,
+      "min": 2
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.8,
+        "min": 2.8
+      },
+      "stat": "health"
+    },
+    "id": "cursed_axe_throw",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.8,
+          "min": 2.8
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cursed_fist_of_judgment": {
+    "base": {
+      "max": 4,
+      "min": 4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 4.2,
+        "min": 4.2
+      },
+      "stat": "health"
+    },
+    "id": "cursed_fist_of_judgment",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 4.2,
+          "min": 4.2
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cursed_lightning_nova": {
+    "base": {
+      "max": 2,
+      "min": 2
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.47,
+        "min": 1.47
+      },
+      "stat": "health"
+    },
+    "id": "cursed_lightning_nova",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.47,
+          "min": 1.47
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.1,
+          "min": 0.1
+        },
+        "stat": "mana"
+      }
+    ]
+  },
+  "cursed_meteor": {
+    "base": {
+      "max": 4,
+      "min": 4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.76,
+        "min": 2.76
+      },
+      "stat": "health"
+    },
+    "id": "cursed_meteor",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.76,
+          "min": 2.76
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cursed_pet_basic": {
+    "base": {
+      "max": 4,
+      "min": 4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 2
+      },
+      "stat": "health"
+    },
+    "id": "cursed_pet_basic",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 2
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cursed_power_chord": {
+    "base": {
+      "max": 2,
+      "min": 2
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.43,
+        "min": 2.43
+      },
+      "stat": "health"
+    },
+    "id": "cursed_power_chord",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.43,
+          "min": 2.43
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cursed_quake": {
+    "base": {
+      "max": 4,
+      "min": 4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 3
+      },
+      "stat": "health"
+    },
+    "id": "cursed_quake",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 3
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cursed_quake_initial": {
+    "base": {
+      "max": 2,
+      "min": 2
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.5,
+        "min": 1.5
+      },
+      "stat": "health"
+    },
+    "id": "cursed_quake_initial",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.5,
+          "min": 1.5
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cursed_raging_dragon": {
+    "base": {
+      "max": 2,
+      "min": 2
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 4.5,
+        "min": 4.5
+      },
+      "stat": "health"
+    },
+    "id": "cursed_raging_dragon",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 4.5,
+          "min": 4.5
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cursed_raging_dragon_slam": {
+    "base": {
+      "max": 1,
+      "min": 1
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.25,
+        "min": 2.25
+      },
+      "stat": "health"
+    },
+    "id": "cursed_raging_dragon_slam",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.25,
+          "min": 2.25
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cursed_ricochet_shot": {
+    "base": {
+      "max": 4,
+      "min": 4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.42,
+        "min": 2.42
+      },
+      "stat": "health"
+    },
+    "id": "cursed_ricochet_shot",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.42,
+          "min": 2.42
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cursed_timewinder": {
+    "base": {
+      "max": 4,
+      "min": 4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.75,
+        "min": 1.75
+      },
+      "stat": "health"
+    },
+    "id": "cursed_timewinder",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.75,
+          "min": 1.75
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cyclone": {
+    "base": {
+      "max": 0.375,
+      "min": 0.2625
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.15,
+        "min": 0.105
+      },
+      "stat": "health"
+    },
+    "id": "cyclone",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.15,
+          "min": 0.105
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "cyclone_thorned": {
+    "base": {
+      "max": 0.5,
+      "min": 0.35
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.2,
+        "min": 0.14
+      },
+      "stat": "health"
+    },
+    "id": "cyclone_thorned",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.2,
+          "min": 0.14
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "damnation": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.5,
+        "min": 0.35
+      },
+      "stat": "health"
+    },
+    "id": "damnation",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5,
+          "min": 0.35
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "damnation_abyss": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.5,
+        "min": 0.35
+      },
+      "stat": "health"
+    },
+    "id": "damnation_abyss",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5,
+          "min": 0.35
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.04,
+          "min": 0.04
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "dark_pact": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 10,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 0.7
+      },
+      "stat": "health"
+    },
+    "id": "dark_pact",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 0.7
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.2,
+          "min": 0.2
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "dark_pact_sacrifice": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 10,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 0.7
+      },
+      "stat": "health"
+    },
+    "id": "dark_pact_sacrifice",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 0.7
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.4,
+          "min": 0.4
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "dark_pact_self": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "dark_pact_self",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.3,
+          "min": 0.3
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "debilitating_blow": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.995,
+        "min": 1.575
+      },
+      "stat": "health"
+    },
+    "id": "debilitating_blow",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.995,
+          "min": 1.575
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "despair": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.3,
+        "min": 0.1
+      },
+      "stat": "health"
+    },
+    "id": "despair",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.3,
+          "min": 0.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "direct_arrow_hit": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.25,
+        "min": 1.85
+      },
+      "stat": "health"
+    },
+    "id": "direct_arrow_hit",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.25,
+          "min": 1.85
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "double_strike": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.2,
+        "min": 1.54
+      },
+      "stat": "health"
+    },
+    "id": "double_strike",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.2,
+          "min": 1.54
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "drain": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.75,
+        "min": 0.525
+      },
+      "stat": "health"
+    },
+    "id": "drain",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.75,
+          "min": 0.525
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "eighth_gate": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.1,
+        "min": 0.1
+      },
+      "stat": "health"
+    },
+    "id": "eighth_gate",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.1,
+          "min": 0.1
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.175,
+          "min": 0.35
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "elemental_assault": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.66675,
+        "min": 0.525
+      },
+      "stat": "health"
+    },
+    "id": "elemental_assault",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.66675,
+          "min": 0.525
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "encased": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.4
+      },
+      "stat": "health"
+    },
+    "id": "encased",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.4
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "energy_recover": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.5,
+        "min": 0.35
+      },
+      "stat": "health"
+    },
+    "id": "energy_recover",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5,
+          "min": 0.35
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.01,
+          "min": 0.01
+        },
+        "stat": "energy"
+      }
+    ]
+  },
+  "enflamed": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.125,
+        "min": 2.125
+      },
+      "stat": "health"
+    },
+    "id": "enflamed",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.125,
+          "min": 2.125
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "ensnaring_melody": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.8,
+        "min": 1.26
+      },
+      "stat": "health"
+    },
+    "id": "ensnaring_melody",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.8,
+          "min": 1.26
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "ensnaring_melody_charmed": {
+    "base": {
+      "max": 2.5,
+      "min": 1.85
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.25,
+        "min": 1.575
+      },
+      "stat": "health"
+    },
+    "id": "ensnaring_melody_charmed",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.25,
+          "min": 1.575
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "envenomed": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.25,
+        "min": 1.8
+      },
+      "stat": "health"
+    },
+    "id": "envenomed",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.25,
+          "min": 1.8
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "execute": {
+    "base": {
+      "max": 8,
+      "min": 5.6
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 6.05,
+        "min": 4.235
+      },
+      "stat": "health"
+    },
+    "id": "execute",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 6.05,
+          "min": 4.235
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "execute_double": {
+    "base": {
+      "max": 16,
+      "min": 11.2
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 9.075,
+        "min": 6.3525
+      },
+      "stat": "health"
+    },
+    "id": "execute_double",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 9.075,
+          "min": 6.3525
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "explode_minion": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 10,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 0.7
+      },
+      "stat": "health"
+    },
+    "id": "explode_minion",
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 0.7
+        },
+        "stat": "weapon_damage"
+      }
+    ],
+    "target_stat_scalings": [
+      {
+        "multi": {
+          "max": 0.2,
+          "min": 0.14
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "explosive_arrow": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.75,
+        "min": 1.9375
+      },
+      "stat": "health"
+    },
+    "id": "explosive_arrow",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.75,
+          "min": 1.9375
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "fan_of_knives": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.4
+      },
+      "stat": "health"
+    },
+    "id": "fan_of_knives",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.4
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "fire_nova": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.145,
+        "min": 1.5015
+      },
+      "stat": "health"
+    },
+    "id": "fire_nova",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.145,
+          "min": 1.5015
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "fire_nova_overheat": {
+    "base": {
+      "max": 3,
+      "min": 2.1
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3.2175,
+        "min": 2.25225
+      },
+      "stat": "health"
+    },
+    "id": "fire_nova_overheat",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3.2175,
+          "min": 2.25225
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "fire_wall": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.4,
+        "min": 0.3
+      },
+      "stat": "health"
+    },
+    "id": "fire_wall",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.4,
+          "min": 0.3
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "fireball": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3.025,
+        "min": 2.1175
+      },
+      "stat": "health"
+    },
+    "id": "fireball",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3.025,
+          "min": 2.1175
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "fireball_overheat": {
+    "base": {
+      "max": 3,
+      "min": 2.1
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 4.5375,
+        "min": 3.17625
+      },
+      "stat": "health"
+    },
+    "id": "fireball_overheat",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 4.5375,
+          "min": 3.17625
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "fist_of_judgment": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 4.2,
+        "min": 2.95
+      },
+      "stat": "health"
+    },
+    "id": "fist_of_judgment",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 4.2,
+          "min": 2.95
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "fist_of_judgment_self": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.25,
+        "min": 0.25
+      },
+      "stat": "health"
+    },
+    "id": "fist_of_judgment_self",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.25,
+          "min": 0.25
+        },
+        "stat": "health"
+      },
+      {
+        "multi": {
+          "max": 0.25,
+          "min": 0.25
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "flame_splash_potion": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.7,
+        "min": 1.4
+      },
+      "stat": "health"
+    },
+    "id": "flame_splash_potion",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.7,
+          "min": 1.4
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "flame_strike": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.4,
+        "min": 1.68
+      },
+      "stat": "health"
+    },
+    "id": "flame_strike",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.4,
+          "min": 1.68
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "flame_strike_fighter": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.2,
+        "min": 0.84
+      },
+      "stat": "health"
+    },
+    "id": "flame_strike_fighter",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.2,
+          "min": 0.84
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "flamethrower_totem": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.2,
+        "min": 0.14
+      },
+      "stat": "health"
+    },
+    "id": "flamethrower_totem",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.2,
+          "min": 0.14
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "flicker_strike": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.6,
+        "min": 2.1
+      },
+      "stat": "health"
+    },
+    "id": "flicker_strike",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.6,
+          "min": 2.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "flower_flower": {
+    "base": {
+      "max": 6,
+      "min": 1
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 0.5
+      },
+      "stat": "health"
+    },
+    "id": "flower_flower",
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 0.5
+        },
+        "stat": "weapon_damage"
+      }
+    ],
+    "target_stat_scalings": []
+  },
+  "flowing_river_rush": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.6875,
+        "min": 0.525
+      },
+      "stat": "health"
+    },
+    "id": "flowing_river_rush",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.6875,
+          "min": 0.525
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "forbidden_rite": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.4
+      },
+      "stat": "health"
+    },
+    "id": "forbidden_rite",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.4
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.08,
+          "min": 0.08
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "forbidden_rite_self": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.25,
+        "min": 0.25
+      },
+      "stat": "health"
+    },
+    "id": "forbidden_rite_self",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.25,
+          "min": 0.25
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "frost_flower": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.4,
+        "min": 1.05
+      },
+      "stat": "health"
+    },
+    "id": "frost_flower",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.4,
+          "min": 1.05
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "frost_nova": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.6,
+        "min": 1.12
+      },
+      "stat": "health"
+    },
+    "id": "frost_nova",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.6,
+          "min": 1.12
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.05,
+          "min": 0.05
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "frost_nova_heal": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.357,
+        "min": 0.25
+      },
+      "stat": "health"
+    },
+    "id": "frost_nova_heal",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.357,
+          "min": 0.25
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "frost_orbs": {
+    "base": {
+      "max": 0.5,
+      "min": 0.35
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.65,
+        "min": 0.455
+      },
+      "stat": "health"
+    },
+    "id": "frost_orbs",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.65,
+          "min": 0.455
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.03,
+          "min": 0.03
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "frost_trap": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 2.1
+      },
+      "stat": "health"
+    },
+    "id": "frost_trap",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 2.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "frostbite_thrust": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.5,
+        "min": 1.05
+      },
+      "stat": "health"
+    },
+    "id": "frostbite_thrust",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.5,
+          "min": 1.05
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "frostbite_thrust_energy_restore": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.375,
+        "min": 0.28125
+      },
+      "stat": "health"
+    },
+    "id": "frostbite_thrust_energy_restore",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.375,
+          "min": 0.28125
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "frostbite_thrust_tracked": {
+    "base": {
+      "max": 5.6,
+      "min": 3.92
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.1,
+        "min": 1.47
+      },
+      "stat": "health"
+    },
+    "id": "frostbite_thrust_tracked",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.1,
+          "min": 1.47
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "gale_wind": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.4
+      },
+      "stat": "health"
+    },
+    "id": "gale_wind",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.4
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "gale_wind_fighter": {
+    "base": {
+      "max": 1.8,
+      "min": 1.26
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.8,
+        "min": 1.26
+      },
+      "stat": "health"
+    },
+    "id": "gale_wind_fighter",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.8,
+          "min": 1.26
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "galvanic_blade": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.4,
+        "min": 0.25
+      },
+      "stat": "health"
+    },
+    "id": "galvanic_blade",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.4,
+          "min": 0.25
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.05,
+          "min": 0.035
+        },
+        "stat": "mana"
+      }
+    ]
+  },
+  "garden_of_thorns": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.8,
+        "min": 0.8
+      },
+      "stat": "health"
+    },
+    "id": "garden_of_thorns",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.8,
+          "min": 0.8
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.1,
+          "min": 0.1
+        },
+        "stat": "energy"
+      }
+    ]
+  },
+  "glacial_condemnation": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 2.1
+      },
+      "stat": "health"
+    },
+    "id": "glacial_condemnation",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 2.1
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.25,
+          "min": 0.175
+        },
+        "stat": "energy"
+      }
+    ]
+  },
+  "glacial_dash": {
+    "base": {
+      "max": 8,
+      "min": 5.6
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 2.1
+      },
+      "stat": "health"
+    },
+    "id": "glacial_dash",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 2.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "glacial_phoenix": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.25,
+        "min": 1.575
+      },
+      "stat": "health"
+    },
+    "id": "glacial_phoenix",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.25,
+          "min": 1.575
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "goading_strike": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.995,
+        "min": 1.575
+      },
+      "stat": "health"
+    },
+    "id": "goading_strike",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.995,
+          "min": 1.575
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "gong_strike": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.45,
+        "min": 1.015
+      },
+      "stat": "health"
+    },
+    "id": "gong_strike",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.45,
+          "min": 1.015
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.08,
+          "min": 0.08
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "gong_strike_fighter": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.9,
+        "min": 2.03
+      },
+      "stat": "health"
+    },
+    "id": "gong_strike_fighter",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.9,
+          "min": 2.03
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "gong_strike_plain": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.45,
+        "min": 1.015
+      },
+      "stat": "health"
+    },
+    "id": "gong_strike_plain",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.45,
+          "min": 1.015
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "grand_cross": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 2.1
+      },
+      "stat": "health"
+    },
+    "id": "grand_cross",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 2.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "grand_cross_heal": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.8,
+        "min": 0.56
+      },
+      "stat": "health"
+    },
+    "id": "grand_cross_heal",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.8,
+          "min": 0.56
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "grand_cross_self": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.33,
+        "min": 0.33
+      },
+      "stat": "health"
+    },
+    "id": "grand_cross_self",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.33,
+          "min": 0.33
+        },
+        "stat": "health"
+      },
+      {
+        "multi": {
+          "max": 0.33,
+          "min": 0.33
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "hailstorm": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.385,
+        "min": 0.2695
+      },
+      "stat": "health"
+    },
+    "id": "hailstorm",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.385,
+          "min": 0.2695
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "harvest": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.5,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "harvest",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.5,
+          "min": 1
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.225,
+          "min": 0.1575
+        },
+        "stat": "energy"
+      }
+    ]
+  },
+  "healing_aura": {
+    "base": {
+      "max": 16,
+      "min": 11.2
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.25,
+        "min": 1.5
+      },
+      "stat": "health"
+    },
+    "id": "healing_aura",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.25,
+          "min": 1.5
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "heart_of_ice": {
+    "base": {
+      "max": 8,
+      "min": 5.6
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.5,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "heart_of_ice",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.5,
+          "min": 1
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.2,
+          "min": 0.1
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "hoarfrost_armor_heal": {
+    "base": {
+      "max": 8,
+      "min": 5.6
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.4
+      },
+      "stat": "health"
+    },
+    "id": "hoarfrost_armor_heal",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.4
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "holy_fire": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 10,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 0.7
+      },
+      "stat": "health"
+    },
+    "id": "holy_fire",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 0.7
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.15,
+          "min": 0.15
+        },
+        "stat": "health"
+      },
+      {
+        "multi": {
+          "max": 0.15,
+          "min": 0.15
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "holy_fire_self": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "holy_fire_self",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.33,
+          "min": 0.33
+        },
+        "stat": "health"
+      },
+      {
+        "multi": {
+          "max": 0.33,
+          "min": 0.33
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "holy_missiles": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.25,
+        "min": 0.15
+      },
+      "stat": "health"
+    },
+    "id": "holy_missiles",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.25,
+          "min": 0.15
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "holy_shield_throw": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.65,
+        "min": 1.155
+      },
+      "stat": "health"
+    },
+    "id": "holy_shield_throw",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.65,
+          "min": 1.155
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "holy_shock": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.8,
+        "min": 1.96
+      },
+      "stat": "health"
+    },
+    "id": "holy_shock",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.8,
+          "min": 1.96
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "hunter_pot_heal": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "hunter_pot_heal",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5,
+          "min": 0.35
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "hunters_mark": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.6
+      },
+      "stat": "health"
+    },
+    "id": "hunters_mark",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.6
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "ice_comet": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.4
+      },
+      "stat": "health"
+    },
+    "id": "ice_comet",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.4
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.06,
+          "min": 0.06
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "ice_tipped_spear_stun": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.4
+      },
+      "stat": "health"
+    },
+    "id": "ice_tipped_spear_stun",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.4
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "iceball": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.4375,
+        "min": 1.70625
+      },
+      "stat": "health"
+    },
+    "id": "iceball",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.4375,
+          "min": 1.70625
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "iceball_explosion": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.21875,
+        "min": 0.853125
+      },
+      "stat": "health"
+    },
+    "id": "iceball_explosion",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.21875,
+          "min": 0.853125
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "iceball_half": {
+    "base": {
+      "max": 0.5,
+      "min": 0.35
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.609375,
+        "min": 0.4265625
+      },
+      "stat": "health"
+    },
+    "id": "iceball_half",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.609375,
+          "min": 0.4265625
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "ignite_explosion": {
+    "base": {
+      "max": 4,
+      "min": 4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 4,
+        "min": 4
+      },
+      "stat": "health"
+    },
+    "id": "ignite_explosion",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 4,
+          "min": 4
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "immolate": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 0.7
+      },
+      "stat": "health"
+    },
+    "id": "immolate",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 0.7
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.02,
+          "min": 0.02
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "inferno": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.4,
+        "min": 0.28
+      },
+      "stat": "health"
+    },
+    "id": "inferno",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.4,
+          "min": 0.28
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "inner_calm": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.05,
+        "min": 0.035
+      },
+      "stat": "health"
+    },
+    "id": "inner_calm",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.05,
+          "min": 0.035
+        },
+        "stat": "mana"
+      }
+    ]
+  },
+  "kick": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 2.7
+      },
+      "stat": "health"
+    },
+    "id": "kick",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 2.7
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "kinetic_blast": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.6,
+        "min": 0.42
+      },
+      "stat": "health"
+    },
+    "id": "kinetic_blast",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.6,
+          "min": 0.42
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "lightning_bolt": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 0.7
+      },
+      "stat": "health"
+    },
+    "id": "lightning_bolt",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 0.7
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.04,
+          "min": 0.04
+        },
+        "stat": "mana"
+      }
+    ]
+  },
+  "lightning_nova": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.47,
+        "min": 1.05
+      },
+      "stat": "health"
+    },
+    "id": "lightning_nova",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.47,
+          "min": 1.05
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.1,
+          "min": 0.07
+        },
+        "stat": "mana"
+      }
+    ]
+  },
+  "lightning_spear": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.98,
+        "min": 1.386
+      },
+      "stat": "health"
+    },
+    "id": "lightning_spear",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.98,
+          "min": 1.386
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.12,
+          "min": 0.084
+        },
+        "stat": "mana"
+      }
+    ]
+  },
+  "lightning_totem": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 0.75
+      },
+      "stat": "health"
+    },
+    "id": "lightning_totem",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 0.75
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.08,
+          "min": 0.056
+        },
+        "stat": "mana"
+      }
+    ]
+  },
+  "lose_aggro": {
+    "base": {
+      "max": 8,
+      "min": 5.6
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.5
+      },
+      "stat": "health"
+    },
+    "id": "lose_aggro",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.5
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "mage_restore": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.15,
+        "min": 0.15
+      },
+      "stat": "health"
+    },
+    "id": "mage_restore",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.15,
+          "min": 0.15
+        },
+        "stat": "mana"
+      }
+    ]
+  },
+  "magic_missile": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.4
+      },
+      "stat": "health"
+    },
+    "id": "magic_missile",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.4
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "magma_flower": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.775,
+        "min": 0.55
+      },
+      "stat": "health"
+    },
+    "id": "magma_flower",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.775,
+          "min": 0.55
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "magma_orb": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.9,
+        "min": 1.32
+      },
+      "stat": "health"
+    },
+    "id": "magma_orb",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.9,
+          "min": 1.32
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "magma_orb_explosion": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "id": "magma_orb_explosion",
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.36,
+        "min": 1.65
+      },
+      "stat": "health"
+    },
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.36,
+          "min": 1.65
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "martyrdom": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.35,
+        "min": 0.25
+      },
+      "stat": "health"
+    },
+    "id": "martyrdom",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.35,
+          "min": 0.25
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "martyrdom_self": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.25,
+        "min": 0.25
+      },
+      "stat": "health"
+    },
+    "id": "martyrdom_self",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.25,
+          "min": 0.25
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "meditate": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "meditate",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.1,
+          "min": 0.1
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "merc_arrow_barrage": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.7,
+        "min": 0.7
+      },
+      "stat": "health"
+    },
+    "id": "merc_arrow_barrage",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.7,
+          "min": 0.7
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_arrow_storm": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.7,
+        "min": 1.7
+      },
+      "stat": "health"
+    },
+    "id": "merc_arrow_storm",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.7,
+          "min": 1.7
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_charged_bolt": {
+    "base": {
+      "max": 3.4,
+      "min": 3.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.55,
+        "min": 2.55
+      },
+      "stat": "health"
+    },
+    "id": "merc_charged_bolt",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.55,
+          "min": 2.55
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_chilling_field": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.59375,
+        "min": 1.59375
+      },
+      "stat": "health"
+    },
+    "id": "merc_chilling_field",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.59375,
+          "min": 1.59375
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.102,
+          "min": 0.102
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "merc_encased": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.7,
+        "min": 1.7
+      },
+      "stat": "health"
+    },
+    "id": "merc_encased",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.7,
+          "min": 1.7
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_enflamed": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.5,
+        "min": 2.5
+      },
+      "stat": "health"
+    },
+    "id": "merc_enflamed",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.5,
+          "min": 2.5
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_fire_trap": {
+    "base": {
+      "max": 3.4,
+      "min": 3.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3.4,
+        "min": 3.4
+      },
+      "stat": "health"
+    },
+    "id": "merc_fire_trap",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3.4,
+          "min": 3.4
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_fire_wall": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.34,
+        "min": 0.34
+      },
+      "stat": "health"
+    },
+    "id": "merc_fire_wall",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.34,
+          "min": 0.34
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_fireball": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.125,
+        "min": 2.125
+      },
+      "stat": "health"
+    },
+    "id": "merc_fireball",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.125,
+          "min": 2.125
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_flame_strike": {
+    "base": {
+      "max": 3.4,
+      "min": 3.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.04,
+        "min": 2.04
+      },
+      "stat": "health"
+    },
+    "id": "merc_flame_strike",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.04,
+          "min": 2.04
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_flame_strike_fighter": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.02,
+        "min": 1.02
+      },
+      "stat": "health"
+    },
+    "id": "merc_flame_strike_fighter",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.02,
+          "min": 1.02
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_frost_nova": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.36,
+        "min": 1.36
+      },
+      "stat": "health"
+    },
+    "id": "merc_frost_nova",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.36,
+          "min": 1.36
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.068,
+          "min": 0.068
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "merc_frost_nova_heal": {
+    "base": {
+      "max": 1,
+      "min": 1
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.357,
+        "min": 0.357
+      },
+      "stat": "health"
+    },
+    "id": "merc_frost_nova_heal",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.357,
+          "min": 0.357
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_frost_trap": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.55,
+        "min": 2.55
+      },
+      "stat": "health"
+    },
+    "id": "merc_frost_trap",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.55,
+          "min": 2.55
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_gale_wind": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.85,
+        "min": 0.85
+      },
+      "stat": "health"
+    },
+    "id": "merc_gale_wind",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.85,
+          "min": 0.85
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_gong_strike": {
+    "base": {
+      "max": 3.4,
+      "min": 3.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.275,
+        "min": 1.275
+      },
+      "stat": "health"
+    },
+    "id": "merc_gong_strike",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.275,
+          "min": 1.275
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.085,
+          "min": 0.085
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "merc_hunters_potion": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "merc_hunters_potion",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.4,
+          "min": 0.4
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "merc_iceball_explosion": {
+    "base": {
+      "max": 0.85,
+      "min": 0.85
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.0359375,
+        "min": 1.0359375
+      },
+      "stat": "health"
+    },
+    "id": "merc_iceball_explosion",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.0359375,
+          "min": 1.0359375
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_iceball_half": {
+    "base": {
+      "max": 0.425,
+      "min": 0.425
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.5179688,
+        "min": 0.5179688
+      },
+      "stat": "health"
+    },
+    "id": "merc_iceball_half",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5179688,
+          "min": 0.5179688
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_inferno": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.255,
+        "min": 0.255
+      },
+      "stat": "health"
+    },
+    "id": "merc_inferno",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.255,
+          "min": 0.255
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_magma_orb": {
+    "base": {
+      "max": 1.36,
+      "min": 1.36
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.36,
+        "min": 1.36
+      },
+      "stat": "health"
+    },
+    "id": "merc_magma_orb",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.36,
+          "min": 1.36
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_magma_orb_explosion": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "id": "merc_magma_orb_explosion",
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.7,
+        "min": 1.7
+      },
+      "stat": "health"
+    },
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.7,
+          "min": 1.7
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_meditate": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "merc_meditate",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.15,
+          "min": 0.15
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "merc_meteor": {
+    "base": {
+      "max": 3.4,
+      "min": 3.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.955,
+        "min": 1.955
+      },
+      "stat": "health"
+    },
+    "id": "merc_meteor",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.955,
+          "min": 1.955
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_meteor_arrow": {
+    "base": {
+      "max": 3.4,
+      "min": 3.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.346,
+        "min": 2.346
+      },
+      "stat": "health"
+    },
+    "id": "merc_meteor_arrow",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.346,
+          "min": 2.346
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_poison_trap": {
+    "base": {
+      "max": 0.85,
+      "min": 0.85
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.85,
+        "min": 0.85
+      },
+      "stat": "health"
+    },
+    "id": "merc_poison_trap",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.85,
+          "min": 0.85
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_pull": {
+    "base": {
+      "max": 3.4,
+      "min": 3.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.7,
+        "min": 1.7
+      },
+      "stat": "health"
+    },
+    "id": "merc_pull",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.7,
+          "min": 1.7
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_quake": {
+    "base": {
+      "max": 3.4,
+      "min": 3.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.55,
+        "min": 2.55
+      },
+      "stat": "health"
+    },
+    "id": "merc_quake",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.55,
+          "min": 2.55
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_quake_initial": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.275,
+        "min": 1.275
+      },
+      "stat": "health"
+    },
+    "id": "merc_quake_initial",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.275,
+          "min": 1.275
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_shred": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.6375,
+        "min": 0.6375
+      },
+      "stat": "health"
+    },
+    "id": "merc_shred",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.6375,
+          "min": 0.6375
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_taunt": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "merc_taunt",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.1,
+          "min": 0.1
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "merc_tidal_strike": {
+    "base": {
+      "max": 3.4,
+      "min": 3.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.21,
+        "min": 2.21
+      },
+      "stat": "health"
+    },
+    "id": "merc_tidal_strike",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.21,
+          "min": 2.21
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_tidal_strike_fighter": {
+    "base": {
+      "max": 0.85,
+      "min": 0.85
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.5525,
+        "min": 0.5525
+      },
+      "stat": "health"
+    },
+    "id": "merc_tidal_strike_fighter",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5525,
+          "min": 0.5525
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "merc_whirlwind": {
+    "base": {
+      "max": 1.7,
+      "min": 1.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.8,
+        "min": 0.8
+      },
+      "stat": "health"
+    },
+    "id": "merc_whirlwind",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.8,
+          "min": 0.8
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.05,
+          "min": 0.05
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "meteor": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.76,
+        "min": 2.1
+      },
+      "stat": "health"
+    },
+    "id": "meteor",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.76,
+          "min": 2.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "meteor_overheat": {
+    "base": {
+      "max": 5,
+      "min": 3.5
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3.45,
+        "min": 2.415
+      },
+      "stat": "health"
+    },
+    "id": "meteor_overheat",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3.45,
+          "min": 2.415
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "minion_explosion": {
+    "base": {
+      "max": 10,
+      "min": 10
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "minion_explosion",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "mirror_image": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.5,
+        "min": 1.05
+      },
+      "stat": "health"
+    },
+    "id": "mirror_image",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.5,
+          "min": 1.05
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "nature_balm": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "nature_balm",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.06,
+          "min": 0.03
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "noise": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.35,
+        "min": 0.945
+      },
+      "stat": "health"
+    },
+    "id": "noise",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.35,
+          "min": 0.945
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "noise_self": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.675,
+        "min": 0.4725
+      },
+      "stat": "health"
+    },
+    "id": "noise_self",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.675,
+          "min": 0.4725
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "omnislash": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.275,
+        "min": 0.8925
+      },
+      "stat": "health"
+    },
+    "id": "omnislash",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.275,
+          "min": 0.8925
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "omnislash_final": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.55,
+        "min": 1.785
+      },
+      "stat": "health"
+    },
+    "id": "omnislash_final",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.55,
+          "min": 1.785
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "parallel_convergence": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 2.4
+      },
+      "stat": "health"
+    },
+    "id": "parallel_convergence",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 2.4
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "parallel_convergence_lightning": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 2.1
+      },
+      "stat": "health"
+    },
+    "id": "parallel_convergence_lightning",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 2.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "pedipalp_consume": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.5,
+        "min": 1.5
+      },
+      "stat": "health"
+    },
+    "id": "pedipalp_consume",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.5,
+          "min": 1.5
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 1,
+          "min": 1
+        },
+        "stat": "strength"
+      },
+      {
+        "multi": {
+          "max": 1,
+          "min": 1
+        },
+        "stat": "dexterity"
+      }
+    ]
+  },
+  "persecutory_thrust": {
+    "base": {
+      "max": 0.5,
+      "min": 0.35
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.275,
+        "min": 0.1925
+      },
+      "stat": "health"
+    },
+    "id": "persecutory_thrust",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.275,
+          "min": 0.1925
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "persecutory_thrust_self": {
+    "base": {
+      "max": 0.25,
+      "min": 0.175
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.01,
+        "min": 0.01
+      },
+      "stat": "health"
+    },
+    "id": "persecutory_thrust_self",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.01,
+          "min": 0.01
+        },
+        "stat": "health"
+      },
+      {
+        "multi": {
+          "max": 0.01,
+          "min": 0.01
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "pet_basic": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "pet_basic",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "petrify": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 2.1
+      },
+      "stat": "health"
+    },
+    "id": "petrify",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 2.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "phase_dive": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.8,
+        "min": 1.96
+      },
+      "stat": "health"
+    },
+    "id": "phase_dive",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.8,
+          "min": 1.96
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "phase_dive_beta": {
+    "base": {
+      "max": 5,
+      "min": 3.5
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3.5,
+        "min": 2.45
+      },
+      "stat": "health"
+    },
+    "id": "phase_dive_beta",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3.5,
+          "min": 2.45
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "phase_dive_blizz": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.8,
+        "min": 1.96
+      },
+      "stat": "health"
+    },
+    "id": "phase_dive_blizz",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.8,
+          "min": 1.96
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "piercing_dagger_throw": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.805,
+        "min": 1.9635
+      },
+      "stat": "health"
+    },
+    "id": "piercing_dagger_throw",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.805,
+          "min": 1.9635
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "piercing_strike": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.995,
+        "min": 1.575
+      },
+      "stat": "health"
+    },
+    "id": "piercing_strike",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.995,
+          "min": 1.575
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "plague_aura_self": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "plague_aura_self",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.03,
+          "min": 0.03
+        },
+        "stat": "health"
+      },
+      {
+        "multi": {
+          "max": 0.03,
+          "min": 0.03
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "poison_arrow": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.45
+      },
+      "stat": "health"
+    },
+    "id": "poison_arrow",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.45
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "poison_cloud": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.2,
+        "min": 1.54
+      },
+      "stat": "health"
+    },
+    "id": "poison_cloud",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.2,
+          "min": 1.54
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "poison_cloud_double": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 4.4,
+        "min": 3.08
+      },
+      "stat": "health"
+    },
+    "id": "poison_cloud_double",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 4.4,
+          "min": 3.08
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "poison_trap": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 0.7
+      },
+      "stat": "health"
+    },
+    "id": "poison_trap",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 0.7
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "poisonball": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.65,
+        "min": 0.455
+      },
+      "stat": "health"
+    },
+    "id": "poisonball",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.65,
+          "min": 0.455
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "power_chord": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.6,
+        "min": 1.82
+      },
+      "stat": "health"
+    },
+    "id": "power_chord",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.6,
+          "min": 1.82
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "power_surge": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.4
+      },
+      "stat": "health"
+    },
+    "id": "power_surge",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.4
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.05,
+          "min": 0.05
+        },
+        "stat": "mana"
+      }
+    ]
+  },
+  "prayer": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.3,
+        "min": 0.1
+      },
+      "stat": "health"
+    },
+    "id": "prayer",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.3,
+          "min": 0.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "profane_explosion": {
+    "base": {
+      "max": 4,
+      "min": 4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 4,
+        "min": 4
+      },
+      "stat": "health"
+    },
+    "id": "profane_explosion",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 4,
+          "min": 4
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "pull": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.6
+      },
+      "stat": "health"
+    },
+    "id": "pull",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.6
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "pulsar_singularity_trap": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 2.1
+      },
+      "stat": "health"
+    },
+    "id": "pulsar_singularity_trap",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 2.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "pulsar_singularity_trap_half": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.5,
+        "min": 1.05
+      },
+      "stat": "health"
+    },
+    "id": "pulsar_singularity_trap_half",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.5,
+          "min": 1.05
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "puncture": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.64,
+        "min": 1.848
+      },
+      "stat": "health"
+    },
+    "id": "puncture",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.64,
+          "min": 1.848
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "putrid_breath": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.95,
+        "min": 0.665
+      },
+      "stat": "health"
+    },
+    "id": "putrid_breath",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.95,
+          "min": 0.665
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "quake": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 2.1
+      },
+      "stat": "health"
+    },
+    "id": "quake",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 2.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "quake_fighter": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.33,
+        "min": 0.26
+      },
+      "stat": "health"
+    },
+    "id": "quake_fighter",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.33,
+          "min": 0.26
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "quake_initial": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.5,
+        "min": 1.05
+      },
+      "stat": "health"
+    },
+    "id": "quake_initial",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.5,
+          "min": 1.05
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "raging_dragon": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 4.5,
+        "min": 3.15
+      },
+      "stat": "health"
+    },
+    "id": "raging_dragon",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 4.5,
+          "min": 3.15
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "raging_dragon_slam": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.25,
+        "min": 1.575
+      },
+      "stat": "health"
+    },
+    "id": "raging_dragon_slam",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.25,
+          "min": 1.575
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "rallying_sweep": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.6,
+        "min": 1.82
+      },
+      "stat": "health"
+    },
+    "id": "rallying_sweep",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.6,
+          "min": 1.82
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "ranger_trap": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 4,
+        "min": 2.8
+      },
+      "stat": "health"
+    },
+    "id": "ranger_trap",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 4,
+          "min": 2.8
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "reckoners_flail": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.25,
+        "min": 1.575
+      },
+      "stat": "health"
+    },
+    "id": "reckoners_flail",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.25,
+          "min": 1.575
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "rejuvenation": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.5,
+        "min": 0.35
+      },
+      "stat": "health"
+    },
+    "id": "rejuvenation",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5,
+          "min": 0.35
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.1,
+          "min": 0.1
+        },
+        "stat": "energy"
+      }
+    ]
+  },
+  "resonance": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.86,
+        "min": 0.6
+      },
+      "stat": "health"
+    },
+    "id": "resonance",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.86,
+          "min": 0.6
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "resonance_charmed": {
+    "base": {
+      "max": 8,
+      "min": 5.6
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.72,
+        "min": 1.2
+      },
+      "stat": "health"
+    },
+    "id": "resonance_charmed",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.72,
+          "min": 1.2
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "revenant_slam": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.5,
+        "min": 1.75
+      },
+      "stat": "health"
+    },
+    "id": "revenant_slam",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.5,
+          "min": 1.75
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.08,
+          "min": 0.08
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "revenant_slam_rock": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.625,
+        "min": 0.4375
+      },
+      "stat": "health"
+    },
+    "id": "revenant_slam_rock",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.625,
+          "min": 0.4375
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.02,
+          "min": 0.02
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "ricochet_shot": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 2.1
+      },
+      "stat": "health"
+    },
+    "id": "ricochet_shot",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 2.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "rime_reaver": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.3,
+        "min": 0.91
+      },
+      "stat": "health"
+    },
+    "id": "rime_reaver",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.3,
+          "min": 0.91
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.13,
+          "min": 0.091
+        },
+        "stat": "energy"
+      }
+    ]
+  },
+  "rime_reaver_half": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.65,
+        "min": 0.455
+      },
+      "stat": "health"
+    },
+    "id": "rime_reaver_half",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.65,
+          "min": 0.455
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.065,
+          "min": 0.0455
+        },
+        "stat": "energy"
+      }
+    ]
+  },
+  "rime_reaver_tracked": {
+    "base": {
+      "max": 2.5,
+      "min": 1.75
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.625,
+        "min": 1.1375
+      },
+      "stat": "health"
+    },
+    "id": "rime_reaver_tracked",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.625,
+          "min": 1.1375
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.1625,
+          "min": 0.11375
+        },
+        "stat": "energy"
+      }
+    ]
+  },
+  "rip_apart": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 2.1
+      },
+      "stat": "health"
+    },
+    "id": "rip_apart",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 2.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "ritardando": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 2.1
+      },
+      "stat": "health"
+    },
+    "id": "ritardando",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 2.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "sanguine_aura_self": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "sanguine_aura_self",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.15,
+          "min": 0.15
+        },
+        "stat": "health"
+      },
+      {
+        "multi": {
+          "max": 0.15,
+          "min": 0.15
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "shatter": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.5,
+        "min": 0.35
+      },
+      "stat": "health"
+    },
+    "id": "shatter",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5,
+          "min": 0.35
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "shooting_star": {
+    "base": {
+      "max": 8,
+      "min": 5.6
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.5,
+        "min": 1.75
+      },
+      "stat": "health"
+    },
+    "id": "shooting_star",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.5,
+          "min": 1.75
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "shout_warn": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "shout_warn",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.1,
+          "min": 0.05
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "shred": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.75,
+        "min": 0.55
+      },
+      "stat": "health"
+    },
+    "id": "shred",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.75,
+          "min": 0.55
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "shred_fighter": {
+    "base": {
+      "max": 2.5,
+      "min": 1.85
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.9625,
+        "min": 0.6875
+      },
+      "stat": "health"
+    },
+    "id": "shred_fighter",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.9625,
+          "min": 0.6875
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "slice": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.5,
+        "min": 1.05
+      },
+      "stat": "health"
+    },
+    "id": "slice",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.5,
+          "min": 1.05
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "snipe": {
+    "base": {
+      "max": 8,
+      "min": 5.6
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 5.5,
+        "min": 3.85
+      },
+      "stat": "health"
+    },
+    "id": "snipe",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 5.5,
+          "min": 3.85
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "snipe_double": {
+    "base": {
+      "max": 16,
+      "min": 11.2
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 8.25,
+        "min": 5.775
+      },
+      "stat": "health"
+    },
+    "id": "snipe_double",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 8.25,
+          "min": 5.775
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "soul_siphon": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.5,
+        "min": 0.35
+      },
+      "stat": "health"
+    },
+    "id": "soul_siphon",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5,
+          "min": 0.35
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "soul_siphon_blood": {
+    "base": {
+      "max": 0.75,
+      "min": 0.525
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.375,
+        "min": 0.2625
+      },
+      "stat": "health"
+    },
+    "id": "soul_siphon_blood",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.375,
+          "min": 0.2625
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "soul_siphon_cloud": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.5,
+        "min": 0.35
+      },
+      "stat": "health"
+    },
+    "id": "soul_siphon_cloud",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5,
+          "min": 0.35
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "soul_wound": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 0.7
+      },
+      "stat": "health"
+    },
+    "id": "soul_wound",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 0.7
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "soul_wound_big": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.4
+      },
+      "stat": "health"
+    },
+    "id": "soul_wound_big",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.4
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "spider_pet_basic": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.7,
+        "min": 0.7
+      },
+      "stat": "health"
+    },
+    "id": "spider_pet_basic",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.7,
+          "min": 0.7
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "spirit_offensive": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.6,
+        "min": 1.12
+      },
+      "stat": "health"
+    },
+    "id": "spirit_offensive",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.6,
+          "min": 1.12
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "spirit_offensive_heal": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.6,
+        "min": 1.12
+      },
+      "stat": "health"
+    },
+    "id": "spirit_offensive_heal",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.6,
+          "min": 1.12
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "splinter": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.5,
+        "min": 0.35
+      },
+      "stat": "health"
+    },
+    "id": "splinter",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5,
+          "min": 0.35
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "steam_cloud": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.42,
+        "min": 0.3
+      },
+      "stat": "health"
+    },
+    "id": "steam_cloud",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.42,
+          "min": 0.3
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "storming_tiger": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.25,
+        "min": 1.575
+      },
+      "stat": "health"
+    },
+    "id": "storming_tiger",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.25,
+          "min": 1.575
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "storming_tiger_lightning": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.125,
+        "min": 0.7875
+      },
+      "stat": "health"
+    },
+    "id": "storming_tiger_lightning",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.125,
+          "min": 0.7875
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "summon_wraith": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.5,
+        "min": 0.35
+      },
+      "stat": "health"
+    },
+    "id": "summon_wraith",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5,
+          "min": 0.35
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "summon_wraith_abyss": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.75,
+        "min": 0.525
+      },
+      "stat": "health"
+    },
+    "id": "summon_wraith_abyss",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.75,
+          "min": 0.525
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "summon_wraith_blood": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.5,
+        "min": 0.35
+      },
+      "stat": "health"
+    },
+    "id": "summon_wraith_blood",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5,
+          "min": 0.35
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.03,
+          "min": 0.03
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "summon_wraith_cloud": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.2,
+        "min": 0.14
+      },
+      "stat": "health"
+    },
+    "id": "summon_wraith_cloud",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.2,
+          "min": 0.14
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "sweeping_blow": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.995,
+        "min": 1.575
+      },
+      "stat": "health"
+    },
+    "id": "sweeping_blow",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.995,
+          "min": 1.575
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "tailwind_sweep": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.4
+      },
+      "stat": "health"
+    },
+    "id": "tailwind_sweep",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.4
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "target": {
+    "base": {
+      "max": 1,
+      "min": 1
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0,
+        "min": 0
+      },
+      "stat": "health"
+    },
+    "id": "target",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0,
+          "min": 0
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "taunt": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "taunt",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.1,
+          "min": 0.05
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "thorn_bush": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.7,
+        "min": 1.3
+      },
+      "stat": "health"
+    },
+    "id": "thorn_bush",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.7,
+          "min": 1.3
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "thorn_consume": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.5,
+        "min": 1.5
+      },
+      "stat": "health"
+    },
+    "id": "thorn_consume",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.5,
+          "min": 1.5
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.2,
+          "min": 0.2
+        },
+        "stat": "energy"
+      }
+    ]
+  },
+  "tidal_strike": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.6,
+        "min": 1.82
+      },
+      "stat": "health"
+    },
+    "id": "tidal_strike",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.6,
+          "min": 1.82
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "tidal_strike_fighter": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.65,
+        "min": 0.455
+      },
+      "stat": "health"
+    },
+    "id": "tidal_strike_fighter",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.65,
+          "min": 0.455
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "timewinder": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.2,
+        "min": 1.54
+      },
+      "stat": "health"
+    },
+    "id": "timewinder",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.2,
+          "min": 1.54
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "timewinder_floor": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.1,
+        "min": 0.77
+      },
+      "stat": "health"
+    },
+    "id": "timewinder_floor",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.1,
+          "min": 0.77
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "torment": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.5,
+        "min": 0.3
+      },
+      "stat": "health"
+    },
+    "id": "torment",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5,
+          "min": 0.3
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "totem_guard": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.6,
+        "min": 0.3
+      },
+      "stat": "health"
+    },
+    "id": "totem_guard",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.6,
+          "min": 0.3
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "totem_heal": {
+    "base": {
+      "max": 8,
+      "min": 5.6
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2,
+        "min": 1.5
+      },
+      "stat": "health"
+    },
+    "id": "totem_heal",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2,
+          "min": 1.5
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "totem_mana": {
+    "base": {
+      "max": 16,
+      "min": 11.2
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.5,
+        "min": 1
+      },
+      "stat": "health"
+    },
+    "id": "totem_mana",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.5,
+          "min": 1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "triple_blitz": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.915,
+        "min": 0.68
+      },
+      "stat": "health"
+    },
+    "id": "triple_blitz",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.915,
+          "min": 0.68
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "unknown": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0,
+        "min": 0
+      },
+      "stat": "health"
+    },
+    "id": "unknown",
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0,
+          "min": 0
+        },
+        "stat": "weapon_damage"
+      }
+    ],
+    "target_stat_scalings": []
+  },
+  "venom": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.8,
+        "min": 0.6
+      },
+      "stat": "health"
+    },
+    "id": "venom",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.8,
+          "min": 0.6
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "venom_splash_potion": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.6,
+        "min": 1.3
+      },
+      "stat": "health"
+    },
+    "id": "venom_splash_potion",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.6,
+          "min": 1.3
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "vile_splash_potion": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.5,
+        "min": 1.2
+      },
+      "stat": "health"
+    },
+    "id": "vile_splash_potion",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.5,
+          "min": 1.2
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "vortex_skewer": {
+    "base": {
+      "max": 8,
+      "min": 5.6
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3,
+        "min": 2.1
+      },
+      "stat": "health"
+    },
+    "id": "vortex_skewer",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3,
+          "min": 2.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "weapon_toss": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.55,
+        "min": 1.1
+      },
+      "stat": "health"
+    },
+    "id": "weapon_toss",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.55,
+          "min": 1.1
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "weapon_toss_explode": {
+    "base": {
+      "max": 8,
+      "min": 5.6
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3.1,
+        "min": 2.2
+      },
+      "stat": "health"
+    },
+    "id": "weapon_toss_explode",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3.1,
+          "min": 2.2
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "whirling_blades": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 0.7
+      },
+      "stat": "health"
+    },
+    "id": "whirling_blades",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 0.7
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "whirlwind": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1.25,
+        "min": 0.875
+      },
+      "stat": "health"
+    },
+    "id": "whirlwind",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1.25,
+          "min": 0.875
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "whirlwind_defender": {
+    "base": {
+      "max": 1.5,
+      "min": 1.05
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.9375,
+        "min": 0.65625
+      },
+      "stat": "health"
+    },
+    "id": "whirlwind_defender",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.9375,
+          "min": 0.65625
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.05,
+          "min": 0.05
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "whiteout_sovereign": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.15,
+        "min": 1.65
+      },
+      "stat": "health"
+    },
+    "id": "whiteout_sovereign",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.15,
+          "min": 1.65
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "whiteout_sovereign_icicle": {
+    "base": {
+      "max": 1.5,
+      "min": 1.05
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.80625,
+        "min": 0.564375
+      },
+      "stat": "health"
+    },
+    "id": "whiteout_sovereign_icicle",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.80625,
+          "min": 0.564375
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "winters_grasp": {
+    "base": {
+      "max": 8,
+      "min": 5.6
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 3.5,
+        "min": 2.45
+      },
+      "stat": "health"
+    },
+    "id": "winters_grasp",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 3.5,
+          "min": 2.45
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "wish": {
+    "base": {
+      "max": 4,
+      "min": 2.8
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 1,
+        "min": 0.7
+      },
+      "stat": "health"
+    },
+    "id": "wish",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 1,
+          "min": 0.7
+        },
+        "stat": "health"
+      }
+    ]
+  },
+  "wisp": {
+    "base": {
+      "max": 1,
+      "min": 0.7
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 2,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.5,
+        "min": 0.35
+      },
+      "stat": "health"
+    },
+    "id": "wisp",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.5,
+          "min": 0.35
+        },
+        "stat": "weapon_damage"
+      },
+      {
+        "multi": {
+          "max": 0.02,
+          "min": 0.02
+        },
+        "stat": "magic_shield"
+      }
+    ]
+  },
+  "witch_chain_lightning": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.56595,
+        "min": 0.56595
+      },
+      "stat": "health"
+    },
+    "id": "witch_chain_lightning",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.56595,
+          "min": 0.56595
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "witch_chilling_field": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.42,
+        "min": 0.42
+      },
+      "stat": "health"
+    },
+    "id": "witch_chilling_field",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.42,
+          "min": 0.42
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "witch_fire_nova": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.6006,
+        "min": 0.6006
+      },
+      "stat": "health"
+    },
+    "id": "witch_fire_nova",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.6006,
+          "min": 0.6006
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "witch_fireball": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.6776,
+        "min": 0.6776
+      },
+      "stat": "health"
+    },
+    "id": "witch_fireball",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.6776,
+          "min": 0.6776
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "witch_frostball": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.6825,
+        "min": 0.6825
+      },
+      "stat": "health"
+    },
+    "id": "witch_frostball",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.6825,
+          "min": 0.6825
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "witch_frozen_orb": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.170625,
+        "min": 0.170625
+      },
+      "stat": "health"
+    },
+    "id": "witch_frozen_orb",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.170625,
+          "min": 0.170625
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "witch_frozen_orb_explosion": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.34125,
+        "min": 0.34125
+      },
+      "stat": "health"
+    },
+    "id": "witch_frozen_orb_explosion",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.34125,
+          "min": 0.34125
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "witch_lightning_spear": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.693,
+        "min": 0.693
+      },
+      "stat": "health"
+    },
+    "id": "witch_lightning_spear",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.693,
+          "min": 0.693
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "witch_lightning_totem": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.375,
+        "min": 0.375
+      },
+      "stat": "health"
+    },
+    "id": "witch_lightning_totem",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.375,
+          "min": 0.375
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "witch_meteor": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.84,
+        "min": 0.84
+      },
+      "stat": "health"
+    },
+    "id": "witch_meteor",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.84,
+          "min": 0.84
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "witch_poison_ball": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.273,
+        "min": 0.273
+      },
+      "stat": "health"
+    },
+    "id": "witch_poison_ball",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.273,
+          "min": 0.273
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "witch_poison_cloud": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.616,
+        "min": 0.616
+      },
+      "stat": "health"
+    },
+    "id": "witch_poison_cloud",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.616,
+          "min": 0.616
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "witch_putrid_breath": {
+    "base": {
+      "max": 0,
+      "min": 0
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 0.266,
+        "min": 0.266
+      },
+      "stat": "health"
+    },
+    "id": "witch_putrid_breath",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 0.266,
+          "min": 0.266
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  },
+  "zap": {
+    "base": {
+      "max": 2,
+      "min": 1.4
+    },
+    "base_scaling_type": "NORMAL",
+    "cap_to_wep_dmg": 1000,
+    "dmg_effectiveness": {
+      "multi": {
+        "max": 2.25,
+        "min": 1.575
+      },
+      "stat": "health"
+    },
+    "id": "zap",
+    "target_stat_scalings": [],
+    "stat_scalings": [
+      {
+        "multi": {
+          "max": 2.25,
+          "min": 1.575
+        },
+        "stat": "weapon_damage"
+      }
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { affixes, bases, infusions } from '../lib/gear';
+import { spells } from '../lib/spells';
 import { stats } from '../lib/stats';
 import { supports } from '../lib/supports';
 import { talents } from '../lib/talents';
@@ -66,6 +67,10 @@ const structuredData = JSON.stringify({
     <a class="block" href="/talents">
       <strong>Talents</strong>
       <p>A planner for all {talents.nodes.length} talents, plus the ascendancy and atlas trees.</p>
+    </a>
+    <a class="block" href="/spells">
+      <strong>Spells</strong>
+      <p>{spells.length} class spells with what they do, what they cost and how fast they cast.</p>
     </a>
     <a class="block" href="/stats">
       <strong>Stats</strong>

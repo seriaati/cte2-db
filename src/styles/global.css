@@ -652,6 +652,11 @@ ul {
   cursor: pointer;
 }
 
+.option-icon {
+  margin-right: 8px;
+  vertical-align: -4px;
+}
+
 .dropdown-list li.cap {
   padding: 12px 12px 4px;
   cursor: default;

@@ -159,7 +159,7 @@ export function GearSelect({ options, selected, onChange, anyLabel }: Omit<GearP
 
 interface OptionGroup {
   label?: string;
-  options: { value: string; label: string }[];
+  options: { value: string; label: string; icon?: string }[];
 }
 
 // With a list as its value the dropdown takes several: it stays open, and each pick is passed on for the caller to turn on or off.
@@ -188,6 +188,7 @@ export function Dropdown(props: { label: string; value: string | string[]; group
     if (open) document.getElementById(`${id}-${active}`)?.scrollIntoView({ block: 'nearest' });
   }, [open, active]);
 
+  const icon = (o?: { icon?: string }) => o?.icon && <img key="icon" className="option-icon" src={o.icon} alt="" width={18} height={18} />;
   const toggle = () => {
     setActive(Math.max(0, selected));
     setOpen(!open);
@@ -224,7 +225,9 @@ export function Dropdown(props: { label: string; value: string | string[]; group
         onKeyDown={onKeyDown}
         onBlur={() => setOpen(false)}
       >
-        <span id={`${id}-value`}>{chosen.length > 1 ? `${chosen.length} selected` : options[selected]?.label}</span>
+        <span id={`${id}-value`}>
+          {chosen.length > 1 ? `${chosen.length} selected` : [icon(options[selected]), options[selected]?.label]}
+        </span>
         <svg viewBox="0 0 10 6" width="10" height="6" aria-hidden="true">
           <path d="M0 0h2v2H0zM2 2h2v2H2zM4 4h2v2H4zM6 2h2v2H6zM8 0h2v2H8z" fill="currentColor" />
         </svg>
@@ -250,6 +253,7 @@ export function Dropdown(props: { label: string; value: string | string[]; group
                   onPointerEnter={() => setActive(i)}
                   onClick={() => pick(i)}
                 >
+                  {icon(o)}
                   {o.label}
                 </li>
               );

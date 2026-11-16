@@ -10,6 +10,7 @@ import { affixes, bases, infusions } from '../lib/gear';
 import { gems } from '../lib/gems';
 import { jewelAffixes } from '../lib/jewels';
 import { runes } from '../lib/runes';
+import { spells } from '../lib/spells';
 import { stats } from '../lib/stats';
 import { supports } from '../lib/supports';
 import { talents } from '../lib/talents';
@@ -23,7 +24,7 @@ interface Props {
 
 const {
   title = 'CTE2 Database | Craft to Exile 2 Gear Planner and Affixes',
-  description = 'CTE2 Database is a searchable gear database for the Craft to Exile 2 modpack: a gear planner, affixes, uniques, runes, gems, augments, support gems, infusions, jewels and stats.',
+  description = 'CTE2 Database is a searchable gear database for the Craft to Exile 2 modpack: a gear planner, affixes, uniques, runes, gems, augments, support gems, infusions, jewels, spells and stats.',
 } = Astro.props;
 const path = Astro.url.pathname;
 const url = new URL(path, Astro.site);
@@ -41,6 +42,7 @@ const nav: [href: string, label: string, icon: string, count?: number][] = [
   ['/infusions', 'Infusions', 'M0 0h8v1h-8zM0 1h1v1h-1zM2 1h4v1h-4zM7 1h1v1h-1zM1 2h6v1h-6zM1 3h4v1h-4zM6 3h1v1h-1zM1 4h3v1h-3zM5 4h2v1h-2zM1 5h2v1h-2zM4 5h3v1h-3zM1 6h6v1h-6zM1 7h6v1h-6z', infusions.length],
   ['/jewels', 'Jewels', 'M2 0h4v1h-4zM1 1h1v1h-1zM6 1h1v1h-1zM0 2h1v1h-1zM3 2h2v1h-2zM7 2h1v1h-1zM0 3h1v1h-1zM2 3h4v1h-4zM7 3h1v1h-1zM0 4h1v1h-1zM2 4h4v1h-4zM7 4h1v1h-1zM0 5h1v1h-1zM3 5h2v1h-2zM7 5h1v1h-1zM1 6h1v1h-1zM6 6h1v1h-1zM2 7h4v1h-4z', Object.values(jewelAffixes).flat().length],
   ['/talents', 'Talents', 'M2 0h4v1h-4zM1 1h6v1h-6zM0 2h3v1h-3zM5 2h3v1h-3zM0 3h2v1h-2zM6 3h2v1h-2zM0 4h2v1h-2zM6 4h2v1h-2zM0 5h3v1h-3zM5 5h3v1h-3zM1 6h6v1h-6zM2 7h4v1h-4z', talents.nodes.length],
+  ['/spells', 'Spells', 'M6 0h2v1h-2zM4 1h3v1h-3zM2 2h5v1h-5zM1 3h6v1h-6zM0 4h3v1h-3zM5 4h2v1h-2zM0 5h3v1h-3zM5 5h2v1h-2zM0 6h6v1h-6zM1 7h4v1h-4z', spells.length],
   ['/stats', 'Stats', 'M6 0h2v1h-2zM6 1h2v1h-2zM3 2h2v1h-2zM6 2h2v1h-2zM3 3h2v1h-2zM6 3h2v1h-2zM0 4h2v1h-2zM3 4h2v1h-2zM6 4h2v1h-2zM0 5h2v1h-2zM3 5h2v1h-2zM6 5h2v1h-2zM0 6h2v1h-2zM3 6h2v1h-2zM6 6h2v1h-2z', stats.length],
 ];
 ---

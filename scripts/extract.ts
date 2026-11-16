@@ -15,10 +15,13 @@ const REGISTRIES = [
   'mmorpg_perk',
   'mmorpg_runes',
   'mmorpg_runeword',
+  'mmorpg_spell_school',
+  'mmorpg_spells',
   'mmorpg_stat',
   'mmorpg_support_gem',
   'mmorpg_talent_tree',
   'mmorpg_unique_gears',
+  'mmorpg_value_calc',
 ];
 const LANG = 'assets/mmorpg/lang/en_us.json';
 const OUT = join(import.meta.dirname, '../src/data');
@@ -191,3 +194,18 @@ for (const item of spriteItems) {
   await writeImage(file, PNG.sync.write(frame));
 }
 console.log(`item sprites: ${spriteItems.length}`);
+
+// Icons for the spells page. A class lists its spells and its passives together; only the spells are in the spell registry.
+const SPELLS = join(import.meta.dirname, '../public/spells');
+const classSpells = Object.values(registries.mmorpg_spell_school)
+  .flatMap((school) => Object.keys((school as { perks: object }).perks))
+  .filter((id) => id in registries.mmorpg_spells);
+mkdirSync(SPELLS, { recursive: true });
+for (const id of classSpells) await writeImage(join(SPELLS, `${id}.webp`), texture(`assets/mmorpg/textures/gui/spells/icons/${id}.png`));
+
+const CLASSES = join(import.meta.dirname, '../public/classes');
+mkdirSync(CLASSES, { recursive: true });
+for (const id of Object.keys(registries.mmorpg_spell_school)) {
+  await writeImage(join(CLASSES, `${id}.webp`), texture(`assets/mmorpg/textures/gui/asc_classes/class/${id}.png`));
+}
+console.log(`spell icons: ${classSpells.length}`);
