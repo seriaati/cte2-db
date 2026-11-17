@@ -6,6 +6,7 @@ import {
   MAX_JEWELS,
   OFFHAND_WEAPON_PERCENT,
   RESISTS,
+  RETRIBUTION,
   SOLO_CLASS,
   TREES,
   codexBonuses,
@@ -20,7 +21,7 @@ import {
   type Rolled,
 } from './buildRules';
 import type { Core, Sections } from './builds';
-import { ELEMENTS, UNARMED, armorShare, attackDamage, attackRate, resistance, skillDamage, type Element, type Fighter } from './damageRules';
+import { ELEMENTS, UNARMED, armorShare, attackDamage, attackRate, resistance, skillDamage, type Element, type Fighter, type Used } from './damageRules';
 import { avoidance, mobStats, taken } from './defenseRules';
 import { MODIFIES, baseRange, formedRuneword, itemName, rollWindows, slotCount, socketPart, type Part, type Socketed } from './plannerRules';
 import { bonusSkillLevels, newbieResists, totalStats, type Exact, type Source, type StatDef, type Total } from './statRules';
@@ -207,6 +208,9 @@ export interface Totals {
 const exact = ({ stats, rolls, level }: Part): Exact[] => stats.map((s) => ({ id: s.id, type: s.type, value: rolled(s, rolls.maxPercent, level) }));
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
+// The Retribution stacks the build holds: only a Crusader gains any.
+export const retributionHeld = (data: Pick<Data, 'skills'>, build: Build) => (build.classes.includes(RETRIBUTION.class) ? Math.min(data.skills.retribution.max, build.retribution) : 0);
+
 // Everything that gives a character stats, as the game gathers it (StatCalculation.collectStatsWithCtx
 // and CachedPlayerStats). What it takes from a weapon in the off hand depends on a stat of the
 // character's own, so that is passed in. `extra` is what a skill adds for itself alone.
@@ -279,6 +283,9 @@ function gather(data: Data, build: Build, dualWield: number, extra: Exact[]) {
   if (classes.filter((perks) => perks.length).length === 1) {
     others.push({ id: 'total_damage', type: 'MORE', value: SOLO_CLASS.moreDamage }, { id: 'dmg_reduction', type: 'FLAT', value: SOLO_CLASS.damageReduction });
   }
+  // ExileEffect.getExactStats: every stack of an effect gives its stats again.
+  const stacks = retributionHeld(data, build);
+  if (stacks) others.push(...exact({ stats: data.skills.retribution.stats, rolls: exactly(100), level }).map((mod) => ({ ...mod, value: mod.value * stacks })));
 
   const auras = build.augments.flatMap((a) => {
     const aura = data.sockets.auras.find((x) => x.id === a.id);
@@ -350,36 +357,50 @@ export function buildDamage(data: Data & Pick<Sections, 'damage'>, build: Build)
   const { level } = build;
   const { target } = build.damage;
 
-  // Skills on the hotbar that deal damage themselves.
+  // Skills on the hotbar that deal damage themselves or through the pets they summon.
   const perks = skills.classes.filter((c) => build.classes.includes(c.id)).flatMap((c) => c.perks);
   const choices = build.hotbar.flatMap((slot) => {
     const perk = perks.find((p) => p.id === slot?.spell);
     return slot && perk?.spell && build.perks[perk.id] > 0 && rules.skills[perk.id] ? [{ slot, perk, spell: perk.spell }] : [];
   });
   const chosen = choices.find((c) => c.perk.id === build.damage.skill);
-  const top = chosen ? chosen.spell.maxLevel + skills.bonusLevels : 1;
-  const rank = chosen ? build.perks[chosen.perk.id] + bonusSkillLevels(own.stats, chosen.spell.tagIds, skills.bonusLevels) : 0;
 
-  // StatCalculation.calc: a skill is used with its own stats and its support gems' on top of the character's.
-  const extra = (): Exact[] => {
+  const fighter = (unit: Map<string, Total>): Fighter => ({ level, own: own.stats, unit, weapon: (own.weapon && rules.weapons[own.weapon]) || UNARMED, dualWield: own.dualWield });
+  // StatCalculation.calc: a skill is used at the level the character has it, with its own stats
+  // and the support gems of its hotbar slot on top of the character's.
+  const used = (id: string) => {
+    const spell = skills.classes.flatMap((c) => c.perks).find((p) => p.id === id)!.spell!;
+    const topRank = spell.maxLevel + skills.bonusLevels;
+    const learned = build.perks[id] ?? 0;
+    const rank = learned && learned + bonusSkillLevels(own.stats, spell.tagIds, skills.bonusLevels);
+    const percent = Math.trunc(Math.fround(rank / topRank) * 100);
     const exact = (stats: StatMod[], roll: number) => stats.map((s): Exact => ({ id: s.id, type: s.type, value: rolled(s, roll, level) }));
-    const supports = chosen!.slot.supports.flatMap((gem) => exact(skills.supports.find((s) => s.id === gem.id)?.stats ?? [], gem.roll ?? 100));
-    return [...exact(chosen!.spell.stats, Math.trunc(Math.fround(rank / top) * 100)), ...supports];
+    const supports = build.hotbar.find((slot) => slot?.spell === id)?.supports ?? [];
+    const extra = [...exact(spell.stats, percent), ...supports.flatMap((gem) => exact(skills.supports.find((s) => s.id === gem.id)?.stats ?? [], gem.roll ?? 100))];
+    return { skill: rules.skills[id], who: fighter(buildTotals(data, build, extra).stats), rank, topRank, percent };
   };
-  const unit = chosen ? buildTotals(data, build, extra()) : own;
+  const use = chosen && used(chosen.perk.id);
+  const who = use?.who ?? fighter(own.stats);
 
-  const who: Fighter = { level, own: own.stats, unit: unit.stats, weapon: (own.weapon && rules.weapons[own.weapon]) || UNARMED, dualWield: own.dualWield };
-  // The target has armor and resistances and nothing else.
-  const defenses = [['armor', target.armor] as const, ...RESISTS.map((id) => [`${id}_resist`, target.resists[id] ?? 0] as const)];
-  const enemy = { level: target.level ?? level, stats: new Map(defenses.map(([id, value]) => [id, { value, more: 1 }])), rules: {} };
-  // The states a skill can be used in go by the effects they take.
-  const variants = chosen ? rules.skills[chosen.perk.id].variants.map((variant) => ({ variant, name: variant.needs.join(' and ') })) : [];
+  // The states a skill can be used in go by the effects they take. One that does more for a
+  // Retribution stack spends one whenever any is held.
+  const stacks = retributionHeld(data, build);
+  const states = use?.skill.variants ?? [];
+  const spends = states.some((variant) => variant.retribution);
+  const variants = states.filter((variant) => !!variant.retribution === (spends && stacks > 0)).map((variant) => ({ variant, name: variant.needs.join(' and ') }));
   const under = variants.find((v) => v.name === build.damage.under) ?? variants[0];
-  const damage = chosen ? skillDamage(rules, who, enemy, rules.skills[chosen.perk.id], under.variant, rank, top) : attackDamage(rules, who, enemy, build.damage.attacks ?? attackRate(who));
+
+  // The target has armor and resistances, and what the skill puts on it at its level (ExileEffect.getExactStats).
+  const marks = use ? (under.variant.marks ?? []).map((mark) => [mark.id, rolled(mark, use.percent, level)] as const) : [];
+  const defenses = [['armor', target.armor] as const, ...RESISTS.map((id) => [`${id}_resist`, target.resists[id] ?? 0] as const), ...marks];
+  const enemy = { level: target.level ?? level, stats: new Map(defenses.map(([id, value]) => [id, { value, more: 1 }])), rules: rules.taken };
+  // The skills its pets may cast, which no hotbar slot has to hold.
+  const cast: Record<string, Used> = Object.fromEntries((use?.skill.pets?.spells ?? []).map((id) => [id, used(id)]));
+  const damage = use ? skillDamage(rules, use, enemy, under.variant, cast) : attackDamage(rules, who, enemy, build.damage.attacks ?? attackRate(who));
   // The stats the hit is made with.
-  const stats = chosen ? who.unit : who.own;
+  const stats = who.unit;
   const crit = Math.min(100, Math.max(0, stats.get('critical_hit')?.value ?? 0));
-  return { rules, own, choices, chosen, variants, under, enemy, damage, stats, crit };
+  return { rules, own, choices, chosen, variants, under, enemy, damage, stats, crit, retribution: { stacks, spends, name: skills.retribution.name } };
 }
 
 const HITS: Element[] = ['Physical', 'Fire', 'Cold', 'Nature', 'Shadow'];

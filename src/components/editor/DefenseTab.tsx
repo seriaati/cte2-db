@@ -2,7 +2,7 @@ import { buildDefense, percent, resistText, show } from '../../lib/buildCalc';
 import type { Build } from '../../lib/buildRules';
 import { ELEMENTS } from '../../lib/damageRules';
 import { Dropdown } from '../controls';
-import { Loading, NumberField, Popover, useSection, type TabProps } from './shared';
+import { Loading, NumberField, Popover, RetributionField, useSection, type TabProps } from './shared';
 import { useTotals } from './totals';
 
 // How the build holds up against the enemy set on this tab, for the tab and for the summary beside
@@ -48,6 +48,7 @@ export default function DefenseTab({ core, build, change }: TabProps) {
           <NumberField label="Hit of a common mob" value={enemy.hit} min={1} max={100000000} onChange={(hit) => set({ hit })} />
           <NumberField label="Hits a second" value={enemy.rate} min={1} max={20} onChange={(rate) => set({ rate })} />
         </Popover>
+        <RetributionField build={build} change={change} />
       </div>
 
       <dl className="totals-main">
@@ -175,8 +176,8 @@ export default function DefenseTab({ core, build, change }: TabProps) {
       {left.length > 0 && <p className="note">Left out, because they depend on the moment: {left.join(', ')}.</p>}
       <p className="note">
         Every mob has some accuracy and armor penetration and deals half again as much elemental and chaos damage, so a hit can come to more than its size. Its rarity multiplies its hits,
-        and an affix that adds an element adds it to physical hits. Its hits are attacks. Neither side has buffs, curses or ailments on it, and regeneration, leech and healing aren't
-        counted.
+        and an affix that adds an element adds it to physical hits. Its hits are attacks. Neither side has buffs, curses or ailments on it but the Retribution stacks a Crusader is set to hold, and
+        regeneration, leech and healing aren't counted.
       </p>
     </div>
   );

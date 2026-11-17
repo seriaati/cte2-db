@@ -3,13 +3,20 @@ import { buildDamage } from '../../lib/buildCalc';
 import { RESISTS, type Build } from '../../lib/buildRules';
 import { ELEMENTS, type ByElement, type Element, type SkillHit } from '../../lib/damageRules';
 import { Dropdown } from '../controls';
-import { Loading, NumberField, Popover, useSection, type TabProps } from './shared';
+import { Loading, NumberField, Popover, RetributionField, useSection, type TabProps } from './shared';
 import { useData } from './totals';
 
 const show = (n: number) => (n >= 100 ? Math.round(n).toLocaleString('en') : `${+n.toFixed(1)}`);
 const sum = (damage: ByElement) => Object.values(damage).reduce((total, value) => total + value, 0);
 const elementName = (id: string) => Object.values(ELEMENTS).find((element) => element.id === id)!.name;
-const WHEN: Record<SkillHit['when'], string> = { cast: 'when cast', hit: 'when a projectile hits', tick: 'over time', end: 'as it ends' };
+const WHEN: Record<SkillHit['when'], string> = {
+  cast: 'when cast',
+  hit: 'when a projectile hits',
+  tick: 'over time',
+  end: 'as it ends',
+  attack: 'when a pet attacks',
+  spell: 'when a pet casts its spell',
+};
 
 // What the skill picked on this tab deals, for the tab and for the summary beside the editor. Null
 // until the game data it draws on has arrived.
@@ -23,7 +30,9 @@ export default function DamageTab({ core, build, change }: TabProps) {
   const found = useDamage(build);
   if (!found) return <Loading />;
 
-  const { rules, own, choices, chosen, variants, under, enemy, damage, stats, crit } = found;
+  const { rules, own, choices, chosen, variants, under, enemy, damage, stats, crit, retribution } = found;
+  // A summon skill is used by its pets, one attack at a time.
+  const casts = chosen && damage.pets === undefined;
   const { level } = build;
   const { target } = build.damage;
   const elements = (Object.entries(damage.perUse) as [Element, number][]).filter(([, value]) => value > 0).sort((a, b) => b[1] - a[1]);
@@ -38,8 +47,8 @@ export default function DamageTab({ core, build, change }: TabProps) {
         <h1>Damage</h1>
       </div>
       <p className="note">
-        What one skill deals a second to a single enemy when it is used over and over. Of projectiles shot together one is taken to hit, and what goes on over time lands every time. Critical
-        hits and other chances count as their average.
+        What one skill deals a second to a single enemy when it is used over and over. Of projectiles shot together one is taken to hit, and what goes on over time lands every time. A
+        summon skill deals what its pets do: as many as it can keep out, all attacking that enemy without pause. Critical hits and other chances count as their average.
       </p>
 
       <div className="controls">
@@ -52,6 +61,7 @@ export default function DamageTab({ core, build, change }: TabProps) {
         {variants.length > 1 && (
           <Dropdown label="Used with" value={under.name} groups={[{ options: variants.map((v) => ({ value: v.name, label: v.name || 'No effect' })) }]} onChange={(name) => set({ under: name })} />
         )}
+        {retribution.spends && <RetributionField build={build} change={change} />}
         {!chosen && (
           <label className="field number">
             <span className="cap">Attacks a second</span>
@@ -94,11 +104,11 @@ export default function DamageTab({ core, build, change }: TabProps) {
           <dd>{show(damage.dps)}</dd>
         </div>
         <div>
-          <dt className="cap">{chosen ? 'Each cast' : 'Each attack'}</dt>
+          <dt className="cap">{casts ? 'Each cast' : 'Each attack'}</dt>
           <dd>{show(damage.total)}</dd>
         </div>
         <div>
-          <dt className="cap">{chosen ? 'Casts a second' : 'Attacks a second'}</dt>
+          <dt className="cap">{casts ? 'Casts a second' : 'Attacks a second'}</dt>
           <dd>{+damage.rate.toFixed(2)}</dd>
         </div>
         <div>
@@ -108,18 +118,20 @@ export default function DamageTab({ core, build, change }: TabProps) {
       </dl>
 
       {variants.length === 1 && under.name && <p className="note">Worked out as used with {under.name}, which the skill needs.</p>}
+      {damage.pets !== undefined && <p className="note">Worked out with {+damage.pets.toFixed(2)} pets out, the most the skill keeps up.</p>}
+      {retribution.spends && <p className="note">While any {retribution.name} stack is held, every cast is taken to spend one, and what that puts on the target to be there already.</p>}
       {!own.weapon && <p className="note skipped">No weapon is held, so basic attacks are unarmed and skills that build on weapon damage have little to build on.</p>}
 
       {chosen && (
         <section className="group">
           <div className="group-head">
-            <h2>Each cast</h2>
+            <h2>{casts ? 'Each cast' : 'Each attack'}</h2>
           </div>
           <ul className="totals one">
             {damage.parts.map(({ hit, count, damage: each }, i) => (
               <li key={i}>
                 <span>
-                  <span className="v">{count} ×</span> {ELEMENTS[hit!.element].name} {WHEN[hit!.when]}
+                  <span className="v">{+count.toFixed(2)} ×</span> {ELEMENTS[hit!.element].name} {WHEN[hit!.when]}
                 </span>
                 <span className="v">{show(sum(each))}</span>
               </li>
@@ -148,8 +160,8 @@ export default function DamageTab({ core, build, change }: TabProps) {
 
       {left.length > 0 && <p className="note">Left out, because they depend on the moment: {left.join(', ')}.</p>}
       <p className="note">
-        The target has no dodge or block, and neither side has buffs, curses or ailments on it. Ailments and the damage they deal over time, summons, and spells set off by other effects aren't
-        worked out yet.
+        The target has no dodge or block, and neither side has buffs, curses or ailments on it. Ailments and the damage they deal over time, and spells set off by other effects, aren't worked
+        out yet.
       </p>
     </div>
   );

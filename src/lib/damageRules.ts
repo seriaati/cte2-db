@@ -1,5 +1,6 @@
 // Client-safe: how Mine and Slash works out the damage of a hit and how often a skill is used.
 // Like affix.ts, no data imports here.
+import type { StatMod } from './affix';
 import { leveled, multiplier, type Leveled } from './spellRules';
 import type { Total } from './statRules';
 
@@ -76,7 +77,25 @@ export interface SkillHit {
   element: Element;
   // How many times it lands on one target each cast.
   count: number;
-  when: 'cast' | 'hit' | 'tick' | 'end';
+  when: 'cast' | 'hit' | 'tick' | 'end' | 'attack' | 'spell';
+}
+
+// What a summon skill puts out: pets whose attacks are its damage. A pet's attack is a spell of
+// its own that the character casts through it (PetAttackUTIL).
+export interface Pets {
+  // The kind whose Max Summons stat they count toward, where they do.
+  kind: string;
+  capped: boolean;
+  // How many one cast summons, the ticks they last, and the ticks between one's attacks.
+  count: number;
+  lifeTicks: number;
+  attackTicks: number;
+  style: string;
+  tags: string[];
+  // Skills a pet may cast as it attacks, one picked at random, and the chance of it in percent
+  // before a stat adds to it.
+  spells: string[];
+  chance: number;
 }
 
 export interface SkillDamage {
@@ -91,7 +110,10 @@ export interface SkillDamage {
   channel: boolean;
   // What the skill does depends on the effects its caster is under: one list of hits for each
   // such state that deals damage, with the effects it takes. The one that takes the fewest is first.
-  variants: { needs: string[]; hits: SkillHit[] }[];
+  // One that spends a Retribution stack is used whenever the character holds one, and by then has
+  // put `marks` on its target: stats at the skill's level.
+  variants: { needs: string[]; hits: SkillHit[]; retribution?: true; marks?: StatMod[] }[];
+  pets?: Pets;
 }
 
 export interface Weapon {
@@ -105,6 +127,8 @@ export interface Weapon {
 
 export interface DamageRules {
   rules: Record<string, Rule[]>;
+  // What the stats a skill puts on its target do to a hit it takes.
+  taken: Record<string, Rule[]>;
   layers: Record<string, Layer>;
   calcs: Record<string, DamageCalc>;
   skills: Record<string, SkillDamage>;
@@ -195,6 +219,8 @@ export interface Hit {
   takenAs?: boolean;
   // The ailment it is the damage of, which isn't a hit: it can't be a critical one or be converted.
   ailment?: string;
+  // A pet dealt it.
+  summon?: boolean;
 }
 
 const f = Math.fround;
@@ -210,7 +236,7 @@ const rulesOf = (rules: Record<string, Rule[]>, unit: Map<string, Total>, on: Ru
 // the damage in the hit's own element, what it adds in others, what the target takes of it as
 // other elements, what an ailment it causes is made of, and the chances it came across.
 function strike(rules: HitRules, who: Fighter, target: Target, hit: Hit, luck: Map<string, boolean>) {
-  const bools = new Set<string>([...(hit.basic ? ['is_basic_atk'] : []), ...(hit.bonus ? ['is_bonus_element_damage'] : []), ...(hit.blocked ? ['is_blocked'] : [])]);
+  const bools = new Set<string>([...(hit.basic ? ['is_basic_atk'] : []), ...(hit.bonus ? ['is_bonus_element_damage'] : []), ...(hit.blocked ? ['is_blocked'] : []), ...(hit.summon ? ['is_summon_attack'] : [])]);
   const strings: Record<string, string> = { attack_type: hit.ailment ? 'dot' : hit.bonus ? 'bonus_dmg' : 'hit', style: hit.style, ailment: hit.ailment ?? '' };
   const layers = new Map<string, number>();
   const conversion = new Map<Element, number>();
@@ -417,11 +443,11 @@ function calcValue(rules: DamageRules, calc: DamageCalc, who: Fighter, rank: num
 }
 
 // SpellStatsCalculationEvent and SpellCastingData: how many ticks one use of a skill takes when it
-// is used over and over.
-function castTicks(rules: DamageRules, who: Fighter, skill: SkillDamage) {
-  const start: Record<string, number> = { cast_ticks: skill.castTicks, cast_speed_ticks: skill.recoveryTicks, cd_ticks: skill.cooldownTicks, charge_cd_ticks: skill.chargeTicks };
+// is used over and over, what its duration is multiplied by, and how many pets of its kind can be out.
+function castNumbers(rules: DamageRules, who: Fighter, skill: SkillDamage) {
+  const start: Record<string, number> = { cast_ticks: skill.castTicks, cast_speed_ticks: skill.recoveryTicks, cd_ticks: skill.cooldownTicks, charge_cd_ticks: skill.chargeTicks, duration_multi: 1 };
   const now = { ...start };
-  const strings: Record<string, string> = { style: skill.style };
+  const strings: Record<string, string> = { style: skill.style, summon_type: skill.pets?.kind ?? 'none' };
   for (const { total, rule } of rulesOf(rules.rules, who.unit, 'cast')) {
     const met = (cond: Cond): boolean => !!cond.not !== (cond.k === 'tag' ? skill.tags.includes(cond.tag) : cond.k === 'str' ? strings[cond.key] === cond.value : cond.k === 'any' && cond.ifs.some(met));
     if (!rule.ifs.every(met)) continue;
@@ -438,7 +464,8 @@ function castTicks(rules: DamageRules, who: Fighter, skill: SkillDamage) {
   const recovery = Math.ceil(Math.max(rules.globalCooldownTicks, f(now.cast_speed_ticks / speed)));
   // A channelled skill goes off again as soon as it is cast; any other waits out its cooldown, and
   // one with charges can't be used faster than they come back.
-  return skill.channel ? cast : Math.max(cast + Math.max(cooled('cd_ticks'), recovery), skill.charges > 0 ? cooled('charge_cd_ticks') : 0);
+  const ticks = skill.channel ? cast : Math.max(cast + Math.max(cooled('cd_ticks'), recovery), skill.charges > 0 ? cooled('charge_cd_ticks') : 0);
+  return { ticks, duration: now.duration_multi, summons: Math.trunc(now.bonus_total_summons ?? 0) };
 }
 
 export interface Part {
@@ -459,6 +486,8 @@ export interface Damage {
   dps: number;
   // What the ailments its hits cause deal on top for each use, by ailment.
   ailments: Record<string, number>;
+  // For a summon skill, whose use is one attack of one pet: how many pets it keeps out.
+  pets?: number;
 }
 
 const sum = (damage: ByElement) => Object.values(damage).reduce((total, value) => total + value, 0);
@@ -466,21 +495,22 @@ const sum = (damage: ByElement) => Object.values(damage).reduce((total, value) =
 // AilmentChance and EntityAilmentData: what each ailment the hits cause deals for one use of a
 // skill that is used over and over. An ailment's damage is worked out once, as damage over time
 // of no weapon that the attacker's and the target's stats act on, and is then dealt as it is.
-// Ailment strength and DOT speed, which nothing in the pack gives, are left out.
-function ailmentDamage(rules: HitRules, who: Fighter, target: Target, hits: { count: number; from: Hit; mean: Average }[], rate: number) {
+// Ailment strength and DOT speed, which nothing in the pack gives, are left out. A hit a pet's
+// spell deals has that spell's chance to cause one; how long it lasts goes by the skill's own stats.
+function ailmentDamage(rules: HitRules, who: Fighter, target: Target, hits: { count: number; from: Hit; by: Fighter; mean: Average }[], rate: number) {
   const perUse: Record<string, number> = {};
   for (const [id, { element, share, ticks }] of Object.entries(AILMENTS)) {
-    const stat = (name: string) => who.unit.get(`${id}_${name}`)?.value ?? 0;
-    const chance = stat('chance') / 100;
-    if (chance <= 0) continue;
+    const stat = (name: string, of = who) => of.unit.get(`${id}_${name}`)?.value ?? 0;
     let made = 0;
     let rolls = 0;
-    for (const { count, from, mean } of hits) {
+    for (const { count, from, by, mean } of hits) {
       const landed = mean.landed[element] ?? 0;
+      const chance = stat('chance', by) / 100;
       if (!landed) continue;
-      const event: Hit = { ...from, amount: mean.base[element]! / landed, element, ailment: id, bonus: false, depth: 0, style: 'int', basic: false, effectiveness: 1, multis: [levelPenalty(who, target)] };
-      made += count * landed * chance * (average(rules, { ...who, weapon: UNARMED }, target, event).damage[element] ?? 0);
       rolls += count * landed;
+      if (chance <= 0) continue;
+      const event: Hit = { ...from, amount: mean.base[element]! / landed, element, ailment: id, bonus: false, depth: 0, style: 'int', basic: false, effectiveness: 1, multis: [levelPenalty(by, target)] };
+      made += count * landed * chance * (average(rules, { ...by, weapon: UNARMED }, target, event).damage[element] ?? 0);
     }
     made *= share * Math.max(0, 1 - (target.stats.get(`${id}_resistance`)?.value ?? 0) / 100);
     if (made <= 0) continue;
@@ -500,26 +530,53 @@ function ailmentDamage(rules: HitRules, who: Fighter, target: Target, hits: { co
   return perUse;
 }
 
-// One use of a skill or one attack: its hits on the target and the ailments they cause.
-function dealt(rules: HitRules, who: Fighter, target: Target, needs: string[], hits: { hit?: SkillHit; count: number; from: Hit }[], rate: number): Damage {
-  const means = hits.map(({ count, from }) => ({ count, from, mean: average(rules, who, target, from) }));
+// One use of a skill or one attack: its hits on the target and the ailments they cause. A hit is
+// the user's own unless it says whose it is.
+function dealt(rules: HitRules, who: Fighter, target: Target, needs: string[], hits: { hit?: SkillHit; count: number; from: Hit; by?: Fighter }[], rate: number): Damage {
+  const means = hits.map(({ count, from, by = who }) => ({ count, from, by, mean: average(rules, by, target, from) }));
   const perUse: ByElement = {};
   for (const { count, mean } of means) addTo(perUse, mean.damage, count);
   const parts = hits.map(({ hit, count }, i): Part => ({ hit, count, damage: means[i].mean.damage }));
   return { needs, parts, perUse, total: sum(perUse), rate, dps: sum(perUse) * rate, ailments: ailmentDamage(rules, who, target, means, rate) };
 }
 
-// A skill's damage against one target, used in one of the states it can be used in.
-export function skillDamage(rules: DamageRules, who: Fighter, target: Target, skill: SkillDamage, variant: SkillDamage['variants'][number], rank: number, topRank: number): Damage {
-  const multis = [levelPenalty(who, target)];
-  const hits = variant.hits.map((hit) => {
-    const calc = rules.calcs[hit.calc];
-    const amount = calcValue(rules, calc, who, rank, topRank);
-    const effectiveness = leveled(calc.effectiveness, rank, topRank);
-    const from: Hit = { amount, element: hit.element, bonus: false, depth: 0, style: skill.style, tags: skill.tags, basic: false, effectiveness, multis };
-    return { hit, count: hit.count, from };
-  });
-  return dealt(rules, who, target, variant.needs, hits, 20 / castTicks(rules, who, skill));
+// A skill at the level its user has it, with the stats it is used with.
+export interface Used {
+  skill: SkillDamage;
+  who: Fighter;
+  rank: number;
+  topRank: number;
+}
+
+// SummonSpellCaster: the stat that adds to the chance a golem casts its spell as it attacks.
+const GOLEM = { tag: 'golem', chance: 'golem_spell_chance' };
+
+// A skill's damage against one target, used in one of the states it can be used in. A summon
+// skill deals what its pets do: as many as it can keep out, all attacking the target without
+// pause, with one attack of one pet for a use. `cast` has the skills its pets may cast, which the
+// character casts through them at the level it has them itself.
+export function skillDamage(rules: DamageRules, used: Used, target: Target, variant: SkillDamage['variants'][number], cast: Record<string, Used> = {}): Damage {
+  const hitsOf = ({ who, rank, topRank }: Used, hits: SkillHit[], as: { style: string; tags: string[] }, summon?: true) =>
+    hits.map((hit) => {
+      const calc = rules.calcs[hit.calc];
+      const amount = calcValue(rules, calc, who, rank, topRank);
+      const effectiveness = leveled(calc.effectiveness, rank, topRank);
+      const from: Hit = { amount, element: hit.element, bonus: false, depth: 0, style: as.style, tags: as.tags, basic: false, effectiveness, multis: [levelPenalty(who, target)], summon };
+      return { hit, count: hit.count, from, by: who };
+    });
+  const { skill, who } = used;
+  const { ticks, duration, summons } = castNumbers(rules, who, skill);
+  const { pets } = skill;
+  if (!pets) return dealt(rules, who, target, variant.needs, hitsOf(used, variant.hits, skill), 20 / ticks);
+
+  // SummonPetAction: pets past what their kind allows are sent away, the oldest first.
+  const out = Math.min((pets.count * Math.trunc(pets.lifeTicks * duration)) / ticks, pets.capped ? summons : Infinity);
+  const chance = clamp(Math.trunc(pets.chance + (skill.tags.includes(GOLEM.tag) ? (who.own.get(GOLEM.chance)?.value ?? 0) : 0)) / 100, 0, 1);
+  const spells = pets.spells.flatMap((id) =>
+    hitsOf(cast[id], cast[id].skill.variants[0].hits, cast[id].skill, true).map(({ hit, count, ...rest }) => ({ ...rest, hit: { ...hit, when: 'spell' as const }, count: (count * chance) / pets.spells.length })),
+  );
+  const hits = [...hitsOf(used, variant.hits, pets, true), ...(chance > 0 ? spells : [])];
+  return { ...dealt(rules, who, target, variant.needs, hits, (out * 20) / pets.attackTicks), pets: out };
 }
 
 // How many basic attacks a second the weapon makes at full swing: the vanilla attack speed, which

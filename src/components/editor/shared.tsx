@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
-import type { Build } from '../../lib/buildRules';
+import { RETRIBUTION, type Build } from '../../lib/buildRules';
 import type { Core, Sections } from '../../lib/builds';
 import { matches, type Part } from '../../lib/plannerRules';
 import { StatLines } from '../StatLine';
@@ -168,6 +168,14 @@ export function NumberField(props: { label: string; value: number; min: number; 
       </span>
     </label>
   );
+}
+
+// How many Retribution stacks a Crusader is taken to hold, for the tabs whose numbers they change.
+export function RetributionField({ build, change }: Pick<TabProps, 'build' | 'change'>) {
+  const skills = useSection('skills');
+  if (!skills || !build.classes.includes(RETRIBUTION.class)) return null;
+  const { name, max } = skills.retribution;
+  return <NumberField label={`${name} stacks`} value={Math.min(max, build.retribution)} min={0} max={max} onChange={(retribution) => change({ retribution })} />;
 }
 
 interface SlotProps {

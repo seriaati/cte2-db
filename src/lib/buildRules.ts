@@ -122,6 +122,8 @@ export interface Build {
   // set, with its rarity and one affix or none for each it rolls, what a common mob's hit is
   // before defenses, and how many hits land a second.
   defense: { level?: number; rarity: string; affixes: string[]; hit: number; rate: number };
+  // The Retribution stacks a Crusader is taken to hold.
+  retribution: number;
 }
 
 // GemInventoryHelper in Mine and Slash 6.4.13.
@@ -139,6 +141,8 @@ export const VANILLA_HEALTH = 20;
 // PERC_OFFHAND_WEP_STAT in the pack's server config: the share of its stats a weapon gives from the off hand.
 export const OFFHAND_WEAPON_PERCENT = 25;
 const ENEMY = { rarity: 'common', affixes: [], hit: 1000, rate: 2 };
+// The pack's effect that Crusader skills spend, and the class that gains it.
+export const RETRIBUTION = { effect: 'retribution', class: 'crusader' };
 
 export interface Limits {
   maxLevel: number;
@@ -161,6 +165,7 @@ export const emptyBuild = ({ maxLevel, points }: Limits, name = 'New build'): Bu
   jewels: [],
   damage: { skill: '', under: '', target: { armor: 0, resists: {} } },
   defense: ENEMY,
+  retribution: 0,
 });
 
 // SpellSchool.isLevelEnoughFor and isLevelEnoughForSpellLevelUp: a perk opens at its row's level,
@@ -313,6 +318,7 @@ export function readBuild(v: unknown, limits: Limits): Build | null {
     }),
     damage: readDamage(v.damage, maxLevel),
     defense: readDefense(v.defense, maxLevel),
+    retribution: int(v.retribution, 0, 100),
   };
 }
 

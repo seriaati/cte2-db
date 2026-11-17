@@ -5,6 +5,7 @@ import baseData from '../data/base_gear_types.json';
 import baseStatData from '../data/base_stats.json';
 import balanceData from '../data/game_balance.json';
 import chaosData from '../data/chaos_stat.json';
+import effectData from '../data/exile_effect.json';
 import iconData from '../data/gear_icons.json';
 import rarityData from '../data/gear_rarity.json';
 import omenData from '../data/omen.json';
@@ -19,7 +20,7 @@ import uniqueData from '../data/unique_gears.json';
 import weaponData from '../data/weapon_type.json';
 import type { Affix, StatMod } from './affix';
 import { auras } from './auras';
-import { VANILLA_HEALTH, type Limits, type RarityType, type TreeId } from './buildRules';
+import { RETRIBUTION, VANILLA_HEALTH, type Limits, type RarityType, type TreeId } from './buildRules';
 import { builtinLimits, transfers } from './builtinStats';
 import { damage } from './damage';
 import { defense } from './defense';
@@ -172,6 +173,7 @@ interface RawPerk {
 }
 const rawPerks = perkData as unknown as Record<string, RawPerk>;
 const classSpells = new Map(spells.map((s) => [s.id, s]));
+const retribution = (effectData as unknown as Record<string, { max_stacks: number; stats: Parameters<typeof statMod>[0][] }>)[RETRIBUTION.effect];
 
 const skills = {
   // A class lays its perks out on a grid: spells on the left, passives on the right, and each row
@@ -200,6 +202,8 @@ const skills = {
   supports,
   bonusLevels,
   costScaling,
+  // How many Retribution stacks can be held, and what each gives while it is.
+  retribution: { name: text(`mmorpg.effect.${RETRIBUTION.effect}`, RETRIBUTION.effect), max: retribution.max_stacks, stats: retribution.stats.map(statMod) },
 };
 
 const sockets = {

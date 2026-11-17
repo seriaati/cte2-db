@@ -12,8 +12,9 @@ import layerData from '../data/stat_layer.json';
 import effectsData from '../data/exile_effect.json';
 import calcData from '../data/value_calc.json';
 import weaponData from '../data/weapon_type.json';
+import type { StatMod } from './affix';
 import { AILMENTS, type Act, type Cond, type DamageCalc, type DamageRules, type Element, type Layer, type Rule, type SkillDamage, type SkillHit, type Weapon } from './damageRules';
-import { text } from './gear';
+import { statMod, text } from './gear';
 import type { Leveled } from './spellRules';
 
 const balance = balanceData.original_balance;
@@ -122,8 +123,9 @@ export function statRules(side: 'Source' | 'Target') {
   }
   return { rules, situational };
 }
-// The calculator's target has no stats of its own.
+// The calculator's target has no stats of its own but the ones a skill puts on it.
 const { rules, situational } = statRules('Source');
+const taken = statRules('Target').rules;
 
 // Stats built into the mod, whose effects are in its code (6.4.13) and need rechecking when it updates.
 const HIT: Cond = { k: 'str', key: 'attack_type', value: 'hit' };
@@ -195,13 +197,23 @@ interface RawSpell {
     times_to_cast: number;
     channel_skill: boolean;
     tags: { tags: string[] };
+    summonType: string;
+    summon_basic_atk: string;
+    summon_spells: string[];
+    summon_spell_chance: number;
   };
 }
 const rawSpells = spellData as unknown as Record<string, RawSpell>;
-const casterEffects = effectsData as unknown as Record<string, { one_of_a_kind_id: string; max_stacks: number }>;
+const casterEffects = effectsData as unknown as Record<string, { one_of_a_kind_id: string; max_stacks: number; stats: Parameters<typeof statMod>[0][] }>;
 const effectName = (id: string) => text(`mmorpg.effect.${id}`, id);
 
 const EFFECT_IF = 'caster_has_mns_effect';
+// The Crusader's stacks. A skill spends one for something extra whenever its caster holds any, so
+// it isn't among the effects a skill is picked to be used with.
+const RETRIBUTION = 'retribution';
+// How often a pet attacks, by vanilla's MeleeAttackGoal and by RangedBowAttackGoal as SummonEntity
+// sets it up: 20 ticks to draw and 10 between shots.
+const PET_ATTACK_TICKS = { melee: 20, ranged: 30 };
 // What makes the entities a spell's script goes on in; pets fight on their own and aren't counted.
 const SUMMONS = ['projectile', 'summon_at_sight', 'summon_block'];
 
@@ -211,31 +223,40 @@ const ticks = (life: number, { tick_rate: rate, first_tick: first = 0 }: Raw) =>
 
 // The hits of one use of a spell on a single target, with its caster holding `stacks` of each
 // effect its script asks about. Of projectiles shot together one is taken to hit, and of what
-// goes on over time every tick is taken to land.
-function hitsOf(spell: RawSpell, stacks: Record<string, number>): SkillHit[] {
+// goes on over time every tick is taken to land. What a Retribution stack buys counts in full:
+// every projectile it adds hits, and the stats it puts on the target are there by the next use.
+function hitsOf(spell: RawSpell, stacks: Record<string, number>) {
   const hits: SkillHit[] = [];
+  const marks: StatMod[] = [];
   const walk = (parts: RawPart[], count: number, life: number, seen: string[]) => {
     for (const part of parts) {
-      if (!part.ifs.filter((i) => i.type === EFFECT_IF).every((i) => (stacks[i.map.exile_potion_id] ?? 0) >= (i.map.effect_stacks ?? 1) !== !!i.map.is_false)) continue;
+      const asks = part.ifs.filter((i) => i.type === EFFECT_IF);
+      if (!asks.every((i) => (stacks[i.map.exile_potion_id] ?? 0) >= (i.map.effect_stacks ?? 1) !== !!i.map.is_false)) continue;
+      const bought = asks.some((i) => i.map.exile_potion_id === RETRIBUTION && !i.map.is_false);
       const has = (type: string) => part.ifs.find((i) => i.type === type);
       const tick = has('x_ticks_condition');
       const when: SkillHit['when'] = tick ? 'tick' : has('on_entity_expire') ? 'end' : has('on_hit') ? 'hit' : 'cast';
       // A spell cast several times in a row runs its script each time; some steps only on the first or last.
       const times = (life ? (tick ? ticks(life, tick.map) : 1) : has('is_first_cast') || has('is_last_cast') ? 1 : spell.config.times_to_cast) * count;
+      const onEnemy = part.targets.some((t) => t.type !== 'self');
       for (const act of part.acts) {
         // DamageAction: some damage is multiplied by the stacks of an effect on the caster.
         const multiplied = act.map.multiply_by_caster_effect_stacks ? (stacks[act.map.multiply_by_caster_effect_stacks] ?? 0) : 1;
-        if (act.type === 'damage' && multiplied && part.targets.some((t) => t.type !== 'self')) {
+        if (act.type === 'damage' && multiplied && onEnemy) {
           hits.push({ calc: act.map.value_calculation, element: act.map.element, count: times * multiplied, when });
+        }
+        if (bought && act.type === 'exile_effect' && act.map.potion_action === 'GIVE_STACKS' && onEnemy) {
+          marks.push(...casterEffects[act.map.exile_potion_id].stats.filter((s) => s.stat in taken).map(statMod));
         }
         const entity: string | undefined = act.map.entity_name;
         if (!entity || !SUMMONS.includes(act.type) || seen.includes(entity)) continue;
-        walk(spell.attached.entity_components[entity] ?? [], times, Math.max(1, act.map.life_ticks ?? 1), [...seen, entity]);
+        const volley = bought ? (act.map.proj_count ?? 1) : 1;
+        walk(spell.attached.entity_components[entity] ?? [], times * volley, Math.max(1, act.map.life_ticks ?? 1), [...seen, entity]);
       }
     }
   };
   walk(spell.attached.on_cast, 1, 0, []);
-  return hits.filter((hit) => hit.count > 0);
+  return { hits: hits.filter((hit) => hit.count > 0), marks };
 }
 
 function skill(spell: RawSpell): SkillDamage | null {
@@ -257,13 +278,23 @@ function skill(spell: RawSpell): SkillDamage | null {
   // States that come to the same hits are one, told by the fewest effects that give them.
   const variants = new Map<string, SkillDamage['variants'][number]>();
   for (const state of states.sort((a, b) => Object.values(a).filter(Boolean).length - Object.values(b).filter(Boolean).length)) {
-    const hits = hitsOf(spell, state);
-    const key = JSON.stringify(hits);
-    const needs = Object.entries(state).flatMap(([effect, stacks]) => (stacks ? [stacks > 1 ? `${stacks} ${effectName(effect)}` : effectName(effect)] : []));
-    if (hits.length && !variants.has(key)) variants.set(key, { needs, hits });
+    const { hits, marks } = hitsOf(spell, state);
+    const key = JSON.stringify([hits, marks]);
+    const needs = Object.entries(state).flatMap(([effect, stacks]) => (stacks && effect !== RETRIBUTION ? [stacks > 1 ? `${stacks} ${effectName(effect)}` : effectName(effect)] : []));
+    if (hits.length && !variants.has(key)) variants.set(key, { needs, hits, ...(state[RETRIBUTION] ? { retribution: true as const } : {}), ...(marks.length ? { marks } : {}) });
+  }
+  const { config } = spell;
+  // SummonPetAction and PetAttackUTIL: a pet's attack runs the script of the skill's basic attack.
+  const summon = spell.attached.on_cast.flatMap((part) => part.acts).find((act) => act.type === 'summon_pet');
+  const basic = summon && rawSpells[config.summon_basic_atk];
+  if (basic) {
+    const hits = basic.attached.entity_components.default_entity_name
+      .flatMap((part) => part.acts)
+      .filter((act) => act.type === 'damage')
+      .map((act): SkillHit => ({ calc: act.map.value_calculation, element: act.map.element, count: 1, when: 'attack' }));
+    variants.set('', { needs: [], hits });
   }
   if (!variants.size) return null;
-  const { config } = spell;
   return {
     style: config.style,
     tags: config.tags.tags,
@@ -275,6 +306,19 @@ function skill(spell: RawSpell): SkillDamage | null {
     times: config.times_to_cast,
     channel: config.channel_skill,
     variants: [...variants.values()],
+    ...(basic && {
+      pets: {
+        kind: config.summonType.toLowerCase(),
+        capped: summon.map.counts_towards_max_summons,
+        count: summon.map.count,
+        lifeTicks: summon.map.life_ticks,
+        attackTicks: PET_ATTACK_TICKS[basic.config.tags.tags.includes('ranged') ? 'ranged' : 'melee'],
+        style: basic.config.style,
+        tags: basic.config.tags.tags,
+        spells: config.summon_spells,
+        chance: config.summon_spell_chance,
+      },
+    }),
   };
 }
 
@@ -286,6 +330,9 @@ const skills: Record<string, SkillDamage> = Object.fromEntries(
       return damage ? [[id, damage] as const] : [];
     }),
 );
+// A pet can only cast what the calculator can work out.
+for (const { pets } of Object.values(skills)) if (pets) pets.spells = pets.spells.filter((id) => id in skills);
+const marked = Object.values(skills).flatMap((s) => s.variants.flatMap((v) => v.marks?.map((mark) => mark.id) ?? []));
 const usedCalcs = [...new Set(Object.values(skills).flatMap((s) => s.variants.flatMap((v) => v.hits.map((hit) => hit.calc))))];
 
 // What the pack's own weapons (RoE Weapons 0.1.7) add to the 4 swings a second every player
@@ -313,6 +360,7 @@ const weapons: Record<string, Weapon> = Object.fromEntries(
 
 export const damage: DamageRules = {
   rules,
+  taken: Object.fromEntries([...new Set(marked)].map((id) => [id, taken[id]])),
   layers,
   calcs: Object.fromEntries(usedCalcs.map((id) => [id, calc(id)])),
   skills,

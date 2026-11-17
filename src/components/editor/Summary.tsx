@@ -26,7 +26,8 @@ export default function Summary({ core, build }: { core: Core; build: Build }) {
   const defense = useDefense(build);
   if (!attack || !defense) return <Loading />;
 
-  const { chosen, under, damage, stats, crit } = attack;
+  const { chosen, under, damage, stats, crit, retribution } = attack;
+  const casts = chosen && damage.pets === undefined;
   const { totals, value, avoid, rows, weakest } = defense;
   const { defs } = totals.rules;
 
@@ -45,9 +46,11 @@ export default function Summary({ core, build }: { core: Core; build: Build }) {
         <ul className="totals one">
           <Row label="Skill" value={chosen?.spell.name ?? 'Basic attack'} />
           {under?.name && <Row kind="sub" label="Used with" value={under.name} />}
+          {retribution.spends && retribution.stacks > 0 && <Row kind="sub" label="Spends" value={retribution.name} />}
           <Row kind="key" label="Damage a second" value={show(damage.dps)} />
-          <Row label={chosen ? 'Each cast' : 'Each attack'} value={show(damage.total)} />
-          <Row label={chosen ? 'Casts a second' : 'Attacks a second'} value={+damage.rate.toFixed(2)} />
+          <Row label={casts ? 'Each cast' : 'Each attack'} value={show(damage.total)} />
+          <Row label={casts ? 'Casts a second' : 'Attacks a second'} value={+damage.rate.toFixed(2)} />
+          {damage.pets !== undefined && <Row label="Pets out" value={+damage.pets.toFixed(2)} />}
           <Row label={defs.critical_hit.name} value={`${+crit.toFixed(1)}%`} />
           <Row label={defs.critical_damage.name} value={`${show(stats.get('critical_damage')?.value ?? defs.critical_damage.base)}%`} />
         </ul>
