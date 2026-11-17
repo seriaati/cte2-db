@@ -22,7 +22,7 @@ import type { Affix, StatMod } from './affix';
 import { auras } from './auras';
 import { RETRIBUTION, VANILLA_HEALTH, type Limits, type RarityType, type TreeId } from './buildRules';
 import { builtinLimits, transfers } from './builtinStats';
-import { auraSkills, damage } from './damage';
+import { auraSkills, damage, skillEffects } from './damage';
 import { defense } from './defense';
 import { affixesOf, infusions, maxLevel, statMod, tagNames, text } from './gear';
 import { gems, ranks } from './gems';
@@ -206,6 +206,8 @@ const skills = {
   retribution: { name: text(`mmorpg.effect.${RETRIBUTION.effect}`, RETRIBUTION.effect), max: retribution.max_stacks, stats: retribution.stats.map(statMod) },
   // The skills that are auras, with the effects each keeps up while it is on.
   auras: auraSkills,
+  // The effects of skills and of stats that a build can take to be on.
+  effects: skillEffects,
 };
 
 const sockets = {

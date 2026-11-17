@@ -113,19 +113,21 @@ export interface Build {
   codex: Codex | null;
   augments: Rolled[];
   jewels: Jewel[];
-  // What damage is worked out for: a skill on the hotbar, or the basic attack when empty, and the
-  // effects the skill is used under, the fewest it takes when empty. The basic attacks a second
-  // are the weapon's own unless set. The target is an enemy of the character's own level unless
-  // one is set, with its armor and its resistances by element.
-  damage: { skill: string; under: string; attacks?: number; target: { level?: number; armor: number; resists: Record<string, number> } };
-  // The enemy defenses are worked out against: a mob of the character's own level unless one is
-  // set, with its rarity and one affix or none for each it rolls, what a common mob's hit is
-  // before defenses, and how many hits land a second.
-  defense: { level?: number; rarity: string; affixes: string[]; hit: number; rate: number };
+  // What damage is worked out for: a skill on the hotbar, or the basic attack when empty. The
+  // basic attacks a second are the weapon's own unless set.
+  damage: { skill: string; attacks?: number };
+  // The enemy damage and defenses are worked out against: a mob of the character's own level
+  // unless one is set, with its rarity and one affix or none for each it rolls.
+  enemy: { level?: number; rarity: string; affixes: string[] };
+  // What a common mob's hit is before defenses, and how many hits land a second.
+  defense: { hit: number; rate: number };
   // The Retribution stacks a Crusader is taken to hold.
   retribution: number;
   // The aura skill that is on, of the ones the build has learned: only one can be at a time.
   aura: string;
+  // The effects taken to be on, of the ones the build's skills and stats can put on the
+  // character or on the enemy, with the stacks of each.
+  effects: Record<string, number>;
 }
 
 // GemInventoryHelper in Mine and Slash 6.4.13.
@@ -142,7 +144,8 @@ export const SOLO_CLASS = { moreDamage: 10, damageReduction: 5 };
 export const VANILLA_HEALTH = 20;
 // PERC_OFFHAND_WEP_STAT in the pack's server config: the share of its stats a weapon gives from the off hand.
 export const OFFHAND_WEAPON_PERCENT = 25;
-const ENEMY = { rarity: 'common', affixes: [], hit: 1000, rate: 2 };
+const ENEMY = { rarity: 'common', affixes: [] };
+const MOB_HITS = { hit: 1000, rate: 2 };
 // The pack's effect that Crusader skills spend, and the class that gains it.
 export const RETRIBUTION = { effect: 'retribution', class: 'crusader' };
 
@@ -165,10 +168,12 @@ export const emptyBuild = ({ maxLevel, points }: Limits, name = 'New build'): Bu
   codex: null,
   augments: [],
   jewels: [],
-  damage: { skill: '', under: '', target: { armor: 0, resists: {} } },
-  defense: ENEMY,
+  damage: { skill: '' },
+  enemy: ENEMY,
+  defense: MOB_HITS,
   retribution: 0,
   aura: '',
+  effects: {},
 });
 
 // SpellSchool.isLevelEnoughFor and isLevelEnoughForSpellLevelUp: a perk opens at its row's level,
@@ -257,31 +262,26 @@ function readCodex(v: unknown, maxLevel: number): Codex | null {
   };
 }
 
-function readDamage(v: unknown, maxLevel: number): Build['damage'] {
+function readDamage(v: unknown): Build['damage'] {
   const damage = isObject(v) ? v : {};
-  const target = isObject(damage.target) ? damage.target : {};
-  const resists = isObject(target.resists) ? target.resists : {};
+  return { skill: id(damage.skill), attacks: typeof damage.attacks === 'number' && damage.attacks > 0 ? Math.min(20, damage.attacks) : undefined };
+}
+
+// A build saved before both tabs had the one enemy kept it with the Defense tab's settings, and
+// a level of its own for the Damage tab's target.
+function readEnemy(v: Record<string, unknown>, maxLevel: number): Build['enemy'] {
+  const enemy = isObject(v.enemy) ? v.enemy : isObject(v.defense) ? v.defense : {};
+  const level = enemy.level ?? (isObject(v.damage) && isObject(v.damage.target) ? v.damage.target.level : undefined);
   return {
-    skill: id(damage.skill),
-    under: id(damage.under),
-    attacks: typeof damage.attacks === 'number' && damage.attacks > 0 ? Math.min(20, damage.attacks) : undefined,
-    target: {
-      level: typeof target.level === 'number' ? int(target.level, 1, maxLevel) : undefined,
-      armor: int(target.armor, 0, 10000000),
-      resists: Object.fromEntries(RESISTS.map((element) => [element, int(resists[element], -300, 75, 0)])),
-    },
+    level: typeof level === 'number' ? int(level, 1, maxLevel) : undefined,
+    rarity: id(enemy.rarity) || ENEMY.rarity,
+    affixes: list(enemy.affixes, 4).map(id),
   };
 }
 
-function readDefense(v: unknown, maxLevel: number): Build['defense'] {
-  const enemy = isObject(v) ? v : {};
-  return {
-    level: typeof enemy.level === 'number' ? int(enemy.level, 1, maxLevel) : undefined,
-    rarity: id(enemy.rarity) || ENEMY.rarity,
-    affixes: list(enemy.affixes, 4).map(id),
-    hit: int(enemy.hit, 1, 100000000, ENEMY.hit),
-    rate: int(enemy.rate, 1, 20, ENEMY.rate),
-  };
+function readDefense(v: unknown): Build['defense'] {
+  const defense = isObject(v) ? v : {};
+  return { hit: int(defense.hit, 1, 100000000, MOB_HITS.hit), rate: int(defense.rate, 1, 20, MOB_HITS.rate) };
 }
 
 export function readBuild(v: unknown, limits: Limits): Build | null {
@@ -319,10 +319,12 @@ export function readBuild(v: unknown, limits: Limits): Build | null {
       const kind = isObject(j) && oneOf(j.kind, JEWEL_KINDS);
       return kind ? [{ kind, rarity: id(j.rarity), level: int(j.level, 1, maxLevel, maxLevel), affixes: rolled(j.affixes, 8), corruption: rolled(j.corruption, 2) }] : [];
     }),
-    damage: readDamage(v.damage, maxLevel),
-    defense: readDefense(v.defense, maxLevel),
+    damage: readDamage(v.damage),
+    enemy: readEnemy(v, maxLevel),
+    defense: readDefense(v.defense),
     retribution: int(v.retribution, 0, 100),
     aura: id(v.aura),
+    effects: record(v.effects, 100),
   };
 }
 

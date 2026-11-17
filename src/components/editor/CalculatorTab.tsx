@@ -71,8 +71,8 @@ export default function CalculatorTab({ build }: TabProps) {
         <h1>Stats</h1>
         <Info>
           <p>
-            The stats of the whole build at level {build.level}, added up the way the game does it. Support gems only count for their own skill and are left out, and so are buffs, food and
-            what vanilla armor and attributes give.
+            The stats of the whole build at level {build.level}, added up the way the game does it. Support gems only count for their own skill and are left out, and so are food and what
+            vanilla armor and attributes give. Of buffs, the ones set to be on under Damage or Defense count: Retribution stacks, an aura, and the effects that skills and stats give.
           </p>
         </Info>
       </div>

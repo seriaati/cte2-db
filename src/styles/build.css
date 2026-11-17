@@ -968,6 +968,31 @@ body.editor-page:has(.stats-side:not(.leaving)) {
   box-shadow: 4px 4px 0 #000;
 }
 
+/* Each side's effects take a row of their own: switches, and stack counts where an effect stacks. */
+.effects {
+  display: flex;
+  flex: 1 0 100%;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.effect-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+/* On a narrow page the effects and the enemy open under the whole row of controls, not under their own button. */
+@media (max-width: 620px) {
+  .editor-main .controls {
+    position: relative;
+  }
+
+  .more.float.wide {
+    position: static;
+  }
+}
+
 /* The explanation opens under the whole heading row, so it stays on the page however far along the row its button is. */
 .editor-main .title-row {
   position: relative;
@@ -997,13 +1022,24 @@ body.editor-page:has(.stats-side:not(.leaving)) {
   margin-top: 12px;
 }
 
+/* One row, whether or not the chance to hit is among them. */
 .damage-main {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+}
+
+/* Where a label takes two lines, the numbers still line up. */
+.damage-main div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 @media (max-width: 620px) {
   .damage-main {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-flow: row;
   }
 }
 

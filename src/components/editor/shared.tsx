@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import type { Held, Totals } from '../../lib/buildCalc';
 import { RETRIBUTION, type Build } from '../../lib/buildRules';
 import type { Core, Sections } from '../../lib/builds';
 import { matches, type Part } from '../../lib/plannerRules';
@@ -133,7 +134,8 @@ export function Picker({ title, choices, onPick, onClose }: PickerProps) {
 }
 
 // Settings that float over the page under their button; a click anywhere else puts them away.
-export function Popover({ label, children, info }: { label: string; children: ReactNode; info?: boolean }) {
+// One too wide for that on a narrow page opens under the row its button is in.
+export function Popover({ label, children, info, wide }: { label: string; children: ReactNode; info?: boolean; wide?: boolean }) {
   const box = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
     const close = (e: PointerEvent) => {
@@ -143,7 +145,7 @@ export function Popover({ label, children, info }: { label: string; children: Re
     return () => document.removeEventListener('pointerdown', close);
   }, []);
   return (
-    <details className={info ? 'more float info' : 'more float'} ref={box}>
+    <details className={info ? 'more float info' : wide ? 'more float wide' : 'more float'} ref={box}>
       {info ? (
         <summary className="btn" aria-label={label} title={label}>
           <svg viewBox="0 0 3 7" width="6" height="14" shapeRendering="crispEdges" aria-hidden="true">
@@ -186,6 +188,30 @@ export function NumberField(props: { label: string; value: number; min: number; 
   );
 }
 
+// The mob the build is set against, for the tabs whose numbers it changes. What only one of them
+// asks about it goes below.
+export function EnemyField({ core, build, change, enemy, children }: Pick<TabProps, 'core' | 'build' | 'change'> & { enemy: Totals['enemy']; children?: ReactNode }) {
+  const mob = useSection('defense')?.mob;
+  if (!mob) return null;
+  const set = (patch: Partial<Build['enemy']>) => change({ enemy: { ...build.enemy, ...patch } });
+  return (
+    <Popover wide label="Enemy">
+      <NumberField label="Level" value={enemy.level} min={1} max={core.maxLevel} onChange={(n) => set({ level: n === build.level ? undefined : n })} />
+      <Dropdown label="Rarity" value={enemy.rarity.id} groups={[{ options: mob.rarities.map((r) => ({ value: r.id, label: r.name })) }]} onChange={(id) => set({ rarity: id })} />
+      {enemy.slots.map((id, i) => (
+        <Dropdown
+          key={i}
+          label={enemy.slots.length > 1 ? `Affix ${i + 1}` : 'Affix'}
+          value={id}
+          groups={[{ options: [{ value: '', label: 'None' }, ...mob.affixes.map((a) => ({ value: a.id, label: a.name }))] }]}
+          onChange={(picked) => set({ affixes: enemy.slots.map((old, at) => (at === i ? picked : old)) })}
+        />
+      ))}
+      {children}
+    </Popover>
+  );
+}
+
 // How many Retribution stacks a Crusader is taken to hold, for the tabs whose numbers they change.
 export function RetributionField({ build, change }: Pick<TabProps, 'build' | 'change'>) {
   const skills = useSection('skills');
@@ -202,6 +228,52 @@ export function AuraField({ build, change }: Pick<TabProps, 'build' | 'change'>)
   if (!learned.length) return null;
   const options = [{ value: '', label: 'None' }, ...learned.map((p) => ({ value: p.id, label: p.spell!.name, icon: p.icon }))];
   return <Dropdown label="Aura" value={learned.some((p) => p.id === build.aura) ? build.aura : ''} groups={[{ options }]} onChange={(aura) => change({ aura })} />;
+}
+
+// Which of the effects the build can turn on are on, for the tabs whose numbers they change: a
+// switch for each, or its stacks where it has more than one.
+export function EffectsField({ effects, build, change }: Pick<TabProps, 'build' | 'change'> & { effects: Held[] }) {
+  if (!effects.length) return null;
+  const on = effects.filter((effect) => effect.stacks).length;
+  // One that goes on pushes the others of its kind off (ExileEffect.onApply).
+  const set = (effect: Held, stacks: number) => {
+    const pushed = (id: string) => id === effect.id || (!!effect.kind && effects.some((other) => other.id === id && other.kind === effect.kind));
+    change({ effects: { ...Object.fromEntries(Object.entries(build.effects).filter(([id]) => !pushed(id))), ...(stacks ? { [effect.id]: stacks } : {}) } });
+  };
+  return (
+    <Popover wide label={on ? `Effects (${on})` : 'Effects'}>
+      {[false, true].map((enemy) => {
+        const side = effects.filter((effect) => effect.enemy === enemy);
+        const stacked = side.filter((effect) => effect.max > 1);
+        return (
+          side.length > 0 && (
+            <div key={`${enemy}`} className="effects">
+              <span className="cap">{enemy ? 'On the enemy' : 'On you'}</span>
+              {side.length > stacked.length && (
+                <div className="effect-list">
+                  {side.map(
+                    (effect) =>
+                      effect.max === 1 && (
+                        <button key={effect.id} className="btn" type="button" aria-pressed={effect.stacks > 0} onClick={() => set(effect, effect.stacks ? 0 : 1)}>
+                          {effect.name}
+                        </button>
+                      ),
+                  )}
+                </div>
+              )}
+              {stacked.length > 0 && (
+                <div className="effect-list">
+                  {stacked.map((effect) => (
+                    <NumberField key={effect.id} label={`${effect.name} stacks`} value={effect.stacks} min={0} max={effect.max} onChange={(stacks) => set(effect, stacks)} />
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+        );
+      })}
+    </Popover>
+  );
 }
 
 interface SlotProps {

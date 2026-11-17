@@ -13,6 +13,7 @@ export function useData(): Data | null {
     talents: useSection('talents'),
     ascendancy: useSection('ascendancy'),
     atlas: useSection('atlas'),
+    defense: useSection('defense'),
   };
   return useMemo(() => (Object.values(data).some((section) => !section) ? null : (data as Data)), Object.values(data));
 }

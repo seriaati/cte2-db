@@ -1,24 +1,23 @@
 import { buildDefense, percent, resistText, show } from '../../lib/buildCalc';
 import type { Build } from '../../lib/buildRules';
 import { ELEMENTS } from '../../lib/damageRules';
-import { Dropdown } from '../controls';
-import { AuraField, Info, Loading, NumberField, Popover, RetributionField, useSection, type TabProps } from './shared';
-import { useTotals } from './totals';
+import { useDamage } from './DamageTab';
+import { AuraField, EffectsField, EnemyField, Info, Loading, NumberField, RetributionField, useSection, type TabProps } from './shared';
 
-// How the build holds up against the enemy set on this tab, for the tab and for the summary beside
-// the editor. Null until the game data it draws on has arrived.
-export function useDefense(build: Build) {
+// How the build holds up against the enemy set for it while it uses what `attack` worked out, for
+// the tab and for the summary beside the editor. Null until the game data it draws on has arrived.
+export function useDefense(build: Build, attack: ReturnType<typeof useDamage>) {
   const defense = useSection('defense');
   const damage = useSection('damage');
-  const totals = useTotals(build);
-  return defense && damage && totals ? buildDefense({ damage, defense }, build, totals) : null;
+  return defense && damage && attack ? buildDefense({ damage, defense }, build, attack) : null;
 }
 
 export default function DefenseTab({ core, build, change }: TabProps) {
-  const found = useDefense(build);
+  const attack = useDamage(build);
+  const found = useDefense(build, attack);
   if (!found) return <Loading />;
 
-  const { rules, totals, value, rarity, slots, enemy, avoid, rows, weakest, aura } = found;
+  const { rules, totals, value, enemy, avoid, rows, weakest, shortest, held, aura } = found;
   const { shield } = totals;
   const set = (patch: Partial<Build['defense']>) => change({ defense: { ...build.defense, ...patch } });
   const left = rules.situational.filter((id) => value(id)).map((id) => totals.rules.defs[id].name.replace('[VAL1]', 'X'));
@@ -33,31 +32,28 @@ export default function DefenseTab({ core, build, change }: TabProps) {
             defenses and before what the mob's rarity and affixes add. Dodges, blocks and other chances count as their average, and nothing is healed in between.
           </p>
           <p>
-            Every mob has some accuracy and armor penetration and deals half again as much elemental and chaos damage, so a hit can come to more than its size. Its rarity multiplies its
-            hits, and an affix that adds an element adds it to physical hits. Its hits are attacks. Neither side has buffs, curses or ailments on it but the Retribution stacks a Crusader is
-            set to hold and what the aura set to be on gives. What an aura costs its caster is left out of effective health, as are regeneration, leech and healing.
+            The enemy is the mob the Damage tab's skill is used on, set under Enemy on either tab. Every mob has some accuracy and armor penetration and deals half again as much elemental
+            and chaos damage, so a hit can come to more than its size. Its rarity multiplies its hits, and an affix that adds an element adds it to physical hits. Its hits are attacks.
+            Neither side has buffs, curses or ailments on it but the Retribution stacks a Crusader is set to hold, what the aura set to be on gives, and the effects set to be on under
+            Effects, out of those the build's skills and stats give, each taken to be kept up the whole time. What an aura costs its caster is left out of effective health, as are regeneration, leech and healing.
+          </p>
+          <p>
+            Recovery is what comes back a second while fighting: regeneration, which the pack doesn't slow in combat, and what the hits of the skill picked on the Damage tab leech
+            or restore on a hit, at the pace it can keep up and no more a second than the leech cap. Set against it are the enemy's hits a second at the pace set, after
+            defenses, dodges and blocks, and what the aura costs. Restores on a kill don't count, for the enemy never dies, and neither do heals, potions and food. Stats that restore
+            on block or on dodge do nothing here: in the game they go to the one whose hit is blocked or dodged, and a mob blocks nothing and gives nothing back.
           </p>
         </Info>
       </div>
 
       <div className="controls">
-        <Popover label="Enemy">
-          <NumberField label="Level" value={enemy.level} min={1} max={core.maxLevel} onChange={(n) => set({ level: n === build.level ? undefined : n })} />
-          <Dropdown label="Rarity" value={rarity.id} groups={[{ options: rules.mob.rarities.map((r) => ({ value: r.id, label: r.name })) }]} onChange={(id) => set({ rarity: id })} />
-          {slots.map((id, i) => (
-            <Dropdown
-              key={i}
-              label={slots.length > 1 ? `Affix ${i + 1}` : 'Affix'}
-              value={id}
-              groups={[{ options: [{ value: '', label: 'None' }, ...rules.mob.affixes.map((a) => ({ value: a.id, label: a.name }))] }]}
-              onChange={(picked) => set({ affixes: slots.map((old, at) => (at === i ? picked : old)) })}
-            />
-          ))}
+        <EnemyField core={core} build={build} change={change} enemy={totals.enemy}>
           <NumberField label="Hit of a common mob" value={enemy.hit} min={1} max={100000000} onChange={(hit) => set({ hit })} />
           <NumberField label="Hits a second" value={enemy.rate} min={1} max={20} onChange={(rate) => set({ rate })} />
-        </Popover>
+        </EnemyField>
         <RetributionField build={build} change={change} />
         <AuraField build={build} change={change} />
+        <EffectsField effects={totals.effects} build={build} change={change} />
       </div>
 
       <dl className="totals-main">
@@ -177,6 +173,33 @@ export default function DefenseTab({ core, build, change }: TabProps) {
           </ul>
         </section>
       )}
+
+      <section className="group">
+        <div className="group-head">
+          <h2>Recovery while fighting</h2>
+        </div>
+        <ul className="totals one">
+          <li>
+            <span>Health a second</span>
+            <span className="v">{show(held.health)}</span>
+          </li>
+          {(value('magic_shield') > 0 || held.magic_shield > 0) && (
+            <li>
+              <span>Magic shield a second</span>
+              <span className="v">{show(held.magic_shield)}</span>
+            </li>
+          )}
+          <li>
+            <span>Taken a second from {ELEMENTS[shortest.element].name.toLowerCase()} hits</span>
+            <span className="v">{show(shortest.perSecond)}</span>
+          </li>
+        </ul>
+        <p className="note">
+          {Number.isFinite(shortest.lasts)
+            ? `Against ${ELEMENTS[shortest.element].name.toLowerCase()} hits it falls after ${show(shortest.lasts)} s from full, with that coming back${aura && aura.cost > 0 ? ` and ${aura.name} taking its share` : ''}.`
+            : "It recovers at least as fast as the enemy's hits take, so it never falls."}
+        </p>
+      </section>
 
       {(value('magic_shield') > 0 || value('mana_shield') > 0) && (
         <section className="group">

@@ -1,22 +1,22 @@
 // Client-safe: how much of a mob's hits a character takes, and how many of them it can take. The
 // hit itself is worked out in damageRules.ts. Like affix.ts, no data imports here.
 import { rolled, type StatMod } from './affix';
-import { UNARMED, average, type ByElement, type Element, type Fighter, type Hit, type HitRules, type Rule } from './damageRules';
-import { multiplier } from './spellRules';
-import { totalStats, type StatRules, type Total } from './statRules';
+import { UNARMED, average, dodgeShare, type ByElement, type Element, type Fighter, type Hit, type HitRules, type Rule } from './damageRules';
+import { totalStats, type Exact, type StatRules, type Total } from './statRules';
 
 // The rules of a hit are the effects a mob's stats have on a hit it deals.
 export interface DefenseRules extends HitRules {
   // What a character's stats do to a hit it takes.
   taken: Record<string, Rule[]>;
-  // Stats whose effect on a hit taken depends on the moment: health, buffs, the time of day.
+  // Stats whose effect on a hit taken or on what is restored depends on the moment: health, the time of day.
   situational: string[];
   mob: {
-    // What every mob has that changes its hits.
+    // What every mob has that changes its hits or what it takes of a hit.
     stats: StatMod[];
     // The "more" multiplier on a mob's damage: `base` times `growth` to the power of its level.
     power: { base: number; growth: number };
-    rarities: { id: string; name: string; damage: number; affixes: number }[];
+    // What a rarity multiplies a mob's hits by, how many affixes it rolls, and the stats it gives.
+    rarities: { id: string; name: string; damage: number; affixes: number; stats: StatMod[] }[];
     affixes: { id: string; name: string; stats: StatMod[] }[];
   };
 }
@@ -28,13 +28,12 @@ export interface Enemy {
   rate: number;
   rarity: DefenseRules['mob']['rarities'][number];
   affixes: DefenseRules['mob']['affixes'][number][];
+  // The stacks of each effect it is under.
+  effects: Record<string, number>;
 }
 
 // Numbers in the mod's code (6.4.13), which need rechecking when it updates.
 const BLOCK = { cap: 75, cooldownTicks: 20, minCooldownTicks: 5 };
-// IUsableStat: the rating that makes half at level 1, and the most the stat can come to.
-const DODGE = { per: 100, max: 0.8 };
-const SPELL_DODGE = { per: 200, max: 0.9 };
 // MagicShield: the share of chaos damage that goes past magic shield.
 const CHAOS_BYPASS = 0.5;
 // DamageAbsorbedByMana: mana stops taking damage once this share of it is left.
@@ -44,16 +43,12 @@ type Stats = Map<string, Total>;
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const read = (stats: Stats, id: string) => stats.get(id)?.value ?? 0;
 
-// StatCalculation for a mob: what every mob has and what its affixes give, at its level.
-export function mobStats(rules: DefenseRules, statRules: StatRules, enemy: Enemy): Stats {
-  const mods = [...rules.mob.stats, ...enemy.affixes.flatMap((affix) => affix.stats)];
-  return totalStats(statRules, [{ kind: 'other', stats: mods.map((mod) => ({ id: mod.id, type: mod.type, value: rolled(mod, 100, enemy.level) })) }]);
-}
-
-// IUsableStat.getUsableValue: a rating turns into a share that shrinks as the attacker's level goes up.
-function usable(rules: DefenseRules, value: number, level: number, { per, max }: { per: number; max: number }) {
-  const points = Math.max(0, Math.trunc(value));
-  return clamp(points / (points + per * multiplier(rules.scaling, level)), 0, max);
+// StatCalculation for a mob: what every mob has and what its rarity and its affixes give, at its
+// level, and what the effects it is under give. What the kind of mob, the dimension and a map add
+// is left out.
+export function mobStats(rules: DefenseRules, statRules: StatRules, enemy: Pick<Enemy, 'level' | 'rarity' | 'affixes'>, marks: Exact[]): Stats {
+  const mods = [...rules.mob.stats, ...enemy.rarity.stats, ...enemy.affixes.flatMap((affix) => affix.stats)];
+  return totalStats(statRules, [{ kind: 'other', stats: [...mods.map((mod) => ({ id: mod.id, type: mod.type, value: rolled(mod, 100, enemy.level) })), ...marks] }]);
 }
 
 export interface Avoidance {
@@ -76,8 +71,8 @@ export function avoidance(rules: DefenseRules, stats: Stats, enemy: Enemy, mob: 
   const ticks = Math.max(BLOCK.minCooldownTicks, Math.round(BLOCK.cooldownTicks / (1 + Math.max(-99, read(stats, 'block_recovery')) / 100)));
   const missed = Math.max(0, Math.ceil((ticks * enemy.rate) / 20) - 1);
   return {
-    dodge: usable(rules, read(stats, 'dodge') - read(mob, 'accuracy'), enemy.level, DODGE),
-    spellDodge: usable(rules, read(stats, 'spell_dodge') - read(mob, 'accuracy'), enemy.level, SPELL_DODGE),
+    dodge: dodgeShare(rules.scaling, stats, false, read(mob, 'accuracy'), enemy.level),
+    spellDodge: dodgeShare(rules.scaling, stats, true, read(mob, 'accuracy'), enemy.level),
     block,
     recovery: ticks / 20,
     blocked: block / (1 + block * missed),
@@ -106,13 +101,17 @@ export interface Taken {
   // healed in between: counted as a common mob's hits before any stat acts on them, so that what
   // the enemy's rarity and affixes add counts against the character.
   effectiveHealth: number;
+  // What its hits take a second at the enemy's pace, and how many seconds a character at full
+  // lasts against them while what is healed a second comes back: forever where that is as much.
+  perSecond: number;
+  lasts: number;
 }
 
-// How a character of `level` with `stats` holds up against the enemy's hits of one element:
-// EntityData.mobBasicAttack, with the multipliers of DamageEvent.addMobDamageMultipliers.
-export function taken(rules: DefenseRules, level: number, stats: Stats, enemy: Enemy, mob: Stats, avoid: Avoidance, element: Element): Taken {
-  const who: Fighter = { level: enemy.level, own: mob, unit: mob, weapon: UNARMED, dualWield: false };
-  const target = { level, stats, rules: rules.taken };
+// How a character of `level` with `stats`, under `effects`, holds up against the enemy's hits of
+// one element: EntityData.mobBasicAttack, with the multipliers of DamageEvent.addMobDamageMultipliers.
+export function taken(rules: DefenseRules, level: number, stats: Stats, effects: Record<string, number>, enemy: Enemy, mob: Stats, avoid: Avoidance, element: Element, healed: number): Taken {
+  const who: Fighter = { level: enemy.level, own: mob, unit: mob, weapon: UNARMED, dualWield: false, effects: enemy.effects };
+  const target = { level, stats, rules: rules.taken, effects };
   // The hit is given as a common mob's after the multiplier its level brings, which the game puts on last.
   const power = rules.mob.power.base * rules.mob.power.growth ** enemy.level;
   const hit: Hit = { amount: enemy.hit / power, element, bonus: false, depth: 0, style: 'str', tags: null, basic: true, effectiveness: 1, multis: [power, enemy.rarity.damage] };
@@ -126,5 +125,6 @@ export function taken(rules: DefenseRules, level: number, stats: Stats, enemy: E
   ] as const) {
     for (const [to, amount] of Object.entries(part) as [Element, number][]) mean[to] = (mean[to] ?? 0) + amount * share * (1 - avoid.dodge);
   }
-  return { lands: sum(open), effectiveHealth: (pool(stats, mean) * enemy.hit) / sum(mean) };
+  const perSecond = sum(mean) * enemy.rate;
+  return { lands: sum(open), effectiveHealth: (pool(stats, mean) * enemy.hit) / sum(mean), perSecond, lasts: perSecond > healed ? pool(stats, mean) / (perSecond - healed) : Infinity };
 }

@@ -5,7 +5,6 @@ import {
   GEAR_SLOTS,
   MAX_JEWELS,
   OFFHAND_WEAPON_PERCENT,
-  RESISTS,
   RETRIBUTION,
   SOLO_CLASS,
   TREES,
@@ -21,17 +20,41 @@ import {
   type Rolled,
 } from './buildRules';
 import type { Core, Sections } from './builds';
-import { ELEMENTS, UNARMED, armorShare, attackDamage, attackRate, auraDamage, resistance, skillDamage, type ByElement, type Element, type Fighter, type Used } from './damageRules';
-import { avoidance, mobStats, taken } from './defenseRules';
+import {
+  ELEMENTS,
+  UNARMED,
+  addTo,
+  armorShare,
+  attackCost,
+  attackDamage,
+  attackRate,
+  effectDamage,
+  formOf,
+  procDamage,
+  regenerated,
+  resistance,
+  skillDamage,
+  sustain,
+  useCost,
+  type ByElement,
+  type ByResource,
+  type Damage,
+  type Element,
+  type Fighter,
+  type Gift,
+  type SkillHit,
+  type Used,
+} from './damageRules';
+import { avoidance, mobStats, taken, type Enemy } from './defenseRules';
 import { MODIFIES, baseRange, formedRuneword, itemName, rollWindows, slotCount, socketPart, type Part, type Socketed } from './plannerRules';
-import { leveled } from './spellRules';
+import { leveled, type Spell } from './spellRules';
 import { bonusSkillLevels, newbieResists, totalStats, type Exact, type Source, type StatDef, type Total } from './statRules';
 import { neighbours, rooted } from './talentRules';
 import type { TalentTree } from './talents';
 
 type Gear = Sections['gear'];
 // The game data a build's stats are worked out from.
-export type Data = Omit<Sections, 'damage' | 'defense'>;
+export type Data = Omit<Sections, 'damage'>;
 
 // The parts of an item that game data still knows, with what each gives at its roll.
 export function readItem(data: Gear, item: Item) {
@@ -204,8 +227,31 @@ export interface Totals {
   dualWield: boolean;
   // Whether what is held in the off hand is a shield.
   shield: boolean;
-  // The aura that is on, at the level the character has it, and what it puts on enemies in reach.
-  aura?: { id: string; name: string; rank: number; topRank: number; marks: Exact[] };
+  // The aura that is on, at the level the character has it.
+  aura?: { id: string; name: string; rank: number; topRank: number };
+  // The effects the build can turn on: those its skills give and those its stats do.
+  effects: Held[];
+  // The stacks of every effect the character is under: those that are on, the Retribution
+  // stacks held and the aura that is on. And of every effect the enemy is under.
+  under: { own: Record<string, number>; enemy: Record<string, number> };
+  // The mob the build is set against: one affix or none for each its rarity rolls, and what the
+  // aura and the effects that are on put on it.
+  enemy: Pick<Enemy, 'level' | 'rarity' | 'affixes'> & { slots: string[]; marks: Exact[] };
+}
+
+// An effect a build can take to be on: on the character or on the enemy, the stacks of it that
+// are on, the most it can have, and what it gives at those stacks.
+export interface Held {
+  // What it is saved under, and the effect it is: the same but for one listed for both sides.
+  id: string;
+  effect: string;
+  name: string;
+  enemy: boolean;
+  // Effects of one kind push each other out.
+  kind: string;
+  max: number;
+  stacks: number;
+  stats: Exact[];
 }
 
 const exact = ({ stats, rolls, level }: Part): Exact[] => stats.map((s) => ({ id: s.id, type: s.type, value: rolled(s, rolls.maxPercent, level) }));
@@ -318,7 +364,7 @@ function gather(data: Data, build: Build, dualWield: number, extra: Exact[]) {
 }
 
 // The stats of everything gathered, with what a skill or an effect adds on top.
-function settle(data: Data, build: Build, extra: Exact[]): Totals {
+function settle(data: Data, build: Build, extra: Exact[]): Omit<Totals, 'effects' | 'under' | 'enemy'> {
   // CachedEntityStats.afterStatCalc: the gear is gone over again until Dual Wield Effectiveness settles.
   let dualWield = 0;
   for (let pass = 0; ; pass++) {
@@ -330,34 +376,88 @@ function settle(data: Data, build: Build, extra: Exact[]): Totals {
   }
 }
 
+// The skills the build has learned.
+const known = (data: Data, build: Build) =>
+  data.skills.classes
+    .filter((c) => build.classes.includes(c.id))
+    .flatMap((c) => c.perks)
+    .flatMap((perk) => (perk.spell && build.perks[perk.id] > 0 ? [{ id: perk.id, spell: perk.spell }] : []));
+
 // The aura the build has on: a skill it has learned. An aura that goes on pushes any other off (ExileEffect.onApply).
 function auraOn(data: Data, build: Build) {
-  const perks = data.skills.classes.filter((c) => build.classes.includes(c.id)).flatMap((c) => c.perks);
-  const perk = perks.find((p) => p.id === build.aura && p.spell && build.perks[p.id] > 0);
+  const perk = known(data, build).find((p) => p.id === build.aura);
   const aura = data.skills.auras.find((a) => a.id === build.aura);
-  return perk && aura ? { aura, spell: perk.spell! } : null;
+  return perk && aura ? { aura, spell: perk.spell } : null;
 }
 
 // What the whole build's stats come to, with what a skill adds for itself when that is given.
-export function buildTotals(data: Data, build: Build, extra: Exact[] = []): Totals {
+// `held` has the stacks of effects taken to be on whatever the build says: those a skill being
+// worked out keeps on its caster.
+export function buildTotals(data: Data, build: Build, extra: Exact[] = [], held: Record<string, number> = {}): Totals {
+  // ExileEffect.getExactStats and ExilePotionEvent: an effect is as strong as the level of the
+  // skill that gives it makes it, times its stacks, times what the stats of the character without
+  // any of them add to effects of its kind, and the stats of the mob to those it is under.
+  const before = settle(data, build, []);
+  const level = (perk: { id: string; spell: Spell }) => {
+    const topRank = perk.spell.maxLevel + data.skills.bonusLevels;
+    const rank = build.perks[perk.id] + bonusSkillLevels(before.stats, perk.spell.tagIds, data.skills.bonusLevels);
+    return { rank, topRank, percent: Math.trunc(leveled({ min: 0, max: 100 }, rank, topRank)) };
+  };
+  // A mob rolls as many affixes as its rarity has; the ones here are those that change its hits
+  // or its defenses.
+  const { mob } = data.defense;
+  const rarity = mob.rarities.find((r) => r.id === build.enemy.rarity) ?? mob.rarities[0];
+  const slots = Array.from({ length: rarity.affixes }, (_, i) => build.enemy.affixes[i] ?? '');
+  const foe = { level: build.enemy.level ?? build.level, rarity, slots, affixes: slots.flatMap((id) => mob.affixes.find((a) => a.id === id) ?? []) };
+  const bare = mobStats(data.defense, data.stats, foe, []);
+  const stronger = (ids: string[], stats = before.stats) => ids.reduce((sum, id) => sum + (stats.get(id)?.value ?? 0), 0);
+  const given = (effect: Data['skills']['auras'][number]['effects'][number], percent: number, stacks = 1) => {
+    const multi = stacks * (1 + (stronger(effect.given) + stronger(effect.onYou, effect.enemy ? bare : before.stats)) / 100);
+    return exact({ stats: effect.stats, rolls: exactly(percent), level: build.level }).map((mod) => ({ ...mod, value: mod.value * multi }));
+  };
+
+  const learned = known(data, build);
+  const kinds = new Set<string>();
+  const hold = (effect: Data['skills']['effects'][number]): Held => {
+    // ExilePotionEvent and MaximumChargesStat: stacks stop at the most the one under the effect can have.
+    const max = effect.max + (effect.enemy ? 0 : Math.trunc(before.stats.get(`max_${effect.effect}_charges`)?.value ?? 0));
+    // ExileEffect.onApply: one that goes on pushes the others of its kind off.
+    const stacks = effect.kind && kinds.has(effect.kind) ? 0 : Math.min(max, held[effect.id] ?? build.effects[effect.id] ?? 0);
+    if (stacks) kinds.add(effect.kind);
+    // One that no learned skill gives is at the lowest level (LeveledValue.getValue). What a stat
+    // gives is at the level of the spell whose hit gave it, the lowest when none did
+    // (GiveExileStatusEffect), and is taken at the lowest: of those that grow with level, a
+    // character can only have the ones a skill of its own gives too.
+    const percent = Math.max(0, ...learned.filter((perk) => effect.from.includes(perk.id)).map((perk) => level(perk).percent));
+    // ExileEffect.getExactStats: one whose stacks don't change its stats gives them once.
+    return { id: effect.id, effect: effect.effect, name: effect.name, enemy: effect.enemy, kind: effect.kind, max, stacks, stats: stacks ? given(effect, percent, effect.once ? 1 : stacks) : [] };
+  };
+  // EffectEvent.AddEffects: a skill's hit is made with the skill's own stats and the support gems
+  // of its slot, so what those give on a hit is the character's to gain as well.
+  const cast = learned.flatMap((perk) => [...perk.spell.stats, ...(build.hotbar.find((slot) => slot?.spell === perk.id)?.supports ?? []).flatMap((gem) => data.skills.supports.find((s) => s.id === gem.id)?.stats ?? [])]);
+  // What is offered follows the build: the effects of its learned skills, and those a stat of
+  // the character gives.
+  const offered = (effect: Data['skills']['effects'][number]) =>
+    effect.id in held || learned.some((perk) => effect.from.includes(perk.id) || effect.asked.includes(perk.id)) || effect.by.some((stat) => (before.stats.get(stat)?.value ?? 0) > 0 || cast.some((mod) => mod.id === stat));
+  const first = data.skills.effects.filter(offered).map(hold);
+
   const on = auraOn(data, build);
-  if (!on) return settle(data, build, extra);
-  // ExileEffect.getExactStats and ExilePotionEvent: an aura's effects are as strong as the skill's
-  // level makes them, times what the stats of the character without them add to effects of their kind.
-  const { aura, spell } = on;
-  const before = settle(data, build, []).stats;
-  const topRank = spell.maxLevel + data.skills.bonusLevels;
-  const rank = build.perks[aura.id] + bonusSkillLevels(before, spell.tagIds, data.skills.bonusLevels);
-  const percent = Math.trunc(leveled({ min: 0, max: 100 }, rank, topRank));
-  const stronger = (ids: string[]) => ids.reduce((sum, id) => sum + (before.get(id)?.value ?? 0), 0);
-  const given = (enemy: boolean) =>
-    aura.effects
-      .filter((effect) => effect.enemy === enemy)
-      .flatMap((effect) => {
-        const multi = 1 + (stronger(effect.given) + (enemy ? 0 : stronger(effect.onYou))) / 100;
-        return exact({ stats: effect.stats, rolls: exactly(percent), level: build.level }).map((mod) => ({ ...mod, value: mod.value * multi }));
-      });
-  return { ...settle(data, build, [...extra, ...given(false)]), aura: { id: aura.id, name: spell.name, rank, topRank, marks: given(true) } };
+  const at = on && level({ id: on.aura.id, spell: on.spell });
+  const lit = (enemy: boolean) => (on ? on.aura.effects.filter((effect) => effect.enemy === enemy).flatMap((effect) => given(effect, at!.percent)) : []);
+  // An effect that is on, or the aura, can give the stat that gives a further effect: one more
+  // round finds those.
+  const lent = [...first.flatMap((effect) => (effect.enemy ? [] : effect.stats)), ...lit(false)];
+  const second = data.skills.effects.filter((effect) => !offered(effect) && effect.by.some((stat) => lent.some((mod) => mod.id === stat && mod.value > 0))).map(hold);
+  const effects = [...first, ...second].sort((a, b) => a.name.localeCompare(b.name));
+  const stacksOf = (enemy: boolean) => Object.fromEntries(effects.filter((effect) => effect.enemy === enemy && effect.stacks).map((effect) => [effect.effect, effect.stacks]));
+  const added = [...effects.flatMap((effect) => (effect.enemy ? [] : effect.stats)), ...lit(false)];
+  return {
+    ...(extra.length || added.length ? settle(data, build, [...extra, ...added]) : before),
+    ...(on && { aura: { id: on.aura.id, name: on.spell.name, rank: at!.rank, topRank: at!.topRank } }),
+    effects,
+    under: { own: { ...stacksOf(false), [RETRIBUTION.effect]: retributionHeld(data, build), ...(on && { [on.aura.effect]: 1 }) }, enemy: stacksOf(true) },
+    enemy: { ...foe, marks: [...lit(true), ...effects.flatMap((effect) => (effect.enemy ? effect.stats : []))] },
+  };
 }
 
 // A total written the way the site writes any stat. A damage stat's "more" multipliers get a line of their own.
@@ -388,7 +488,6 @@ export function buildDamage(data: Data & Pick<Sections, 'damage'>, build: Build)
   const { damage: rules, skills } = data;
   const own = buildTotals(data, build);
   const { level } = build;
-  const { target } = build.damage;
 
   // Skills on the hotbar that deal damage themselves or through the pets they summon.
   const perks = skills.classes.filter((c) => build.classes.includes(c.id)).flatMap((c) => c.perks);
@@ -398,69 +497,150 @@ export function buildDamage(data: Data & Pick<Sections, 'damage'>, build: Build)
   });
   const chosen = choices.find((c) => c.perk.id === build.damage.skill);
 
-  const fighter = (unit: Map<string, Total>): Fighter => ({ level, own: own.stats, unit, weapon: (own.weapon && rules.weapons[own.weapon]) || UNARMED, dualWield: own.dualWield });
+  const fighter = (unit: Map<string, Total>): Fighter => ({ level, own: own.stats, unit, weapon: (own.weapon && rules.weapons[own.weapon]) || UNARMED, dualWield: own.dualWield, effects: own.under.own });
+  const spellOf = (id: string) => skills.classes.flatMap((c) => c.perks).find((p) => p.id === id)?.spell;
+  // SpellCastingData.calcSpellLevels: the level the character has a skill at, none where it hasn't learned it.
+  const rankOf = (id: string) => {
+    const learned = build.perks[id] ?? 0;
+    return learned && learned + bonusSkillLevels(own.stats, spellOf(id)!.tagIds, skills.bonusLevels);
+  };
+  // Spell.getStats: a skill's level as a whole percentage of the most it can be.
+  const share = (rank: number, topRank: number) => Math.trunc(Math.fround(rank / topRank) * 100);
+  const exact = (stats: StatMod[], roll: number) => stats.map((s): Exact => ({ id: s.id, type: s.type, value: rolled(s, roll, level) }));
+  const gems = (id: string) => (build.hotbar.find((slot) => slot?.spell === id)?.supports ?? []).flatMap((gem) => exact(skills.supports.find((s) => s.id === gem.id)?.stats ?? [], gem.roll ?? 100));
+  // The one using a skill with `extra` on top of the character's stats, and as it is under an
+  // effect the skill leaves on it, with the stats of the stacks that come to: all it can hold
+  // when one use renews what the last left, or else what a use adds (ExilePotionEvent).
+  const user = (extra: Exact[]) => {
+    const who = fighter(buildTotals(data, build, extra).stats);
+    const holding = (gift: Gift, kept: boolean) => {
+      const effect = skills.effects.find((e) => e.effect === gift.effect && !e.enemy);
+      if (gift.enemy || !effect?.stats.length) return who;
+      const under = buildTotals(data, build, extra, { [effect.id]: kept ? Infinity : gift.stacks });
+      return { ...fighter(under.stats), effects: under.under.own };
+    };
+    return { who, holding };
+  };
   // StatCalculation.calc: a skill is used at the level the character has it, with its own stats
   // and the support gems of its hotbar slot on top of the character's.
   const used = (id: string) => {
-    const spell = skills.classes.flatMap((c) => c.perks).find((p) => p.id === id)!.spell!;
+    const spell = spellOf(id)!;
     const topRank = spell.maxLevel + skills.bonusLevels;
-    const learned = build.perks[id] ?? 0;
-    const rank = learned && learned + bonusSkillLevels(own.stats, spell.tagIds, skills.bonusLevels);
-    const percent = Math.trunc(Math.fround(rank / topRank) * 100);
-    const exact = (stats: StatMod[], roll: number) => stats.map((s): Exact => ({ id: s.id, type: s.type, value: rolled(s, roll, level) }));
-    const supports = build.hotbar.find((slot) => slot?.spell === id)?.supports ?? [];
-    const extra = [...exact(spell.stats, percent), ...supports.flatMap((gem) => exact(skills.supports.find((s) => s.id === gem.id)?.stats ?? [], gem.roll ?? 100))];
-    return { skill: rules.skills[id], who: fighter(buildTotals(data, build, extra).stats), rank, topRank, percent };
+    const rank = rankOf(id);
+    const percent = share(rank, topRank);
+    const extra = [...exact(spell.stats, percent), ...gems(id)];
+    return { skill: rules.skills[id], ...user(extra), rank, topRank, percent };
+  };
+  // ProcSpellEffect: a class skill that is set off is cast as the character has it, at no level
+  // where it hasn't learned it. A spell no class teaches is cast at the level of the skill it
+  // goes by, with that skill's stats and support gems on top of its own.
+  const setOff = (id: string): Used => {
+    const { skill = rules.skills[id], own: spell } = rules.procs[id];
+    if (!spell) return { ...used(id), skill };
+    const topRank = spell.maxLevel + skills.bonusLevels;
+    const rank = Math.max(spell.minRank, rankOf(spell.levelOf));
+    const lent = spell.supportsOf === id ? undefined : spellOf(spell.supportsOf);
+    const extra = [...exact(spell.stats, share(rank, topRank)), ...(lent ? exact(lent.stats, share(rankOf(spell.supportsOf), lent.maxLevel + skills.bonusLevels)) : []), ...gems(spell.supportsOf)];
+    return { skill, ...user(extra), rank, topRank };
   };
   const use = chosen && used(chosen.perk.id);
   const who = use?.who ?? fighter(own.stats);
 
-  // The states a skill can be used in go by the effects they take. One that does more for a
-  // Retribution stack spends one whenever any is held.
-  const stacks = retributionHeld(data, build);
-  const states = use?.skill.variants ?? [];
-  const spends = states.some((variant) => variant.retribution);
-  const variants = states.filter((variant) => !!variant.retribution === (spends && stacks > 0)).map((variant) => ({ variant, name: variant.needs.join(' and ') }));
-  const under = variants.find((v) => v.name === build.damage.under) ?? variants[0];
+  // A skill is used in the form the effects on its caster call for. Where it deals nothing
+  // under them, it is worked out in the form that takes the fewest, as if those were on. One
+  // that does more for a Retribution stack spends one whenever any is held.
+  const stacks = own.under.own[RETRIBUTION.effect];
+  const spends = !!use?.skill.variants.some((variant) => variant.retribution);
+  const fits = use && formOf(use.skill, who.effects);
+  const form = use && (fits ?? use.skill.variants[0]);
+  const forced = !!form && !fits;
 
-  // The target has armor and resistances, and what the skill and the aura that is on put on it at
-  // their level (ExileEffect.getExactStats).
-  const marks = [...(use ? (under.variant.marks ?? []).map((mark) => [mark.id, rolled(mark, use.percent, level)] as const) : []), ...(own.aura?.marks ?? []).map((mark) => [mark.id, mark.value] as const)];
-  const defenses = [['armor', target.armor] as const, ...RESISTS.map((id) => [`${id}_resist`, target.resists[id] ?? 0] as const), ...marks];
-  const enemy = { level: target.level ?? level, stats: new Map(defenses.map(([id, value]) => [id, { value, more: 1 }])), rules: rules.taken };
+  // The enemy has a mob's stats, and what the skill, the aura and the effects that are on put on
+  // it at their level (ExileEffect.getExactStats).
+  const marks = [...(use ? (form!.marks ?? []).map((mark): Exact => ({ id: mark.id, type: mark.type, value: rolled(mark, use.percent, level) })) : []), ...own.enemy.marks];
+  const enemy = { level: own.enemy.level, stats: mobStats(data.defense, data.stats, own.enemy, marks), rules: rules.taken, effects: own.under.enemy };
   // The skills its pets may cast, which no hotbar slot has to hold.
   const cast: Record<string, Used> = Object.fromEntries((use?.skill.pets?.spells ?? []).map((id) => [id, used(id)]));
-  const damage = use ? skillDamage(rules, use, enemy, under.variant, cast) : attackDamage(rules, who, enemy, build.damage.attacks ?? attackRate(who));
+  const damage = use ? skillDamage(rules, use, enemy, form!, cast) : attackDamage(rules, who, enemy, build.damage.attacks ?? attackRate(who));
   // An aura that is on deals what it does beside whatever is used, as a spell of its own skill.
   const hits = own.aura ? rules.auras[own.aura.id].hits : [];
-  const aura = own.aura && { name: own.aura.name, damage: hits.length ? auraDamage(rules, rules.auras[own.aura.id], hits, used(own.aura.id), enemy) : undefined };
-  const dps = damage.dps + (aura?.damage?.dps ?? 0);
+  const aura = own.aura && { name: own.aura.name, damage: hits.length ? effectDamage(rules, rules.auras[own.aura.id], hits, used(own.aura.id), enemy) : undefined };
+  // So does an effect that is on whose own script deals damage, as a spell of the skill that
+  // gave it (ExileEffectInstanceData): the one being used where that gives it, or else the one
+  // the build has at the highest level. Its ticks come without pause, so it never ends, and what
+  // a basic attack sets off comes with every one that lands and deals damage (DamageEvent.activate).
+  const struck = use || !damage.total ? 0 : damage.rate * damage.lands;
+  const lasting = own.effects.flatMap((held) => {
+    const from = held.stacks ? Object.keys(rules.lasting[held.id] ?? {}).filter((id) => rankOf(id) > 0) : [];
+    const giver = chosen && from.includes(chosen.perk.id) ? chosen.perk.id : from.sort((a, b) => rankOf(b) - rankOf(a))[0];
+    const dealt = (rules.lasting[held.id]?.[giver]?.hits ?? []).flatMap((hit): SkillHit[] => (hit.when === 'aura' ? [hit] : struck ? [{ ...hit, count: hit.count * struck }] : []));
+    return dealt.length ? [{ name: held.name, damage: effectDamage(rules, rules.lasting[held.id][giver], dealt, used(giver), enemy) }] : [];
+  });
+  const others = [...(aura?.damage ? [aura.damage] : []), ...lasting.map((effect) => effect.damage)];
+  // The spells that all those hits set off, the one that deals the most first.
+  const setOffBy = (main: Damage) =>
+    Object.entries(procDamage(rules, [main, ...others], enemy, setOff, damage.pets === undefined ? undefined : true))
+      .map(([id, dealt]) => ({ name: rules.procs[id].name, damage: dealt }))
+      .sort((a, b) => b.damage.dps - a.damage.dps);
+  const procs = setOffBy(damage);
+  const all = [damage, ...others, ...procs.map((proc) => proc.damage)];
+  const dps = all.reduce((sum, dealt) => sum + dealt.dps, 0);
   // What each element comes to a second, the most first.
   const perSecond: ByElement = {};
-  for (const [dealt, rate] of [[damage.perUse, damage.rate], [aura?.damage?.perUse ?? {}, 1]] as const) {
-    for (const [element, value] of Object.entries(dealt) as [Element, number][]) perSecond[element] = (perSecond[element] ?? 0) + value * rate;
+  for (const { perUse, rate } of all) {
+    for (const [element, value] of Object.entries(perUse) as [Element, number][]) perSecond[element] = (perSecond[element] ?? 0) + value * rate;
   }
   const elements = (Object.entries(perSecond) as [Element, number][]).filter(([, value]) => value > 0).sort((a, b) => b[1] - a[1]);
   // The stats the hit is made with.
   const stats = who.unit;
   const crit = Math.min(100, Math.max(0, stats.get('critical_hit')?.value ?? 0));
-  return { rules, own, choices, chosen, variants, under, enemy, damage, aura, dps, elements, stats, crit, retribution: { stacks, spends, name: skills.retribution.name } };
+
+  // What using the skill costs: each cast of a summon skill, which keeps its pets out, and each
+  // of its pets' attacks, which its user casts through the pet (PetAttackUTIL), each use of any
+  // other skill, or each basic attack. A set-off spell costs nothing (ProcSpellEffect).
+  const summon = use?.skill.pets;
+  const cost = use ? useCost(rules, skills.costScaling, use, use.skill, chosen!.spell, use.skill.channel) : attackCost(rules, who, damage.rate);
+  const petCost = summon && useCost(rules, skills.costScaling, use, summon, summon.cost, false);
+  const spent: ByResource = {};
+  addTo(spent, cost, damage.casts ?? damage.rate);
+  if (petCost) addTo(spent, petCost, damage.rate);
+  // What comes back while fighting: what is regenerated, and what hits leech, those that come
+  // whatever is used apart from those that come with its uses.
+  const leech = (list: Damage[]) => {
+    const out: ByResource = {};
+    for (const { restores, rate } of list) addTo(out, restores, rate);
+    return out;
+  };
+  const sustained = sustain(own.stats, spent, regenerated(rules, fighter(own.stats)), leech(others), leech([damage, ...procs.map((proc) => proc.damage)]));
+  // What is kept up once the first pool to run out is empty: the skill used as often as what comes back pays for.
+  const slower = { ...damage, rate: damage.rate * sustained.pace, dps: damage.dps * sustained.pace };
+  const kept = sustained.pace < 1 ? [slower, ...others, ...setOffBy(slower).map((proc) => proc.damage)].reduce((sum, dealt) => sum + dealt.dps, 0) : dps;
+  const resources = { ...sustained, cost, petCost, spent, kept };
+  return { rules, own, choices, chosen, form, forced, enemy, damage, aura, lasting, procs, dps, elements, stats, crit, retribution: { stacks, spends, name: skills.retribution.name }, resources };
 }
 
 const HITS: Element[] = ['Physical', 'Fire', 'Cold', 'Nature', 'Shadow'];
 
-// How the build holds up against the enemy set for it.
-export function buildDefense({ damage, defense: rules }: Pick<Sections, 'damage' | 'defense'>, build: Build, totals: Totals) {
+// How the build holds up against the enemy set for it, with what comes back while it uses `attack`'s skill.
+export function buildDefense({ damage, defense: rules }: Pick<Sections, 'damage' | 'defense'>, build: Build, attack: ReturnType<typeof buildDamage>) {
+  const totals = attack.own;
   const { stats, shield } = totals;
   const value = (id: string) => stats.get(id)?.value ?? 0;
 
-  // A mob rolls as many affixes as its rarity has; the ones here are those that change its hits.
-  const rarity = rules.mob.rarities.find((r) => r.id === build.defense.rarity) ?? rules.mob.rarities[0];
-  const slots = Array.from({ length: rarity.affixes }, (_, i) => build.defense.affixes[i] ?? '');
-  const affixes = slots.flatMap((id) => rules.mob.affixes.find((a) => a.id === id) ?? []);
-  const enemy = { ...build.defense, level: build.defense.level ?? build.level, rarity, affixes };
-  const mob = mobStats(rules, totals.rules, enemy);
+  const enemy = { ...totals.enemy, ...build.defense, effects: totals.under.enemy };
+  // What the aura and the effects that are on put on the mob count among its stats (ExileEffect.getExactStats).
+  const mob = mobStats(rules, totals.rules, enemy, enemy.marks);
   const pierces = (id: string) => mob.get(id)?.value ?? 0;
+
+  // What the aura that is on deals its own caster a second. Every player has a stat that keeps
+  // the caster's stats off a hit its self-damaging skill deals it (DefenseStats.NO_SELF_DAMAGE_STATS),
+  // so only its defenses act on it.
+  const aura = totals.aura && damage.auras[totals.aura.id];
+  const caster: Fighter = { level: build.level, own: stats, unit: new Map(), weapon: UNARMED, dualWield: false, effects: totals.under.own };
+  const cost = aura?.self.length ? effectDamage(damage, aura, aura.self, { ...totals.aura!, who: caster }, { level: build.level, stats, rules: rules.taken, effects: totals.under.own, self: true }).dps : 0;
+  // The health and magic shield that come back a second while the skill is used, less what the aura takes.
+  const { held } = attack.resources;
+  const healed = held.health + held.magic_shield - cost;
 
   const avoid = avoidance(rules, stats, enemy, mob, shield);
   const rows = HITS.map((element) => {
@@ -470,17 +650,12 @@ export function buildDefense({ damage, defense: rules }: Pick<Sections, 'damage'
       element === 'Physical'
         ? { used: armorShare(rules.scaling, value('armor'), pierces('armor_penetration'), enemy.level) * 100, all: 0 }
         : { used: resistance(stats, id, pierces(`${id}_penetration`)), all: Math.trunc(value(`${id}_resist`)) };
-    return { element, resisted, ...taken(rules, build.level, stats, enemy, mob, avoid, element) };
+    return { element, resisted, ...taken(rules, build.level, stats, totals.under.own, enemy, mob, avoid, element, healed) };
   });
   const weakest = rows.reduce((low, row) => (row.effectiveHealth < low.effectiveHealth ? row : low));
-
-  // What the aura that is on deals its own caster a second. Every player has a stat that keeps
-  // the caster's stats off a hit its self-damaging skill deals it (DefenseStats.NO_SELF_DAMAGE_STATS),
-  // so only its defenses act on it.
-  const aura = totals.aura && damage.auras[totals.aura.id];
-  const caster: Fighter = { level: build.level, own: stats, unit: new Map(), weapon: UNARMED, dualWield: false };
-  const cost = aura?.self.length ? auraDamage(damage, aura, aura.self, { ...totals.aura!, who: caster }, { level: build.level, stats, rules: rules.taken }).dps : 0;
-  return { rules, totals, value, rarity, slots, enemy, avoid, rows, weakest, aura: totals.aura && { name: totals.aura.name, cost } };
+  // The hits it lasts the shortest against.
+  const shortest = rows.reduce((low, row) => (row.lasts < low.lasts ? row : low));
+  return { rules, totals, value, enemy, avoid, rows, weakest, shortest, held, healed, aura: totals.aura && { name: totals.aura.name, cost } };
 }
 
 export const show = (n: number) => (!Number.isFinite(n) ? '∞' : n >= 100 ? Math.round(n).toLocaleString('en') : `${+n.toFixed(1)}`);
