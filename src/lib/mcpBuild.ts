@@ -76,6 +76,7 @@ export interface GivenBuild {
   damage?: { skill?: string; under?: string; attacks?: number; target?: { level?: number; armor?: number; resists?: Record<string, number> } };
   defense?: { level?: number; rarity?: string; affixes?: string[]; hit?: number; rate?: number };
   retribution?: number;
+  aura?: string;
 }
 
 interface Named {
@@ -361,6 +362,9 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
   if (given.retribution && !classes.some((c) => c.id === RETRIBUTION.class)) problems.push(`Only a Crusader holds ${retribution.name} stacks.`);
   if ((given.retribution ?? 0) > retribution.max) problems.push(`At most ${retribution.max} ${retribution.name} stacks can be held, but ${given.retribution} were given.`);
 
+  const learned = spells.filter((s) => perks[s.id] > 0 && skills.auras.some((a) => a.id === s.id));
+  const aura = given.aura ? pick(learned, given.aura, 'an aura the build has learned', problems) : undefined;
+
   const mob = given.defense?.rarity ? pick(defense.mob.rarities, given.defense.rarity, 'a mob rarity', problems) : defense.mob.rarities[0];
   // An empty one stands for an affix that changes nothing about the mob's hits.
   const mobAffixes = (given.defense?.affixes ?? []).map((affix) => (affix && pick(defense.mob.affixes, affix, "a mob affix that changes the mob's hits", problems)?.id) || '');
@@ -380,6 +384,7 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
       jewels,
       damage: { ...given.damage, skill: skill?.id, under },
       defense: { ...given.defense, rarity: mob?.id, affixes: mobAffixes },
+      aura: aura?.id,
     },
     core,
   )!;
@@ -406,7 +411,6 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
   const casts = chosen && dealt.pets === undefined;
   const each = casts ? 'cast' : 'attack';
   const held = attack.retribution.stacks;
-  const elements = (Object.entries(dealt.perUse) as [keyof typeof ELEMENTS, number][]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]);
   const others = attack.choices.filter((c) => c !== chosen).map((c) => c.spell.name);
   // Stats that came to something but depend on the moment, which neither tab of the editor counts.
   const leftOut = (ids: string[]) => (ids.length ? [`Left out, because they depend on the moment: ${ids.map((id) => defs[id].name.replace('[VAL1]', 'X')).join(', ')}`] : []);
@@ -427,13 +431,14 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
     [
       '## Damage',
       `Skill: ${chosen?.spell.name ?? 'Basic attack'}${attack.under?.name ? `, used with ${attack.under.name}` : ''}${attack.retribution.spends && held ? `, spending a ${retribution.name} stack every cast` : ''}`,
-      `Damage a second: ${amount(dealt.dps)}`,
+      ...(attack.aura ? [`Aura on: ${attack.aura.name}${attack.aura.damage ? `, which deals ${amount(attack.aura.damage.dps)} of the damage a second on its own` : ''}`] : []),
+      `Damage a second: ${amount(attack.dps)}`,
       `Each ${each}: ${amount(dealt.total)}`,
       `${casts ? 'Casts' : 'Attacks'} a second: ${+dealt.rate.toFixed(2)}`,
       ...(dealt.pets === undefined ? [] : [`Pets out: ${+dealt.pets.toFixed(2)}, all attacking the target without pause`]),
       `${defs.critical_hit.name}: ${+crit.toFixed(1)}%`,
       `${defs.critical_damage.name}: ${amount(attack.stats.get('critical_damage')?.value ?? defs.critical_damage.base)}%`,
-      ...(elements.length ? [`By element: ${elements.map(([element, n]) => `${ELEMENTS[element].name} ${amount(n * dealt.rate)} a second (${Math.round((n / dealt.total) * 100)}%)`).join(', ')}`] : []),
+      ...(attack.elements.length ? [`By element: ${attack.elements.map(([element, n]) => `${ELEMENTS[element].name} ${amount(n)} a second (${Math.round((n / attack.dps) * 100)}%)`).join(', ')}`] : []),
       `Target: level ${attack.enemy.level}, ${build.damage.target.armor} armor, resistances ${RESISTS.map((id) => `${elementName(id)} ${build.damage.target.resists[id] ?? 0}%`).join(', ')}`,
       ...(attack.variants.length > 1 ? [`${chosen!.spell.name} can be used with: ${attack.variants.map((v) => v.name || 'no effect').join(', ')}`] : []),
       ...(others.length ? [`Other skills on the hotbar that can be worked out: ${others.join(', ')}`] : []),
@@ -456,6 +461,9 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
         ({ element, resisted, lands, effectiveHealth }) =>
           `${ELEMENTS[element].name} hits: ${element === 'Physical' ? `${percent(resisted.used / 100)} stopped by armor` : `${resistText(resisted)} resisted`}, ${amount(lands)} of ${amount(enemy.hit)} taken, effective health ${amount(effectiveHealth)}`,
       ),
+      ...(guard.aura?.cost
+        ? [`${guard.aura.name} deals its caster ${amount(guard.aura.cost)} a second after defenses, ${percent(guard.aura.cost / (value('health') + value('magic_shield')))} of health and magic shield, which effective health leaves out`]
+        : []),
       ...(held ? [`${retribution.name} stacks held: ${held}, each giving ${statLines(retribution.stats, exactly(100), level).join(', ')}`] : []),
       `Enemy: level ${enemy.level} ${enemy.rarity.name} mob${enemy.affixes.length ? ` (${enemy.affixes.map((a) => a.name).join(', ')})` : ''}, a common mob's hit being ${amount(enemy.hit)} before defenses, ${enemy.rate} hits a second`,
       ...leftOut(guard.rules.situational.filter((id) => value(id))),
