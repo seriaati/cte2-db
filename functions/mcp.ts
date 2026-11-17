@@ -81,32 +81,36 @@ const build = z.object({
   damage: z
     .object({
       skill: z.string().optional().describe('The spell on the hotbar whose damage is worked out. Left out, it is the basic attack.'),
-      under: z.string().optional().describe('The effect the skill is used with, where it has more than one state, e.g. "Combo Starter". The answer lists them.'),
       attacks: z.number().positive().max(20).optional().describe("Basic attacks a second, when not the weapon's own."),
-      target: z
-        .object({
-          level: own,
-          armor: points,
-          resists: z.object({ fire: z.number(), water: z.number(), lightning: z.number(), chaos: z.number() }).partial().describe('In percent, from -300 to 75. Water is cold.'),
-        })
-        .partial()
-        .optional()
-        .describe("The enemy hit. Defaults to one of the character's level with no armor and no resistances."),
     })
     .optional(),
-  defense: z
+  enemy: z
     .object({
       level: own,
       rarity: z.string().describe('The mob\'s rarity, e.g. "Rare" or "Boss". Defaults to Common.'),
-      affixes: z.array(z.string()).describe('Its affixes that change its hits, e.g. ["of Flames"].'),
+      affixes: z.array(z.string()).describe('Its affixes that change its hits or its defenses, e.g. ["of Flames", "Armored"].'),
+    })
+    .partial()
+    .optional()
+    .describe(
+      "The mob the skill is used on and whose hits effective health is measured against. It has the armor, dodge and resistances the game gives a mob of its level, rarity and affixes, and dodges its share of hits once the character's Accuracy is taken off.",
+    ),
+  defense: z
+    .object({
       hit: z.number().int().min(1).describe("What a common mob's hit is before defenses. Defaults to 1000."),
       rate: z.number().int().min(1).max(20).describe('Hits a second. Defaults to 2.'),
     })
     .partial()
     .optional()
-    .describe('The mob whose hits effective health is measured against.'),
+    .describe("The enemy's hits that effective health is measured against."),
   retribution: points.optional().describe('Retribution stacks a Crusader is taken to hold. Each lowers the damage taken, and a Crusader skill that does more for a stack spends one every cast.'),
   aura: z.string().optional().describe('The aura skill that is on, one the build has points in, e.g. "Fanaticism". Only one can be on: its effect counts in every stat, and what it deals enemies or its caster is worked out.'),
+  effects: z
+    .record(z.string(), points)
+    .optional()
+    .describe(
+      'The buffs and debuffs taken to be on, each with its stacks, out of those the build can put on the character or on the enemy: what the skills it has points in give, and what its stats give on a hit, on a kill, when the character is hit or every ten seconds, such as charges, e.g. {"Power Surge": 1, "Frenzy Charge": 3, "Shred": 5}. The answer lists them. One that is on is taken to be kept up the whole time: on the character it counts in every stat, on the enemy it changes what the skill deals it and what its hits deal, and one that deals damage itself, like Damnation, deals it without pause. A skill that changes with the effects on its caster is used in the form they call for.',
+    ),
 });
 
 const handler = createMcpHandler(({ requestInfo }) => {
@@ -197,7 +201,7 @@ const handler = createMcpHandler(({ requestInfo }) => {
     {
       title: 'Work out a character build',
       description:
-        "Work out a whole Craft to Exile 2 character the way the site's build editor does: the points it spends and has, what one skill deals a second to a target, its effective health against a mob's hits, and every stat when asked. Use it to put a build together, to improve one, or to see what a change does; send the whole build each time. Things go by name as the search tool gives them, or by id. What has no name (passives, infusions, and the affixes of jewels, corruption and codexes) goes by the id the search gives or by a stat it gives. The build of a file exported from the editor works as it is. The build has to be one the game allows; when it isn't, the answer lists everything that is wrong, with the choices where there are few, instead of the numbers. Damage is one skill used over and over on one enemy, with chances counted as their average, and for a summon skill what its pets deal attacking that enemy without pause; buffs other than a Crusader's Retribution stacks and the one aura set to be on, curses, ailments and spells set off by other effects are not counted, and neither are regeneration and leech in effective health. The editor opens builds from files, not links: set file for the file to hand to the user.",
+        "Work out a whole Craft to Exile 2 character the way the site's build editor does: the points it spends and has, what one skill deals a second to an enemy mob, its effective health against that mob's hits, and every stat when asked. Use it to put a build together, to improve one, or to see what a change does; send the whole build each time. Things go by name as the search tool gives them, or by id. What has no name (passives, infusions, and the affixes of jewels, corruption and codexes) goes by the id the search gives or by a stat it gives. The build of a file exported from the editor works as it is. The build has to be one the game allows; when it isn't, the answer lists everything that is wrong, with the choices where there are few, instead of the numbers. Damage is one skill used over and over on one enemy, with chances and the enemy's dodges counted as their average, and of projectiles shot together those that would hit an enemy as big as a zombie 5 blocks away, aimed so that the most do, and for a summon skill what its pets deal attacking that enemy without pause; of buffs and debuffs only a Crusader's Retribution stacks, the one aura set to be on and the effects set to be on count, out of those the build's skills and stats give, each as if kept up the whole time; what an effect deals itself while it lasts counts, with the skill that leaves it or apart when it is set to be on; spells that stats set off on a hit count, as often as their chance and cooldown let them go off, but not those set off by a kill or by a hit the character takes; ailments are not counted. Damage a second is at full pace; the answer gives what the skill costs in mana, energy or blood and what comes back a second while fighting (regeneration and what its hits leech or restore, up to the leech cap), and where it costs more than comes back, how long the pool lasts and the damage a second that can be kept up after. Effective health counts no healing; the answer sets the health and magic shield that come back a second against the enemy's hits and says how long the character lasts. The editor opens builds from files, not links: set file for the file to hand to the user.",
       inputSchema: z.object({
         build,
         connect: z.boolean().optional().describe('Add the nodes needed to join the given talents to an entry point and to each other, in each tree, as talent_build_link does. The answer lists what was added.'),

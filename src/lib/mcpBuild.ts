@@ -1,7 +1,7 @@
 // Server-side only: the build tool of functions/mcp.ts. It reads a whole build given by names or
 // ids, says what the game wouldn't allow about it, and reports what the build editor works out for it.
 import { canRoll, type StatMod } from './affix';
-import { buildDamage, buildDefense, describeJewel, jewelSockets, nameOf, percent, readCodex, readItem, resistText, show as amount, statGroups } from './buildCalc';
+import { buildDamage, buildDefense, buildTotals, describeJewel, jewelSockets, nameOf, percent, readCodex, readItem, resistText, show as amount, statGroups } from './buildCalc';
 import {
   AUGMENT_SLOTS,
   GEAR_SLOTS,
@@ -27,12 +27,12 @@ import {
   type TreeId,
 } from './buildRules';
 import { core, sections } from './builds';
-import { ELEMENTS } from './damageRules';
+import { ELEMENTS, resistance, volleysMissed, type Resource } from './damageRules';
 import { TREES, addedLine, planTree, show, statLines } from './mcp';
 import { slotCount } from './plannerRules';
 import { augmentCapacity, augmentCost } from './statRules';
 
-const { gear, skills, sockets, damage, defense } = sections;
+const { gear, skills, sockets, defense } = sections;
 const { maxLevel } = core;
 const tiers = gear.rarities.filter((r) => !r.runewords);
 const top = tiers.at(-1)!;
@@ -73,10 +73,12 @@ export interface GivenBuild {
   codex?: GivenCodex | null;
   augments?: Given[];
   jewels?: { kind: string; rarity?: string; level?: number; affixes?: Given[]; corruption?: Given[] }[];
-  damage?: { skill?: string; under?: string; attacks?: number; target?: { level?: number; armor?: number; resists?: Record<string, number> } };
-  defense?: { level?: number; rarity?: string; affixes?: string[]; hit?: number; rate?: number };
+  damage?: { skill?: string; attacks?: number };
+  enemy?: { level?: number; rarity?: string; affixes?: string[] };
+  defense?: { hit?: number; rate?: number };
   retribution?: number;
   aura?: string;
+  effects?: Record<string, number>;
 }
 
 interface Named {
@@ -87,7 +89,6 @@ interface Named {
 
 const idOf = (given: Given) => (typeof given === 'string' ? given : given.id);
 const rollOf = (given: Given) => (typeof given === 'string' ? undefined : given.roll);
-const same = (a: string, b: string) => a.toLowerCase() === b.trim().toLowerCase();
 
 // Infusions, passives and the affixes of jewels, corruption and codexes have no names in game, so
 // each goes by the stats it gives.
@@ -353,10 +354,6 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
   for (const kind of ['crafted', 'eye']) if (jewels.filter((j) => j.kind === kind).length > 1) problems.push(`Only one ${describeJewel(sockets, jewels.find((j) => j.kind === kind)!).item.name} can be socketed.`);
 
   const skill = given.damage?.skill ? pick(spells, given.damage.skill, `a spell of ${whose}`, problems) : undefined;
-  const states = [...new Set((skill && damage.skills[skill.id]?.variants.map((v) => v.needs.join(' and '))) || [])];
-  const stateNames = states.map((state) => state || 'no effect').join(', ');
-  const under = states.find((state) => same(state, given.damage?.under ?? ''));
-  if (given.damage?.under && under === undefined) problems.push(`"${given.damage.under}" is not something ${skill?.name ?? 'a basic attack'} is used with.${states.length ? ` The choices: ${stateNames}.` : ''}`);
 
   const { retribution } = skills;
   if (given.retribution && !classes.some((c) => c.id === RETRIBUTION.class)) problems.push(`Only a Crusader holds ${retribution.name} stacks.`);
@@ -365,36 +362,57 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
   const learned = spells.filter((s) => perks[s.id] > 0 && skills.auras.some((a) => a.id === s.id));
   const aura = given.aura ? pick(learned, given.aura, 'an aura the build has learned', problems) : undefined;
 
-  const mob = given.defense?.rarity ? pick(defense.mob.rarities, given.defense.rarity, 'a mob rarity', problems) : defense.mob.rarities[0];
-  // An empty one stands for an affix that changes nothing about the mob's hits.
-  const mobAffixes = (given.defense?.affixes ?? []).map((affix) => (affix && pick(defense.mob.affixes, affix, "a mob affix that changes the mob's hits", problems)?.id) || '');
+  const mob = given.enemy?.rarity ? pick(defense.mob.rarities, given.enemy.rarity, 'a mob rarity', problems) : defense.mob.rarities[0];
+  // An empty one stands for an affix that changes nothing about the mob's hits or its defenses.
+  const mobAffixes = (given.enemy?.affixes ?? []).map((affix) => (affix && pick(defense.mob.affixes, affix, "a mob affix that changes the mob's hits or its defenses", problems)?.id) || '');
   if (mob && mobAffixes.length > mob.affixes) problems.push(`A ${mob.name} mob has ${count(mob.affixes, 'affix', 'affixes')}, but ${wereGiven(mobAffixes.length)}.`);
 
-  const build = readBuild(
-    {
-      ...given,
-      trees,
-      stats: attributes,
-      classes: classes.map((c) => c.id),
-      perks,
-      hotbar,
-      gear: worn,
-      codex,
-      augments: rolled(augments),
-      jewels,
-      damage: { ...given.damage, skill: skill?.id, under },
-      defense: { ...given.defense, rarity: mob?.id, affixes: mobAffixes },
-      aura: aura?.id,
-    },
-    core,
-  )!;
+  const made = (effects: Record<string, number>) =>
+    readBuild(
+      {
+        ...given,
+        trees,
+        stats: attributes,
+        classes: classes.map((c) => c.id),
+        perks,
+        hotbar,
+        gear: worn,
+        codex,
+        augments: rolled(augments),
+        jewels,
+        damage: { ...given.damage, skill: skill?.id },
+        enemy: { ...given.enemy, rarity: mob?.id, affixes: mobAffixes },
+        aura: aura?.id,
+        effects,
+      },
+      core,
+    )!;
+  // What can be turned on follows the build's stats, and an effect that is on can give the stat
+  // that gives another. So the effects are read against the build without any, and once more
+  // with those found there on.
+  const read = (draft: Build, issues: string[]) => {
+    const can = buildTotals(sections, draft).effects;
+    const offered = skills.effects.filter((effect) => can.some((held) => held.id === effect.id));
+    return Object.entries(given.effects ?? {}).flatMap(([key, held]) => {
+      const found = held > 0 && pick(offered, key, 'an effect the build can turn on', issues);
+      return found ? [{ found, held }] : [];
+    });
+  };
+  const turned = (list: ReturnType<typeof read>) => made(Object.fromEntries(list.map((e) => [e.found.id, e.held])));
+  const effects = read(turned(read(made({}), [])), problems);
+  once(effects.map((e) => e.found), problems);
+  for (const [kind, alike] of Map.groupBy(effects.filter((e) => e.found.kind), (e) => e.found.kind)) {
+    if (alike.length > 1) problems.push(`Only one ${kind} effect is on at a time, but ${alike.map((e) => e.found.name).join(' and ')} were given.`);
+  }
+  const build = turned(effects);
 
   const jewelRoom = jewelSockets(core, build);
   if (build.jewels.length > jewelRoom) problems.push(`The build has ${count(build.jewels.length, 'jewel')} but ${count(jewelRoom, 'jewel socket')}. Sockets come from talents and from a few uniques.`);
   const attack = buildDamage(sections, build);
   const totals = attack.own;
-  const guard = buildDefense(sections, build, totals);
+  const guard = buildDefense(sections, build, attack);
   problems.push(...totals.skipped);
+  for (const { id, name, max } of totals.effects) if (build.effects[id] > max) problems.push(`${name} has ${count(max, 'stack')} at most, but ${build.effects[id]} were given.`);
   const reserved = augments.reduce((sum, { found }) => sum + augmentCost(totals.stats, found), 0);
   const capacity = augmentCapacity(totals.rules, totals.stats);
   if (reserved > capacity) problems.push(`The augments take ${reserved} augment capacity, but the build has ${capacity}.`);
@@ -412,9 +430,23 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
   const each = casts ? 'cast' : 'attack';
   const held = attack.retribution.stacks;
   const others = attack.choices.filter((c) => c !== chosen).map((c) => c.spell.name);
+  // The effects on one side: those that are on, with their stacks, or all that can be. One that
+  // is listed for both sides goes by an id of its own on the second.
+  const effectNames = (enemy: boolean, on: boolean) =>
+    totals.effects
+      .filter((e) => e.enemy === enemy && (!on || e.stacks))
+      .map((e) => (on ? (e.stacks > 1 ? `${e.stacks} ${e.name}` : e.name) : `${e.name}${e.id === e.effect ? '' : ` (given as ${e.id})`}${e.max > 1 ? ` (up to ${e.max} stacks)` : ''}`));
+  const forms = chosen ? attack.rules.skills[chosen.perk.id].variants : [];
+  // What each effect the skill leaves deals of a cast, by the effect's name.
+  const left = Map.groupBy(dealt.parts.filter((part) => part.hit?.effect), (part) => part.hit!.effect!);
+  const whole = (parts: typeof dealt.parts) => parts.reduce((all, part) => all + part.count * Object.values(part.damage).reduce((sum, n) => sum + n, 0), 0);
   // Stats that came to something but depend on the moment, which neither tab of the editor counts.
   const leftOut = (ids: string[]) => (ids.length ? [`Left out, because they depend on the moment: ${ids.map((id) => defs[id].name.replace('[VAL1]', 'X')).join(', ')}`] : []);
-  const resource = (id: string) => `${defs[id].name}: ${amount(value(id))}${value(`${id}_regen`) > 0 ? `, ${amount(value(`${id}_regen`))} regenerated a second` : ''}`;
+  const { shortest } = guard;
+  const resource = (id: Resource) => `${defs[id].name}: ${amount(value(id))}${guard.held[id] > 0 ? `, ${amount(guard.held[id])} recovered a second while fighting` : ''}`;
+  // What the skill costs and what comes back, for each resource it spends.
+  const { cost, petCost, spent: paid, recovered, dry, kept } = attack.resources;
+  const spending = (Object.keys(paid) as Resource[]).filter((id) => paid[id]! > 0);
 
   const gearLines = GEAR_SLOTS.flatMap((slot) => {
     const item = build.gear[slot.id];
@@ -430,17 +462,35 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
     ...(gearLines.length ? [['## Gear', ...gearLines]] : []),
     [
       '## Damage',
-      `Skill: ${chosen?.spell.name ?? 'Basic attack'}${attack.under?.name ? `, used with ${attack.under.name}` : ''}${attack.retribution.spends && held ? `, spending a ${retribution.name} stack every cast` : ''}`,
+      `Skill: ${chosen?.spell.name ?? 'Basic attack'}${attack.form?.needs.length ? `, used with ${attack.form.needs.join(' and ')}${attack.forced ? ', which it needs to do anything and is taken to have' : ''}` : ''}${attack.retribution.spends && held ? `, spending a ${retribution.name} stack every cast` : ''}`,
       ...(attack.aura ? [`Aura on: ${attack.aura.name}${attack.aura.damage ? `, which deals ${amount(attack.aura.damage.dps)} of the damage a second on its own` : ''}`] : []),
+      ...(effectNames(false, true).length ? [`Effects on: ${effectNames(false, true).join(', ')}`] : []),
+      ...(effectNames(true, true).length ? [`Effects on the enemy: ${effectNames(true, true).join(', ')}`] : []),
       `Damage a second: ${amount(attack.dps)}`,
+      ...spending.map(
+        (id) =>
+          `${defs[id].name}: ${amount(cost[id] ?? 0)} each ${chosen ? 'cast' : 'attack'}${petCost?.[id] ? ` and ${amount(petCost[id])} each pet attack` : ''}, ${amount(paid[id]!)} spent a second at full pace and ${amount(recovered[id])} recovered a second (regeneration, leech and restores on hit, up to the leech cap)`,
+      ),
+      ...(dry ? [`At full pace ${defs[dry.resource].name.toLowerCase()} runs out after ${amount(dry.after)} s; after that ${amount(kept)} damage a second can be kept up, the skill used as often as what comes back pays for${dry.resource === 'energy' && totals.shield ? '. Below 1 energy a raised shield blocks nothing' : ''}`] : []),
+      ...(attack.lasting.length ? [`Of that, from effects that are on and deal damage themselves: ${attack.lasting.map((e) => `${e.name} ${amount(e.damage.dps)} a second`).join(', ')}`] : []),
+      ...(attack.procs.length
+        ? [`Of that, from spells set off by hits: ${attack.procs.map((p) => `${p.name} ${amount(p.damage.dps)} a second (${amount(p.damage.total)} a cast, ${+p.damage.rate.toFixed(2)} casts a second)`).join(', ')}`]
+        : []),
       `Each ${each}: ${amount(dealt.total)}`,
+      ...(volleysMissed(dealt.parts).length
+        ? [`Of projectiles shot together, ${volleysMissed(dealt.parts).map(({ shot, hit }) => `${hit} of ${shot}`).join(' and ')} are taken to hit the enemy, an enemy as big as a zombie 5 blocks away`]
+        : []),
+      ...(left.size ? [`Of that, from the effects it leaves, over the time they last or until the next cast renews them: ${[...left].map(([name, parts]) => `${name} ${amount(whole(parts))}`).join(', ')}`] : []),
       `${casts ? 'Casts' : 'Attacks'} a second: ${+dealt.rate.toFixed(2)}`,
       ...(dealt.pets === undefined ? [] : [`Pets out: ${+dealt.pets.toFixed(2)}, all attacking the target without pause`]),
       `${defs.critical_hit.name}: ${+crit.toFixed(1)}%`,
       `${defs.critical_damage.name}: ${amount(attack.stats.get('critical_damage')?.value ?? defs.critical_damage.base)}%`,
+      ...(dealt.lands < 1 ? [`Chance to hit: ${percent(dealt.lands)}, the enemy dodging the rest`] : []),
       ...(attack.elements.length ? [`By element: ${attack.elements.map(([element, n]) => `${ELEMENTS[element].name} ${amount(n)} a second (${Math.round((n / attack.dps) * 100)}%)`).join(', ')}`] : []),
-      `Target: level ${attack.enemy.level}, ${build.damage.target.armor} armor, resistances ${RESISTS.map((id) => `${elementName(id)} ${build.damage.target.resists[id] ?? 0}%`).join(', ')}`,
-      ...(attack.variants.length > 1 ? [`${chosen!.spell.name} can be used with: ${attack.variants.map((v) => v.name || 'no effect').join(', ')}`] : []),
+      `Enemy: level ${enemy.level} ${enemy.rarity.name} mob${enemy.affixes.length ? ` (${enemy.affixes.map((a) => a.name).join(', ')})` : ''}, ${['armor', 'dodge', 'spell_dodge'].map((id) => `${amount(attack.enemy.stats.get(id)?.value ?? 0)} ${defs[id].name.toLowerCase()}`).join(', ')}, resistances ${RESISTS.map((id) => `${elementName(id)} ${resistance(attack.enemy.stats, id, 0)}%`).join(', ')}`,
+      ...(forms.length > 1 ? [`${chosen!.spell.name} takes a form of its own with each of: ${forms.map((v) => v.needs.join(' and ') || 'no effect').join(', ')}. The effects that are on pick it`] : []),
+      ...(effectNames(false, false).length ? [`Effects the build can turn on: ${effectNames(false, false).join(', ')}`] : []),
+      ...(effectNames(true, false).length ? [`Effects it can put on the enemy: ${effectNames(true, false).join(', ')}`] : []),
       ...(others.length ? [`Other skills on the hotbar that can be worked out: ${others.join(', ')}`] : []),
       ...(totals.weapon ? [] : ['No weapon is held, so basic attacks are unarmed and skills that build on weapon damage have little to build on.']),
       ...leftOut(attack.rules.situational.filter((id) => attack.stats.get(id)?.value || (attack.stats.get(id)?.more ?? 1) !== 1)),
@@ -448,7 +498,7 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
     [
       '## Defense',
       `Effective health: ${amount(weakest.effectiveHealth)}, the lowest of the five below, against ${ELEMENTS[weakest.element].name.toLowerCase()} hits`,
-      ...['health', 'magic_shield', 'mana', 'energy'].map(resource),
+      ...(['health', 'magic_shield', 'mana', 'energy', 'blood'] as const).filter((id) => id !== 'blood' || value(id) > 0).map(resource),
       `Attributes: ${core.attributes.map((stat) => `${stat.name} ${amount(Math.trunc(value(stat.id)))}`).join(', ')}`,
       `Armor: ${amount(value('armor'))}`,
       `Attacks dodged: ${percent(avoid.dodge)}, magic spells dodged: ${percent(avoid.spellDodge)}`,
@@ -461,11 +511,12 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
         ({ element, resisted, lands, effectiveHealth }) =>
           `${ELEMENTS[element].name} hits: ${element === 'Physical' ? `${percent(resisted.used / 100)} stopped by armor` : `${resistText(resisted)} resisted`}, ${amount(lands)} of ${amount(enemy.hit)} taken, effective health ${amount(effectiveHealth)}`,
       ),
+      `Against ${ELEMENTS[shortest.element].name.toLowerCase()} hits, which take ${amount(shortest.perSecond)} a second after defenses, dodges and blocks, ${Number.isFinite(shortest.lasts) ? `it falls after ${amount(shortest.lasts)} s from full, with the health and magic shield recovered while fighting coming back${guard.aura?.cost ? ` and ${guard.aura.name} taking its share` : ''}` : 'it recovers at least as fast, so it never falls'}`,
       ...(guard.aura?.cost
         ? [`${guard.aura.name} deals its caster ${amount(guard.aura.cost)} a second after defenses, ${percent(guard.aura.cost / (value('health') + value('magic_shield')))} of health and magic shield, which effective health leaves out`]
         : []),
       ...(held ? [`${retribution.name} stacks held: ${held}, each giving ${statLines(retribution.stats, exactly(100), level).join(', ')}`] : []),
-      `Enemy: level ${enemy.level} ${enemy.rarity.name} mob${enemy.affixes.length ? ` (${enemy.affixes.map((a) => a.name).join(', ')})` : ''}, a common mob's hit being ${amount(enemy.hit)} before defenses, ${enemy.rate} hits a second`,
+      `Enemy: level ${enemy.level} ${enemy.rarity.name} mob${enemy.affixes.length ? ` (${enemy.affixes.map((a) => a.name).join(', ')})` : ''}${effectNames(true, true).length ? ` under ${effectNames(true, true).join(', ')}` : ''}, a common mob's hit being ${amount(enemy.hit)} before defenses, ${enemy.rate} hits a second`,
       ...leftOut(guard.rules.situational.filter((id) => value(id))),
     ],
     ...(options.stats
