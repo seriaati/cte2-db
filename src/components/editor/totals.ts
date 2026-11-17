@@ -18,6 +18,8 @@ export interface Totals {
   // The base of the weapon held, and whether a second one is held beside it.
   weapon?: string;
   dualWield: boolean;
+  // Whether what is held in the off hand is a shield.
+  shield: boolean;
 }
 
 const exact = ({ stats, rolls, level }: Part): Exact[] => stats.map((s) => ({ id: s.id, type: s.type, value: rolled(s, rolls.maxPercent, level) }));
@@ -114,7 +116,13 @@ function gather(data: Sections, build: Build, dualWield: number, extra: Exact[])
   });
 
   const sources: Source[] = [{ kind: 'other', stats: others }, { kind: 'jewel', stats: jewels }, ...auras.map(({ stats }): Source => ({ kind: 'aura', stats }))];
-  return { sources, skipped, secondWeapon: worn.some((w) => w.share !== 1), weapon: worn.find((w) => w.item === build.gear.weapon)?.parts.base.id };
+  return {
+    sources,
+    skipped,
+    secondWeapon: worn.some((w) => w.share !== 1),
+    weapon: worn.find((w) => w.item === build.gear.weapon)?.parts.base.id,
+    shield: worn.some((w) => w.item === build.gear.offhand && w.parts.base.slot === 'shield'),
+  };
 }
 
 const NONE: Exact[] = [];
@@ -137,10 +145,10 @@ export function useTotals(build: Build, extra = NONE): Totals | null {
     // CachedEntityStats.afterStatCalc: the gear is gone over again until Dual Wield Effectiveness settles.
     let dualWield = 0;
     for (let pass = 0; ; pass++) {
-      const { sources, skipped, secondWeapon, weapon } = gather(loaded, build, dualWield, extra);
+      const { sources, skipped, secondWeapon, weapon, shield } = gather(loaded, build, dualWield, extra);
       const stats = totalStats(loaded.stats, sources);
       const next = stats.get('dual_wield_effectiveness')?.value ?? 0;
-      if (!secondWeapon || Math.abs(next - dualWield) <= 0.01 || pass === 5) return { rules: loaded.stats, stats, skipped, weapon, dualWield: secondWeapon };
+      if (!secondWeapon || Math.abs(next - dualWield) <= 0.01 || pass === 5) return { rules: loaded.stats, stats, skipped, weapon, dualWield: secondWeapon, shield };
       dualWield = next;
     }
   }, [build, extra, ...Object.values(data)]);

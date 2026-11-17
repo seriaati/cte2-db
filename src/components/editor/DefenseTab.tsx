@@ -1,0 +1,200 @@
+import type { Build } from '../../lib/buildRules';
+import { ELEMENTS, armorShare, resistance, type Element } from '../../lib/damageRules';
+import { avoidance, mobStats, taken } from '../../lib/defenseRules';
+import { Dropdown } from '../controls';
+import { Loading, NumberField, Popover, useSection, type TabProps } from './shared';
+import { useTotals } from './totals';
+
+const HITS: Element[] = ['Physical', 'Fire', 'Cold', 'Nature', 'Shadow'];
+const show = (n: number) => (!Number.isFinite(n) ? '∞' : n >= 100 ? Math.round(n).toLocaleString('en') : `${+n.toFixed(1)}`);
+const percent = (share: number) => `${+(share * 100).toFixed(1)}%`;
+
+export default function DefenseTab({ core, build, change }: TabProps) {
+  const rules = useSection('defense');
+  const totals = useTotals(build);
+  if (!rules || !totals) return <Loading />;
+
+  const { stats, shield } = totals;
+  const value = (id: string) => stats.get(id)?.value ?? 0;
+  const set = (patch: Partial<Build['defense']>) => change({ defense: { ...build.defense, ...patch } });
+
+  // A mob rolls as many affixes as its rarity has; the ones here are those that change its hits.
+  const rarity = rules.mob.rarities.find((r) => r.id === build.defense.rarity) ?? rules.mob.rarities[0];
+  const slots = Array.from({ length: rarity.affixes }, (_, i) => build.defense.affixes[i] ?? '');
+  const affixes = slots.flatMap((id) => rules.mob.affixes.find((a) => a.id === id) ?? []);
+  const enemy = { ...build.defense, level: build.defense.level ?? build.level, rarity, affixes };
+  const mob = mobStats(rules, totals.rules, enemy);
+  const pierces = (id: string) => mob.get(id)?.value ?? 0;
+
+  const avoid = avoidance(rules, stats, enemy, mob, shield);
+  const rows = HITS.map((element) => ({ element, ...taken(rules, build.level, stats, enemy, mob, avoid, element) }));
+  const weakest = rows.reduce((low, row) => (row.effectiveHealth < low.effectiveHealth ? row : low));
+  const left = rules.situational.filter((id) => value(id)).map((id) => totals.rules.defs[id].name.replace('[VAL1]', 'X'));
+
+  const resisted = (element: Element) => {
+    if (element === 'Physical') return `${percent(armorShare(rules.scaling, value('armor'), pierces('armor_penetration'), enemy.level))} by armor`;
+    const { id } = ELEMENTS[element];
+    const used = resistance(stats, id, pierces(`${id}_penetration`));
+    const all = Math.trunc(value(`${id}_resist`));
+    return all > used ? `${used}% of ${all}%` : `${used}%`;
+  };
+
+  return (
+    <div className="plain">
+      <div className="title-row">
+        <h1>Defense</h1>
+      </div>
+      <p className="note">
+        How the build holds up against a mob's hits. Effective health is the damage those hits add up to by the time a character at full health falls, counted before the character's
+        defenses and before what the mob's rarity and affixes add. Dodges, blocks and other chances count as their average, and nothing is healed in between.
+      </p>
+
+      <div className="controls">
+        <Popover label="Enemy">
+          <NumberField label="Level" value={enemy.level} min={1} max={core.maxLevel} onChange={(n) => set({ level: n === build.level ? undefined : n })} />
+          <Dropdown label="Rarity" value={rarity.id} groups={[{ options: rules.mob.rarities.map((r) => ({ value: r.id, label: r.name })) }]} onChange={(id) => set({ rarity: id })} />
+          {slots.map((id, i) => (
+            <Dropdown
+              key={i}
+              label={slots.length > 1 ? `Affix ${i + 1}` : 'Affix'}
+              value={id}
+              groups={[{ options: [{ value: '', label: 'None' }, ...rules.mob.affixes.map((a) => ({ value: a.id, label: a.name }))] }]}
+              onChange={(picked) => set({ affixes: slots.map((old, at) => (at === i ? picked : old)) })}
+            />
+          ))}
+          <NumberField label="Hit of a common mob" value={enemy.hit} min={1} max={100000000} onChange={(hit) => set({ hit })} />
+          <NumberField label="Hits a second" value={enemy.rate} min={1} max={20} onChange={(rate) => set({ rate })} />
+        </Popover>
+      </div>
+
+      <dl className="totals-main">
+        <div>
+          <dt className="cap">Effective health</dt>
+          <dd>{show(weakest.effectiveHealth)}</dd>
+        </div>
+        <div>
+          <dt className="cap">Health</dt>
+          <dd>{show(value('health'))}</dd>
+        </div>
+        <div>
+          <dt className="cap">Magic shield</dt>
+          <dd>{show(value('magic_shield'))}</dd>
+        </div>
+        <div>
+          <dt className="cap">Armor</dt>
+          <dd>{show(value('armor'))}</dd>
+        </div>
+        <div>
+          <dt className="cap">Attacks dodged</dt>
+          <dd>{percent(avoid.dodge)}</dd>
+        </div>
+        <div>
+          <dt className="cap">Hits blocked</dt>
+          <dd>{percent(avoid.blocked)}</dd>
+        </div>
+      </dl>
+
+      <p className="note">The effective health above is the lowest of the five below, against {ELEMENTS[weakest.element].name.toLowerCase()} hits.</p>
+
+      <section className="group">
+        <div className="group-head">
+          <h2>By element</h2>
+        </div>
+        <table className="by-element">
+          <thead>
+            <tr>
+              <th className="cap">Hit</th>
+              <th className="cap">Resisted</th>
+              <th className="cap">Taken of {show(enemy.hit)}</th>
+              <th className="cap">Effective health</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(({ element, lands, effectiveHealth }) => (
+              <tr key={element}>
+                <th scope="row">{ELEMENTS[element].name}</th>
+                <td>{resisted(element)}</td>
+                <td>
+                  <span className="v">{show(lands)}</span>, {percent(lands / enemy.hit)}
+                </td>
+                <td className="v">{show(effectiveHealth)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      <section className="group">
+        <div className="group-head">
+          <h2>Dodge and block</h2>
+        </div>
+        <ul className="totals one">
+          <li>
+            <span>Attacks dodged</span>
+            <span className="v">{percent(avoid.dodge)}</span>
+          </li>
+          <li>
+            <span>Magic spells dodged</span>
+            <span className="v">{percent(avoid.spellDodge)}</span>
+          </li>
+          {shield && (
+            <>
+              <li>
+                <span>Chance to block when a block is ready</span>
+                <span className="v">{percent(avoid.block)}</span>
+              </li>
+              <li>
+                <span>Share of a blocked hit that is stopped</span>
+                <span className="v">{percent(avoid.stops)}</span>
+              </li>
+              <li>
+                <span>Time until the next block is ready</span>
+                <span>
+                  <span className="v">{avoid.recovery}</span> s
+                </span>
+              </li>
+              <li>
+                <span>Hits blocked at {enemy.rate} a second</span>
+                <span className="v">{percent(avoid.blocked)}</span>
+              </li>
+            </>
+          )}
+          <li>
+            <span>Damage that dodging and blocking stop</span>
+            <span className="v">{percent(1 - (1 - avoid.dodge) * (1 - avoid.blocked * avoid.stops))}</span>
+          </li>
+        </ul>
+        {!shield && value('block_chance') > 0 && <p className="note skipped">Blocking needs a shield in the off hand, so the build's block chance does nothing.</p>}
+      </section>
+
+      {(value('magic_shield') > 0 || value('mana_shield') > 0) && (
+        <section className="group">
+          <div className="group-head">
+            <h2>Magic shield and mana</h2>
+          </div>
+          <ul className="totals one">
+            {value('magic_shield') > 0 && (
+              <li>
+                <span>Chaos damage that goes past magic shield</span>
+                <span className="v">{value('chaos_doesnt_bypass_magic_shield') > 0 ? 'None' : 'Half'}</span>
+              </li>
+            )}
+            {value('mana_shield') > 0 && (
+              <li>
+                <span>Share of every hit that mana takes, until half the mana is gone</span>
+                <span className="v">{percent(Math.min(1, value('mana_shield') / 100))}</span>
+              </li>
+            )}
+          </ul>
+        </section>
+      )}
+
+      {left.length > 0 && <p className="note">Left out, because they depend on the moment: {left.join(', ')}.</p>}
+      <p className="note">
+        Every mob has some accuracy and armor penetration and deals half again as much elemental and chaos damage, so a hit can come to more than its size. Its rarity multiplies its hits,
+        and an affix that adds an element adds it to physical hits. Its hits are attacks. Neither side has buffs, curses or ailments on it, and regeneration, leech and healing aren't
+        counted.
+      </p>
+    </div>
+  );
+}

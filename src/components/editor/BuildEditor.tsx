@@ -5,6 +5,7 @@ import { LevelStepper } from '../controls';
 import AugmentsTab from './AugmentsTab';
 import CalculatorTab, { StatTotals } from './CalculatorTab';
 import DamageTab from './DamageTab';
+import DefenseTab from './DefenseTab';
 import GearTab from './GearTab';
 import JewelsTab, { jewelSockets } from './JewelsTab';
 import SkillsTab from './SkillsTab';
@@ -13,9 +14,9 @@ import TalentsTab from './TalentsTab';
 
 const STORE = 'builds';
 const PANEL = 'build-stats-panel';
-const TABS = ['skills', 'talents', 'stats', 'gear', 'augments', 'jewels', 'calculator', 'damage'] as const;
+const TABS = ['skills', 'talents', 'stats', 'gear', 'augments', 'jewels', 'calculator', 'damage', 'defense'] as const;
 type Tab = (typeof TABS)[number];
-const LABELS: Record<Tab, string> = { skills: 'Skills', talents: 'Talents', stats: 'Stat points', gear: 'Gear', augments: 'Augments', jewels: 'Jewels', calculator: 'Stats', damage: 'Damage' };
+const LABELS: Record<Tab, string> = { skills: 'Skills', talents: 'Talents', stats: 'Stat points', gear: 'Gear', augments: 'Augments', jewels: 'Jewels', calculator: 'Stats', damage: 'Damage', defense: 'Defense' };
 
 // Screens with room for the build's stats beside the editor.
 const DESKTOP = '(min-width: 1280px)';
@@ -35,6 +36,7 @@ const ICONS: Record<Tab, string> = {
   jewels: 'M2 0h4v1h-4zM1 1h1v1h-1zM6 1h1v1h-1zM0 2h1v1h-1zM3 2h2v1h-2zM7 2h1v1h-1zM0 3h1v1h-1zM2 3h4v1h-4zM7 3h1v1h-1zM0 4h1v1h-1zM2 4h4v1h-4zM7 4h1v1h-1zM0 5h1v1h-1zM3 5h2v1h-2zM7 5h1v1h-1zM1 6h1v1h-1zM6 6h1v1h-1zM2 7h4v1h-4z',
   calculator: 'M6 0h2v1h-2zM6 1h2v1h-2zM3 2h2v1h-2zM6 2h2v1h-2zM3 3h2v1h-2zM6 3h2v1h-2zM0 4h2v1h-2zM3 4h2v1h-2zM6 4h2v1h-2zM0 5h2v1h-2zM3 5h2v1h-2zM6 5h2v1h-2zM0 6h2v1h-2zM3 6h2v1h-2zM6 6h2v1h-2z',
   damage: 'M6 0h2v1h-2zM5 1h3v1h-3zM4 2h3v1h-3zM1 3h1v1h-1zM3 3h3v1h-3zM1 4h4v1h-4zM2 5h2v1h-2zM1 6h1v1h-1zM3 6h2v1h-2zM0 7h1v1h-1z',
+  defense: 'M1 0h6v1h-6zM0 1h8v3h-8zM1 4h6v2h-6zM2 6h4v1h-4zM3 7h2v1h-2z',
 };
 
 interface Saved {
@@ -143,7 +145,7 @@ export default function BuildEditor({ core }: { core: Core }) {
     action();
   };
 
-  // What each tab holds of the build, and the points that are spent on it. The stats and damage tabs hold nothing to reset.
+  // What each tab holds of the build, and the points that are spent on it. The stats, damage and defense tabs hold nothing to reset.
   const PARTS: Partial<Record<Tab, [fields: (keyof Build)[], pools: Pool[]]>> = {
     skills: [['classes', 'perks', 'hotbar'], ['spells', 'passives']],
     talents: [['trees'], [...TREES]],
@@ -279,6 +281,7 @@ export default function BuildEditor({ core }: { core: Core }) {
           {tab === 'jewels' && <JewelsTab {...props} />}
           {tab === 'calculator' && <CalculatorTab {...props} />}
           {tab === 'damage' && <DamageTab {...props} />}
+          {tab === 'defense' && <DefenseTab {...props} />}
         </main>
 
         {notice && (

@@ -22,6 +22,7 @@ import { auras } from './auras';
 import { VANILLA_HEALTH, type Limits, type RarityType, type TreeId } from './buildRules';
 import { builtinLimits, transfers } from './builtinStats';
 import { damage } from './damage';
+import { defense } from './defense';
 import { affixesOf, infusions, maxLevel, statMod, tagNames, text } from './gear';
 import { gems, ranks } from './gems';
 import { sprite } from './items';
@@ -280,7 +281,7 @@ const collect = (v: unknown) => {
   if (isMod(v)) given.add(v.id);
   else Object.values(v).forEach(collect);
 };
-collect([partial, baseMods, coreStats]);
+collect([partial, baseMods, coreStats, defense.mob]);
 
 const rules: StatRules = {
   defs: Object.fromEntries(
@@ -327,5 +328,5 @@ const stats = {
   ],
 };
 
-export const sections = { ...partial, stats, damage };
+export const sections = { ...partial, stats, damage, defense };
 export type Sections = typeof sections;
