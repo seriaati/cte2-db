@@ -6,17 +6,18 @@ import { Loading, NumberField, Popover, useSection, type TabProps } from './shar
 import { useTotals } from './totals';
 
 const HITS: Element[] = ['Physical', 'Fire', 'Cold', 'Nature', 'Shadow'];
-const show = (n: number) => (!Number.isFinite(n) ? '∞' : n >= 100 ? Math.round(n).toLocaleString('en') : `${+n.toFixed(1)}`);
-const percent = (share: number) => `${+(share * 100).toFixed(1)}%`;
+export const show = (n: number) => (!Number.isFinite(n) ? '∞' : n >= 100 ? Math.round(n).toLocaleString('en') : `${+n.toFixed(1)}`);
+export const percent = (share: number) => `${+(share * 100).toFixed(1)}%`;
 
-export default function DefenseTab({ core, build, change }: TabProps) {
+// How the build holds up against the enemy set on this tab, for the tab and for the summary beside
+// the editor. Null until the game data it draws on has arrived.
+export function useDefense(build: Build) {
   const rules = useSection('defense');
   const totals = useTotals(build);
-  if (!rules || !totals) return <Loading />;
+  if (!rules || !totals) return null;
 
   const { stats, shield } = totals;
   const value = (id: string) => stats.get(id)?.value ?? 0;
-  const set = (patch: Partial<Build['defense']>) => change({ defense: { ...build.defense, ...patch } });
 
   // A mob rolls as many affixes as its rarity has; the ones here are those that change its hits.
   const rarity = rules.mob.rarities.find((r) => r.id === build.defense.rarity) ?? rules.mob.rarities[0];
@@ -27,17 +28,30 @@ export default function DefenseTab({ core, build, change }: TabProps) {
   const pierces = (id: string) => mob.get(id)?.value ?? 0;
 
   const avoid = avoidance(rules, stats, enemy, mob, shield);
-  const rows = HITS.map((element) => ({ element, ...taken(rules, build.level, stats, enemy, mob, avoid, element) }));
-  const weakest = rows.reduce((low, row) => (row.effectiveHealth < low.effectiveHealth ? row : low));
-  const left = rules.situational.filter((id) => value(id)).map((id) => totals.rules.defs[id].name.replace('[VAL1]', 'X'));
-
-  const resisted = (element: Element) => {
-    if (element === 'Physical') return `${percent(armorShare(rules.scaling, value('armor'), pierces('armor_penetration'), enemy.level))} by armor`;
+  const rows = HITS.map((element) => {
     const { id } = ELEMENTS[element];
-    const used = resistance(stats, id, pierces(`${id}_penetration`));
-    const all = Math.trunc(value(`${id}_resist`));
-    return all > used ? `${used}% of ${all}%` : `${used}%`;
-  };
+    // The share of the hit that armor stops, or the resistance that counts against it and the whole of it, in percent.
+    const resisted =
+      element === 'Physical'
+        ? { used: armorShare(rules.scaling, value('armor'), pierces('armor_penetration'), enemy.level) * 100, all: 0 }
+        : { used: resistance(stats, id, pierces(`${id}_penetration`)), all: Math.trunc(value(`${id}_resist`)) };
+    return { element, resisted, ...taken(rules, build.level, stats, enemy, mob, avoid, element) };
+  });
+  const weakest = rows.reduce((low, row) => (row.effectiveHealth < low.effectiveHealth ? row : low));
+  return { rules, totals, value, rarity, slots, enemy, avoid, rows, weakest };
+}
+
+// A resistance, with the whole of it where a cap or the enemy's penetration keeps some from counting.
+export const resistText = ({ used, all }: { used: number; all: number }) => (all > used ? `${used}% of ${all}%` : `${used}%`);
+
+export default function DefenseTab({ core, build, change }: TabProps) {
+  const found = useDefense(build);
+  if (!found) return <Loading />;
+
+  const { rules, totals, value, rarity, slots, enemy, avoid, rows, weakest } = found;
+  const { shield } = totals;
+  const set = (patch: Partial<Build['defense']>) => change({ defense: { ...build.defense, ...patch } });
+  const left = rules.situational.filter((id) => value(id)).map((id) => totals.rules.defs[id].name.replace('[VAL1]', 'X'));
 
   return (
     <div className="plain">
@@ -110,10 +124,10 @@ export default function DefenseTab({ core, build, change }: TabProps) {
             </tr>
           </thead>
           <tbody>
-            {rows.map(({ element, lands, effectiveHealth }) => (
+            {rows.map(({ element, resisted, lands, effectiveHealth }) => (
               <tr key={element}>
                 <th scope="row">{ELEMENTS[element].name}</th>
-                <td>{resisted(element)}</td>
+                <td>{element === 'Physical' ? `${percent(resisted.used / 100)} by armor` : resistText(resisted)}</td>
                 <td>
                   <span className="v">{show(lands)}</span>, {percent(lands / enemy.hit)}
                 </td>

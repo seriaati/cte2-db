@@ -12,7 +12,9 @@ const sum = (damage: ByElement) => Object.values(damage).reduce((total, value) =
 const elementName = (id: string) => Object.values(ELEMENTS).find((element) => element.id === id)!.name;
 const WHEN: Record<SkillHit['when'], string> = { cast: 'when cast', hit: 'when a projectile hits', tick: 'over time', end: 'as it ends' };
 
-export default function DamageTab({ core, build, change }: TabProps) {
+// What the skill picked on this tab deals, for the tab and for the summary beside the editor. Null
+// until the game data it draws on has arrived.
+export function useDamage(build: Build) {
   const rules = useSection('damage');
   const skills = useSection('skills');
   const own = useTotals(build);
@@ -38,7 +40,7 @@ export default function DamageTab({ core, build, change }: TabProps) {
   }, [skills, rules, build.hotbar, build.classes, build.perks, build.damage.skill, rank, top, level]);
   const unit = useTotals(build, extra);
 
-  if (!rules || !skills || !own || !unit) return <Loading />;
+  if (!rules || !skills || !own || !unit) return null;
 
   const who: Fighter = { level, own: own.stats, unit: unit.stats, weapon: (own.weapon && rules.weapons[own.weapon]) || UNARMED, dualWield: own.dualWield };
   // The target has armor and resistances and nothing else.
@@ -48,8 +50,19 @@ export default function DamageTab({ core, build, change }: TabProps) {
   const variants = chosen ? rules.skills[chosen.perk.id].variants.map((variant) => ({ variant, name: variant.needs.join(' and ') })) : [];
   const under = variants.find((v) => v.name === build.damage.under) ?? variants[0];
   const damage = chosen ? skillDamage(rules, who, enemy, rules.skills[chosen.perk.id], under.variant, rank, top) : attackDamage(rules, who, enemy, build.damage.attacks ?? attackRate(who));
+  // The stats the hit is made with.
   const stats = chosen ? who.unit : who.own;
   const crit = Math.min(100, Math.max(0, stats.get('critical_hit')?.value ?? 0));
+  return { rules, own, choices, chosen, variants, under, enemy, damage, stats, crit };
+}
+
+export default function DamageTab({ core, build, change }: TabProps) {
+  const found = useDamage(build);
+  if (!found) return <Loading />;
+
+  const { rules, own, choices, chosen, variants, under, enemy, damage, stats, crit } = found;
+  const { level } = build;
+  const { target } = build.damage;
   const elements = (Object.entries(damage.perUse) as [Element, number][]).filter(([, value]) => value > 0).sort((a, b) => b[1] - a[1]);
   const left = rules.situational.filter((id) => stats.get(id)?.value || (stats.get(id)?.more ?? 1) !== 1).map((id) => own.rules.defs[id].name.replace('[VAL1]', 'X'));
 
