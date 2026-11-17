@@ -159,7 +159,7 @@ body.editor-page {
   animation: enter 0.18s ease-out;
 }
 
-/* On a desktop the build's stats can stay in view: a panel of its own down the right side of the
+/* On a desktop a summary of the build can stay in view: a panel of its own down the right side of the
    page, the way the database has its sidebar on the left. The editor keeps to the room beside it. */
 body.editor-page {
   transition: padding-right 0.18s ease-out;
@@ -227,19 +227,6 @@ body.editor-page:has(.stats-side:not(.leaving)) {
   transform: scaleX(-1);
 }
 
-.stats-side .totals-main {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin: 16px 0;
-}
-
-.stats-side .totals-main div {
-  padding: 10px 12px;
-}
-
-.stats-side .totals-main dd {
-  font-size: 26px;
-}
-
 .stats-side .group {
   margin-top: 26px;
 }
@@ -250,6 +237,23 @@ body.editor-page:has(.stats-side:not(.leaving)) {
 
 .stats-side .totals {
   font-size: 14.5px;
+}
+
+.summary li {
+  align-items: baseline;
+}
+
+.summary .key .v {
+  font: 400 26px/1 var(--pixel);
+}
+
+.summary .sub {
+  padding-left: 14px;
+  color: var(--muted);
+}
+
+.summary > .note {
+  margin-top: 26px;
 }
 
 .editor-main h1 {

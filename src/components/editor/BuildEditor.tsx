@@ -3,13 +3,14 @@ import { AUGMENT_SLOTS, GEAR_SLOTS, TREES, emptyBuild, exportBuild, importBuild,
 import type { Core } from '../../lib/builds';
 import { LevelStepper } from '../controls';
 import AugmentsTab from './AugmentsTab';
-import CalculatorTab, { StatTotals } from './CalculatorTab';
+import CalculatorTab from './CalculatorTab';
 import DamageTab from './DamageTab';
 import DefenseTab from './DefenseTab';
 import GearTab from './GearTab';
 import JewelsTab, { jewelSockets } from './JewelsTab';
 import SkillsTab from './SkillsTab';
 import StatsTab from './StatsTab';
+import Summary from './Summary';
 import TalentsTab from './TalentsTab';
 
 const STORE = 'builds';
@@ -18,7 +19,7 @@ const TABS = ['skills', 'talents', 'stats', 'gear', 'augments', 'jewels', 'calcu
 type Tab = (typeof TABS)[number];
 const LABELS: Record<Tab, string> = { skills: 'Skills', talents: 'Talents', stats: 'Stat points', gear: 'Gear', augments: 'Augments', jewels: 'Jewels', calculator: 'Stats', damage: 'Damage', defense: 'Defense' };
 
-// Screens with room for the build's stats beside the editor.
+// Screens with room for a summary of the build beside the editor.
 const DESKTOP = '(min-width: 1280px)';
 const watchDesktop = (notify: () => void) => {
   const media = matchMedia(DESKTOP);
@@ -38,6 +39,8 @@ const ICONS: Record<Tab, string> = {
   damage: 'M6 0h2v1h-2zM5 1h3v1h-3zM4 2h3v1h-3zM1 3h1v1h-1zM3 3h3v1h-3zM1 4h4v1h-4zM2 5h2v1h-2zM1 6h1v1h-1zM3 6h2v1h-2zM0 7h1v1h-1z',
   defense: 'M1 0h6v1h-6zM0 1h8v3h-8zM1 4h6v2h-6zM2 6h4v1h-4zM3 7h2v1h-2z',
 };
+// The summary's bookmark: a short list.
+const SUMMARY_ICON = 'M0 0h2v2h-2zM3 0h5v2h-5zM0 3h2v2h-2zM3 3h5v2h-5zM0 6h2v2h-2zM3 6h5v2h-5z';
 
 interface Saved {
   current: number;
@@ -66,8 +69,7 @@ export default function BuildEditor({ core }: { core: Core }) {
   const menuRoot = useRef<HTMLDivElement>(null);
   const file = useRef<HTMLInputElement>(null);
   const build = saved.builds[saved.current];
-  // The stats tab shows the same list, so the panel at the side makes way for it.
-  const desktop = useSyncExternalStore(watchDesktop, () => matchMedia(DESKTOP).matches) && tab !== 'calculator';
+  const desktop = useSyncExternalStore(watchDesktop, () => matchMedia(DESKTOP).matches);
   const [panel, setPanel] = useState(() => {
     try {
       return localStorage.getItem(PANEL) !== 'off';
@@ -296,12 +298,12 @@ export default function BuildEditor({ core }: { core: Core }) {
           className={`stats-mark ${out ? 'out' : ''}`}
           type="button"
           aria-expanded={out}
-          title={out ? 'Hide the stats' : 'Show the stats'}
-          aria-label={out ? 'Hide the stats' : 'Show the stats'}
+          title={out ? 'Hide the summary' : 'Show the summary'}
+          aria-label={out ? 'Hide the summary' : 'Show the summary'}
           onClick={() => (out ? setLeaving(true) : showPanel(true))}
         >
           <svg viewBox="0 0 8 8" width="16" height="16" shapeRendering="crispEdges" aria-hidden="true">
-            <path fill="currentColor" d={ICONS.calculator} />
+            <path fill="currentColor" d={SUMMARY_ICON} />
           </svg>
           <svg className="stats-mark-arrow" viewBox="0 0 4 7" width="8" height="14" shapeRendering="crispEdges" aria-hidden="true">
             <path fill="currentColor" d="M0 0h1v1h-1zM1 1h1v1h-1zM2 2h1v1h-1zM3 3h1v1h-1zM2 4h1v1h-1zM1 5h1v1h-1zM0 6h1v1h-1z" />
@@ -311,12 +313,12 @@ export default function BuildEditor({ core }: { core: Core }) {
       {desktop && panel && (
         <aside
           className={`stats-side plain ${leaving ? 'leaving' : ''}`}
-          aria-label="Stats of the build"
+          aria-label="Summary of the build"
           // Animations of what is inside the panel end here too; only its own counts.
           onAnimationEnd={(e) => leaving && e.target === e.currentTarget && showPanel(false)}
         >
-          <h2>Stats</h2>
-          <StatTotals build={build} />
+          <h2>Summary</h2>
+          <Summary core={core} build={build} />
         </aside>
       )}
     </>

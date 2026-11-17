@@ -14,7 +14,7 @@ function lines(id: string, def: StatDef, total: Total) {
 }
 
 // What the build's stats come to: the numbers that matter most, then the rest in the game's own groups.
-export function StatTotals({ build }: { build: Build }) {
+function StatTotals({ build }: { build: Build }) {
   const totals = useTotals(build);
   const [search, setSearch] = useState('');
   if (!totals) return <Loading />;
