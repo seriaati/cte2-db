@@ -16,6 +16,8 @@ const REGISTRIES = [
   'mmorpg_gear_rarity',
   'mmorpg_gear_slot',
   'mmorpg_gems',
+  'mmorpg_mob_affix',
+  'mmorpg_mob_rarity',
   'mmorpg_omen',
   'mmorpg_perk',
   'mmorpg_runes',
