@@ -144,6 +144,19 @@ export interface Target {
 // What working out a hit takes of the rules.
 export type HitRules = Pick<DamageRules, 'rules' | 'layers' | 'scaling' | 'takenAs'>;
 
+// Ailments, which are in the mod's code (6.4.13): the element of the hits that cause one, the share
+// of the hit it is made of, and the ticks it deals that over. One with no ticks builds up on the
+// target instead, until a hit of its element sets it off.
+export const AILMENTS: Record<string, { element: Element; share: number; ticks: number }> = {
+  burn: { element: 'Fire', share: 1, ticks: 60 },
+  poison: { element: 'Shadow', share: 1.5, ticks: 200 },
+  bleed: { element: 'Physical', share: 1.2, ticks: 100 },
+  freeze: { element: 'Cold', share: 0.85, ticks: 0 },
+  electrify: { element: 'Nature', share: 1, ticks: 0 },
+};
+// EntityAilmentData: the shortest an ailment lasts, and the share of what has built up that is lost every second.
+const AILMENT = { minTicks: 21, decay: 0.1 };
+
 // ElementalResist: a resistance counts up to a cap that the target's stats can raise.
 const RESIST = { min: -300, cap: 75, max: 90 };
 // Armor.getMaxMulti.
@@ -180,6 +193,8 @@ export interface Hit {
   blocked?: boolean;
   // Damage the target took as another element, which nothing of the attacker's acts on.
   takenAs?: boolean;
+  // The ailment it is the damage of, which isn't a hit: it can't be a critical one or be converted.
+  ailment?: string;
 }
 
 const f = Math.fround;
@@ -193,10 +208,10 @@ const rulesOf = (rules: Record<string, Rule[]>, unit: Map<string, Total>, on: Ru
 
 // DamageEvent for one outcome of every roll: `luck` says which of the chances come through. Gives
 // the damage in the hit's own element, what it adds in others, what the target takes of it as
-// other elements, and the chances it came across.
+// other elements, what an ailment it causes is made of, and the chances it came across.
 function strike(rules: HitRules, who: Fighter, target: Target, hit: Hit, luck: Map<string, boolean>) {
   const bools = new Set<string>([...(hit.basic ? ['is_basic_atk'] : []), ...(hit.bonus ? ['is_bonus_element_damage'] : []), ...(hit.blocked ? ['is_blocked'] : [])]);
-  const strings: Record<string, string> = { attack_type: hit.bonus ? 'bonus_dmg' : 'hit', style: hit.style };
+  const strings: Record<string, string> = { attack_type: hit.ailment ? 'dot' : hit.bonus ? 'bonus_dmg' : 'hit', style: hit.style, ailment: hit.ailment ?? '' };
   const layers = new Map<string, number>();
   const conversion = new Map<Element, number>();
   const extra = new Map<Element, number>();
@@ -294,6 +309,8 @@ function strike(rules: HitRules, who: Fighter, target: Target, hit: Hit, luck: M
       damage -= (whole * taken) / 100;
     }
   }
+  // AilmentChance: what the hit started at with flat damage added, less what was converted.
+  const base = damage;
   for (const [to, percent] of extra) if (percent > 0 && damage > 0) add(to, (damage * percent) / 100);
   const rest = [...layers].filter(([id]) => id !== 'flat_damage').sort((a, b) => rules.layers[a[0]].priority - rules.layers[b[0]].priority);
   const run = (steps: typeof rest) => {
@@ -304,7 +321,7 @@ function strike(rules: HitRules, who: Fighter, target: Target, hit: Hit, luck: M
   };
   run(rest.filter(([id]) => rules.layers[id].priority < rules.takenAs));
   // PhysicalDamageTakenAs: shares that add up to more than the whole hit are scaled down to it.
-  if (hit.element === 'Physical' && hit.depth < 2) {
+  if (hit.element === 'Physical' && hit.depth < 2 && !hit.ailment) {
     const shares = RESISTED.map((to) => [to, Math.trunc(defense(`phys_taken_as_${ELEMENTS[to].id}`))] as const).filter(([, percent]) => percent > 0);
     const scale = Math.min(1, 100 / shares.reduce((sum, [, percent]) => sum + percent, 0));
     const whole = damage;
@@ -316,20 +333,32 @@ function strike(rules: HitRules, who: Fighter, target: Target, hit: Hit, luck: M
   }
   run(rest.filter(([id]) => rules.layers[id].priority >= rules.takenAs));
   for (const multi of multis) damage *= multi;
-  return { damage: Math.max(0, damage), other, takenAs, chances };
+  return { damage: Math.max(0, damage), base, other, takenAs, chances };
 }
 
 export type ByElement = Partial<Record<Element, number>>;
+const addTo = (to: ByElement, from: ByElement, times = 1) => {
+  for (const [element, value] of Object.entries(from) as [Element, number][]) to[element] = (to[element] ?? 0) + value * times;
+};
+
+export interface Average {
+  damage: ByElement;
+  // For the ailments it can cause: how many hits of each element it comes to, and what they are made of.
+  landed: ByElement;
+  base: ByElement;
+}
 
 // What a hit comes to on average, by element: every roll weighed by its chance, and the damage it
 // adds in other elements or is taken as worked out as hits of their own
 // (DamageEvent.calculateAllBonusElementalDamage). What is taken as another element gets none of
 // the "more" multipliers the hit started with.
-export function average(rules: HitRules, who: Fighter, target: Target, hit: Hit): ByElement {
+export function average(rules: HitRules, who: Fighter, target: Target, hit: Hit): Average {
   const chances = new Map<string, number>();
   for (;;) {
     const rolls = [...chances];
     let damage = 0;
+    let landed = 0;
+    let base = 0;
     let found = false;
     const other = new Map<Element, number>();
     const takenAs = new Map<Element, number>();
@@ -342,12 +371,18 @@ export function average(rules: HitRules, who: Fighter, target: Target, hit: Hit)
         chances.set(id, chance);
       }
       damage += weight * result.damage;
+      if (result.damage > 0) {
+        landed += weight;
+        base += weight * result.base;
+      }
       for (const [to, amount] of result.other) other.set(to, (other.get(to) ?? 0) + weight * amount);
       for (const [to, amount] of result.takenAs) takenAs.set(to, (takenAs.get(to) ?? 0) + weight * amount);
     }
     // A roll that only showed up now wasn't weighed, so the outcomes are gone over again with it.
     if (found) continue;
-    const total: ByElement = { [hit.element]: damage };
+    // AilmentChance.canActivate: only the attacker's own hits that aren't blocked cause ailments.
+    const causes = !hit.takenAs && !hit.blocked && !hit.ailment;
+    const total: Average = { damage: { [hit.element]: damage }, landed: causes ? { [hit.element]: landed } : {}, base: causes ? { [hit.element]: base } : {} };
     if (hit.depth < 2) {
       const next = { ...hit, bonus: true, depth: hit.depth + 1 };
       const more = [
@@ -356,7 +391,10 @@ export function average(rules: HitRules, who: Fighter, target: Target, hit: Hit)
       ];
       for (const bonus of more) {
         if (bonus.amount <= 0) continue;
-        for (const [element, value] of Object.entries(average(rules, who, target, bonus)) as [Element, number][]) total[element] = (total[element] ?? 0) + value;
+        const added = average(rules, who, target, bonus);
+        addTo(total.damage, added.damage);
+        addTo(total.landed, added.landed);
+        addTo(total.base, added.base);
       }
     }
     return total;
@@ -419,30 +457,69 @@ export interface Damage {
   total: number;
   rate: number;
   dps: number;
+  // What the ailments its hits cause deal on top for each use, by ailment.
+  ailments: Record<string, number>;
 }
 
 const sum = (damage: ByElement) => Object.values(damage).reduce((total, value) => total + value, 0);
 
-function result(needs: string[], parts: Part[], rate: number): Damage {
+// AilmentChance and EntityAilmentData: what each ailment the hits cause deals for one use of a
+// skill that is used over and over. An ailment's damage is worked out once, as damage over time
+// of no weapon that the attacker's and the target's stats act on, and is then dealt as it is.
+// Ailment strength and DOT speed, which nothing in the pack gives, are left out.
+function ailmentDamage(rules: HitRules, who: Fighter, target: Target, hits: { count: number; from: Hit; mean: Average }[], rate: number) {
+  const perUse: Record<string, number> = {};
+  for (const [id, { element, share, ticks }] of Object.entries(AILMENTS)) {
+    const stat = (name: string) => who.unit.get(`${id}_${name}`)?.value ?? 0;
+    const chance = stat('chance') / 100;
+    if (chance <= 0) continue;
+    let made = 0;
+    let rolls = 0;
+    for (const { count, from, mean } of hits) {
+      const landed = mean.landed[element] ?? 0;
+      if (!landed) continue;
+      const event: Hit = { ...from, amount: mean.base[element]! / landed, element, ailment: id, bonus: false, depth: 0, style: 'int', basic: false, effectiveness: 1, multis: [levelPenalty(who, target)] };
+      made += count * landed * chance * (average(rules, { ...who, weapon: UNARMED }, target, event).damage[element] ?? 0);
+      rolls += count * landed;
+    }
+    made *= share * Math.max(0, 1 - (target.stats.get(`${id}_resistance`)?.value ?? 0) / 100);
+    if (made <= 0) continue;
+    const lasts = Math.max(0.01, 1 + stat('duration') / 100);
+    if (ticks) {
+      // It deals a second's worth each time its target's age reaches a whole second while it
+      // lasts, which on average leaves it one tick's worth short of the whole.
+      perUse[id] = (made * (Math.max(AILMENT.minTicks, Math.trunc(ticks * lasts)) - 1)) / ticks;
+    } else {
+      // AilmentProcStat: every hit of its element has a chance to set off all that has built up.
+      // The hits of one use are taken to land together, and what is left decays until the next.
+      const setOff = 1 - (1 - stat('proc_chance') / 100) ** rolls;
+      const kept = (1 - clamp(AILMENT.decay / lasts, 0, 1)) ** (1 / rate);
+      if (setOff > 0) perUse[id] = (setOff * made) / (1 - (1 - setOff) * kept);
+    }
+  }
+  return perUse;
+}
+
+// One use of a skill or one attack: its hits on the target and the ailments they cause.
+function dealt(rules: HitRules, who: Fighter, target: Target, needs: string[], hits: { hit?: SkillHit; count: number; from: Hit }[], rate: number): Damage {
+  const means = hits.map(({ count, from }) => ({ count, from, mean: average(rules, who, target, from) }));
   const perUse: ByElement = {};
-  for (const part of parts) for (const [element, value] of Object.entries(part.damage) as [Element, number][]) perUse[element] = (perUse[element] ?? 0) + value * part.count;
-  return { needs, parts, perUse, total: sum(perUse), rate, dps: sum(perUse) * rate };
+  for (const { count, mean } of means) addTo(perUse, mean.damage, count);
+  const parts = hits.map(({ hit, count }, i): Part => ({ hit, count, damage: means[i].mean.damage }));
+  return { needs, parts, perUse, total: sum(perUse), rate, dps: sum(perUse) * rate, ailments: ailmentDamage(rules, who, target, means, rate) };
 }
 
 // A skill's damage against one target, used in one of the states it can be used in.
 export function skillDamage(rules: DamageRules, who: Fighter, target: Target, skill: SkillDamage, variant: SkillDamage['variants'][number], rank: number, topRank: number): Damage {
   const multis = [levelPenalty(who, target)];
-  const parts = variant.hits.map((hit): Part => {
+  const hits = variant.hits.map((hit) => {
     const calc = rules.calcs[hit.calc];
     const amount = calcValue(rules, calc, who, rank, topRank);
     const effectiveness = leveled(calc.effectiveness, rank, topRank);
-    return {
-      hit,
-      count: hit.count,
-      damage: average(rules, who, target, { amount, element: hit.element, bonus: false, depth: 0, style: skill.style, tags: skill.tags, basic: false, effectiveness, multis }),
-    };
+    const from: Hit = { amount, element: hit.element, bonus: false, depth: 0, style: skill.style, tags: skill.tags, basic: false, effectiveness, multis };
+    return { hit, count: hit.count, from };
   });
-  return result(variant.needs, parts, 20 / castTicks(rules, who, skill));
+  return dealt(rules, who, target, variant.needs, hits, 20 / castTicks(rules, who, skill));
 }
 
 // How many basic attacks a second the weapon makes at full swing: the vanilla attack speed, which
@@ -455,5 +532,5 @@ export function attackDamage(rules: DamageRules, who: Fighter, target: Target, r
   const multis = [1 + (who.own.get('full_swing_damage')?.value ?? 0) / 100, who.weapon.multi, levelPenalty(who, target)];
   const amount = Math.trunc(who.own.get('weapon_damage')?.value ?? 0);
   const hit: Hit = { amount, element: 'Physical', bonus: false, depth: 0, style: who.weapon.style, tags: null, basic: true, effectiveness: 1, multis };
-  return result([], [{ count: 1, damage: average(rules, { ...who, unit: who.own }, target, hit) }], rate);
+  return dealt(rules, { ...who, unit: who.own }, target, [], [{ count: 1, from: hit }], rate);
 }

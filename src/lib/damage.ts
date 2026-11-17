@@ -12,7 +12,7 @@ import layerData from '../data/stat_layer.json';
 import effectsData from '../data/exile_effect.json';
 import calcData from '../data/value_calc.json';
 import weaponData from '../data/weapon_type.json';
-import type { Act, Cond, DamageCalc, DamageRules, Element, Layer, Rule, SkillDamage, SkillHit, Weapon } from './damageRules';
+import { AILMENTS, type Act, type Cond, type DamageCalc, type DamageRules, type Element, type Layer, type Rule, type SkillDamage, type SkillHit, type Weapon } from './damageRules';
 import { text } from './gear';
 import type { Leveled } from './spellRules';
 
@@ -51,8 +51,9 @@ function condition(id: string): Cond | null {
       return { k: 'dual', ...not };
     case 'random_roll':
       return { k: 'roll', ...not };
-    // No ailment is worked out, and a hit is never the attacker's own.
     case 'is_ailment':
+      return { k: 'str', key: 'ailment', value: c.ailment, ...not };
+    // A hit is never the attacker's own.
     case 'source_is_target':
       return { k: 'never', ...not };
     case 'either_is_true': {
@@ -131,7 +132,9 @@ const CONVERTS: Cond[] = [{ k: 'any', ifs: [HIT, { k: 'str', key: 'attack_type',
 const builtin = (id: string, order: number, ifs: Cond[], act: Act) => (rules[id] = [{ on: 'damage', order, ifs, acts: [act] }]);
 const MORE_DAMAGE: Act = { k: 'layer', layer: 'additive_damage', sign: 1 };
 builtin('spell_damage', 19, [{ k: 'spell' }], MORE_DAMAGE);
-builtin('hit_damage', 19, [], MORE_DAMAGE);
+builtin('hit_damage', 19, [{ k: 'str', key: 'ailment', value: '' }], MORE_DAMAGE);
+builtin('ailment_damage', 19, [{ k: 'str', key: 'ailment', value: '', not: true }], MORE_DAMAGE);
+for (const id of Object.keys(AILMENTS)) builtin(`${id}_damage`, 19, [{ k: 'str', key: 'ailment', value: id }], MORE_DAMAGE);
 builtin('armor_penetration', 19, [{ k: 'is', element: 'Physical' }], { k: 'pen' });
 builtin('ele_to_chaos', 20, [{ k: 'single' }, ...CONVERTS], { k: 'convert', to: 'Shadow' });
 const SINGLE: [Element, string][] = [

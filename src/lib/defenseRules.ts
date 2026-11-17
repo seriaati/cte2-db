@@ -116,9 +116,9 @@ export function taken(rules: DefenseRules, level: number, stats: Stats, enemy: E
   // The hit is given as a common mob's after the multiplier its level brings, which the game puts on last.
   const power = rules.mob.power.base * rules.mob.power.growth ** enemy.level;
   const hit: Hit = { amount: enemy.hit / power, element, bonus: false, depth: 0, style: 'str', tags: null, basic: true, effectiveness: 1, multis: [power, enemy.rarity.damage] };
-  const open = average(rules, who, target, hit);
+  const open = average(rules, who, target, hit).damage;
   // A block that stops the whole hit leaves nothing to work out.
-  const held = avoid.stops < 1 ? average(rules, who, target, { ...hit, blocked: true }) : {};
+  const held = avoid.stops < 1 ? average(rules, who, target, { ...hit, blocked: true }).damage : {};
   const mean: ByElement = {};
   for (const [part, share] of [
     [open, 1 - avoid.blocked],
