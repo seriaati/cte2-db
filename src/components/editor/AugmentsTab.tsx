@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { AUGMENT_SLOTS, exactly } from '../../lib/buildRules';
 import { augmentCapacity, augmentCost } from '../../lib/statRules';
 import { StatLines } from '../StatLine';
-import { Loading, Picker, Slot, useSection, type Choice, type TabProps } from './shared';
+import { Info, Loading, Picker, Slot, useSection, type Choice, type TabProps } from './shared';
 import { useTotals } from './totals';
 
 export default function AugmentsTab({ build, change, rolls, reset }: TabProps) {
@@ -36,15 +36,17 @@ export default function AugmentsTab({ build, change, rolls, reset }: TabProps) {
     <div className="plain">
       <div className="title-row">
         <h1>Augments</h1>
+        <Info>
+          <p>
+            A character has {limits.base} augment capacity to begin with. Augment Capacity from the rest of the build raises it, up to {limits.max}, and stats that change what an augment
+            costs are counted in what each one takes.
+          </p>
+        </Info>
         <span className={`count ${reserved > capacity ? 'over' : ''}`}>
           {reserved} / {capacity} capacity
         </span>
         {reset}
       </div>
-      <p className="note">
-        A character has {limits.base} augment capacity to begin with. Augment Capacity from the rest of the build raises it, up to {limits.max}, and stats that change what an augment
-        costs are counted in what each one takes.
-      </p>
       <ul className="slots augments">
         {Array.from({ length: AUGMENT_SLOTS }, (_, i) => {
           const entry = placed[i];

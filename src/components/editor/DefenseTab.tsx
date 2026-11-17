@@ -2,7 +2,7 @@ import { buildDefense, percent, resistText, show } from '../../lib/buildCalc';
 import type { Build } from '../../lib/buildRules';
 import { ELEMENTS } from '../../lib/damageRules';
 import { Dropdown } from '../controls';
-import { AuraField, Loading, NumberField, Popover, RetributionField, useSection, type TabProps } from './shared';
+import { AuraField, Info, Loading, NumberField, Popover, RetributionField, useSection, type TabProps } from './shared';
 import { useTotals } from './totals';
 
 // How the build holds up against the enemy set on this tab, for the tab and for the summary beside
@@ -27,11 +27,18 @@ export default function DefenseTab({ core, build, change }: TabProps) {
     <div className="plain">
       <div className="title-row">
         <h1>Defense</h1>
+        <Info>
+          <p>
+            How the build holds up against a mob's hits. Effective health is the damage those hits add up to by the time a character at full health falls, counted before the character's
+            defenses and before what the mob's rarity and affixes add. Dodges, blocks and other chances count as their average, and nothing is healed in between.
+          </p>
+          <p>
+            Every mob has some accuracy and armor penetration and deals half again as much elemental and chaos damage, so a hit can come to more than its size. Its rarity multiplies its
+            hits, and an affix that adds an element adds it to physical hits. Its hits are attacks. Neither side has buffs, curses or ailments on it but the Retribution stacks a Crusader is
+            set to hold and what the aura set to be on gives. What an aura costs its caster is left out of effective health, as are regeneration, leech and healing.
+          </p>
+        </Info>
       </div>
-      <p className="note">
-        How the build holds up against a mob's hits. Effective health is the damage those hits add up to by the time a character at full health falls, counted before the character's
-        defenses and before what the mob's rarity and affixes add. Dodges, blocks and other chances count as their average, and nothing is healed in between.
-      </p>
 
       <div className="controls">
         <Popover label="Enemy">
@@ -194,11 +201,6 @@ export default function DefenseTab({ core, build, change }: TabProps) {
       )}
 
       {left.length > 0 && <p className="note">Left out, because they depend on the moment: {left.join(', ')}.</p>}
-      <p className="note">
-        Every mob has some accuracy and armor penetration and deals half again as much elemental and chaos damage, so a hit can come to more than its size. Its rarity multiplies its hits,
-        and an affix that adds an element adds it to physical hits. Its hits are attacks. Neither side has buffs, curses or ailments on it but the Retribution stacks a Crusader is set to hold and
-        what the aura set to be on gives. What an aura costs its caster is left out of effective health, as are regeneration, leech and healing.
-      </p>
     </div>
   );
 }

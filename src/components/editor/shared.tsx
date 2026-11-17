@@ -133,7 +133,7 @@ export function Picker({ title, choices, onPick, onClose }: PickerProps) {
 }
 
 // Settings that float over the page under their button; a click anywhere else puts them away.
-export function Popover({ label, children }: { label: string; children: ReactNode }) {
+export function Popover({ label, children, info }: { label: string; children: ReactNode; info?: boolean }) {
   const box = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
     const close = (e: PointerEvent) => {
@@ -143,12 +143,27 @@ export function Popover({ label, children }: { label: string; children: ReactNod
     return () => document.removeEventListener('pointerdown', close);
   }, []);
   return (
-    <details className="more float" ref={box}>
-      <summary className="btn">{label}</summary>
+    <details className={info ? 'more float info' : 'more float'} ref={box}>
+      {info ? (
+        <summary className="btn" aria-label={label} title={label}>
+          <svg viewBox="0 0 3 7" width="6" height="14" shapeRendering="crispEdges" aria-hidden="true">
+            <path fill="currentColor" d="M1 0h1v1h-1zM0 2h2v4h1v1h-3v-1h1v-3h-1z" />
+          </svg>
+        </summary>
+      ) : (
+        <summary className="btn">{label}</summary>
+      )}
       <div className="more-body">{children}</div>
     </details>
   );
 }
+
+// An explanation too long to leave on the page, opened from a button by the tab's heading.
+export const Info = ({ children }: { children: ReactNode }) => (
+  <Popover info label="How this is worked out">
+    {children}
+  </Popover>
+);
 
 // A whole number typed into a small box, kept inside its limits.
 export function NumberField(props: { label: string; value: number; min: number; max: number; onChange: (value: number) => void; suffix?: string }) {

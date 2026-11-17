@@ -3,7 +3,7 @@ import { buildDamage } from '../../lib/buildCalc';
 import { RESISTS, type Build } from '../../lib/buildRules';
 import { ELEMENTS, type ByElement, type SkillHit } from '../../lib/damageRules';
 import { Dropdown } from '../controls';
-import { AuraField, Loading, NumberField, Popover, RetributionField, useSection, type TabProps } from './shared';
+import { AuraField, Info, Loading, NumberField, Popover, RetributionField, useSection, type TabProps } from './shared';
 import { useData } from './totals';
 
 const show = (n: number) => (n >= 100 ? Math.round(n).toLocaleString('en') : `${+n.toFixed(1)}`);
@@ -45,11 +45,17 @@ export default function DamageTab({ core, build, change }: TabProps) {
     <div className="plain">
       <div className="title-row">
         <h1>Damage</h1>
+        <Info>
+          <p>
+            What one skill deals a second to a single enemy when it is used over and over. Of projectiles shot together one is taken to hit, and what goes on over time lands every time. A
+            summon skill deals what its pets do: as many as it can keep out, all attacking that enemy without pause. Critical hits and other chances count as their average.
+          </p>
+          <p>
+            The target has no dodge or block, and neither side has buffs, curses or ailments on it but what the aura set to be on gives. Ailments and the damage they deal over time, and
+            spells set off by other effects, aren't worked out yet.
+          </p>
+        </Info>
       </div>
-      <p className="note">
-        What one skill deals a second to a single enemy when it is used over and over. Of projectiles shot together one is taken to hit, and what goes on over time lands every time. A
-        summon skill deals what its pets do: as many as it can keep out, all attacking that enemy without pause. Critical hits and other chances count as their average.
-      </p>
 
       <div className="controls">
         <Dropdown
@@ -183,10 +189,6 @@ export default function DamageTab({ core, build, change }: TabProps) {
       )}
 
       {left.length > 0 && <p className="note">Left out, because they depend on the moment: {left.join(', ')}.</p>}
-      <p className="note">
-        The target has no dodge or block, and neither side has buffs, curses or ailments on it but what the aura set to be on gives. Ailments and the damage they deal over time, and spells set off by other effects, aren't worked
-        out yet.
-      </p>
     </div>
   );
 }

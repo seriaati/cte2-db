@@ -968,6 +968,35 @@ body.editor-page:has(.stats-side:not(.leaving)) {
   box-shadow: 4px 4px 0 #000;
 }
 
+/* The explanation opens under the whole heading row, so it stays on the page however far along the row its button is. */
+.editor-main .title-row {
+  position: relative;
+}
+
+.more.float.info {
+  position: static;
+}
+
+.info summary {
+  width: 44px;
+  padding: 0;
+}
+
+.info .more-body {
+  display: block;
+  font-size: 14.5px;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.info p {
+  margin: 0;
+}
+
+.info p + p {
+  margin-top: 12px;
+}
+
 .damage-main {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }

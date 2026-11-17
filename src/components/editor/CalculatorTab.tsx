@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { statGroups, totalLines } from '../../lib/buildCalc';
 import type { Build } from '../../lib/buildRules';
 import { StatLine } from '../StatLine';
-import { Loading, type TabProps } from './shared';
+import { Info, Loading, type TabProps } from './shared';
 import { useTotals } from './totals';
 
 // What the build's stats come to: the numbers that matter most, then the rest in the game's own groups.
@@ -69,11 +69,13 @@ export default function CalculatorTab({ build }: TabProps) {
     <div className="plain">
       <div className="title-row">
         <h1>Stats</h1>
+        <Info>
+          <p>
+            The stats of the whole build at level {build.level}, added up the way the game does it. Support gems only count for their own skill and are left out, and so are buffs, food and
+            what vanilla armor and attributes give.
+          </p>
+        </Info>
       </div>
-      <p className="note">
-        The stats of the whole build at level {build.level}, added up the way the game does it. Support gems only count for their own skill and are left out, and so are buffs, food and
-        what vanilla armor and attributes give.
-      </p>
       <StatTotals build={build} />
     </div>
   );
