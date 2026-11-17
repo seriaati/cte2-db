@@ -3,19 +3,22 @@
 import { canRoll, formatRange, formatStat, rolled, type Affix, type Rarity, type StatMod } from './affix';
 import { auras } from './auras';
 import { baseGear, reqScaling } from './bases';
+import { exactly } from './buildRules';
+import { sections } from './builds';
 import { affixes, bases, infusions, maxLevel, rarities, tagNames } from './gear';
 import { gems } from './gems';
 import type { FamilyStats } from './items';
 import { planAffixes, planBases, planRarities } from './planner';
 import { encodePlan, formedRuneword, itemName, rollWindows, slotCount } from './plannerRules';
 import { runed, runes, runewords, slotNames } from './runes';
+import { calcText, cost } from './spellRules';
 import { stats } from './stats';
 import { encodeBuild, neighbours, rooted } from './talentRules';
 import { ascendancy, atlas, talents, type Perk, type TalentTree } from './talents';
 import { sources, uniqueRarity, uniques } from './uniques';
 
 export { maxLevel };
-export const CATEGORIES = ['affixes', 'infusions', 'bases', 'uniques', 'runes', 'runewords', 'gems', 'augments', 'talents', 'stats'] as const;
+export const CATEGORIES = ['affixes', 'infusions', 'bases', 'uniques', 'runes', 'runewords', 'gems', 'augments', 'spells', 'supports', 'jewels', 'talents', 'stats'] as const;
 export const RARITIES = rarities.map((r) => r.id);
 export const PLAN_RARITIES = planRarities.map((r) => r.id);
 
@@ -65,6 +68,47 @@ const perkLines = (perk: Perk, level: number) => [
   ...(perk.oneKind ? [`Only one ${perk.oneKind} talent can be taken`] : []),
   ...perkStats(perk, level),
 ];
+
+const { skills, sockets } = sections;
+
+// A class's spells, described at the most points they take, and its passives. A passive has no
+// name in game, so what one level of it gives stands in for one.
+function classEntries(level: number): Entry[] {
+  return skills.classes.flatMap((c) =>
+    c.perks.map((perk): Entry => {
+      const { spell } = perk;
+      const about = [`Class: ${c.name}`, `${spell ? 'Spell' : 'Passive'}, opens at character level ${perk.level} and takes up to ${perk.maxLevel} points`];
+      if (!spell) return { category: 'spells', title: statLines(perk.stats, exactly(100), level).join(', '), lines: [...about, `Id: ${perk.id}`, 'Every point gives as much again'] };
+      const top = spell.maxLevel + skills.bonusLevels;
+      const fill = (desc: string) => desc.replace(/\[calc:(\w+)\]/g, (_, id) => calcText(spell.calcs[id], spell.maxLevel, top, level));
+      const costs = (['mana', 'energy'] as const).map((type) => [type === 'mana' ? 'Mana' : 'Energy', cost(spell, type, spell.maxLevel, top, skills.costScaling, level)] as const);
+      return {
+        category: 'spells',
+        title: spell.name,
+        lines: [
+          ...about,
+          fill(spell.desc),
+          ...(spell.linked ? [`${spell.linked.name}: ${fill(spell.linked.desc)}`] : []),
+          ...[...costs.filter(([, value]) => value > 0), ...spell.facts].map(([label, value]) => `${label}: ${value}`),
+          `Tags: ${spell.tags.join(', ')}`,
+          ...statLines(spell.stats, exactly(Math.trunc(Math.fround(spell.maxLevel / top) * 100)), level),
+        ],
+      };
+    }),
+  );
+}
+
+// Jewel affixes have no names either. Those of a crafted unique jewel or an Abyssal Eye roll anywhere, like corruption.
+function jewelEntries(level: number, rarity: Rarity, whole: Rarity): Entry[] {
+  const { kinds, crafted, eye, affixes } = sockets.jewels;
+  const entry = (a: (typeof affixes.jewel)[number], rolls: Rarity, fits: string): Entry => ({ category: 'jewels', title: statLines(a.stats, rolls, level).join(', '), lines: [`Id: ${a.id}`, `Fits: ${fits}`] });
+  return [
+    ...affixes.jewel.map((a) => entry(a, rarity, a.tags.includes('any_jewel') ? 'any jewel' : kinds.filter((k) => a.tags.includes(k.tag)).map((k) => k.name).join(', '))),
+    ...affixes.corruption.map((a) => entry(a, whole, 'any jewel, as a corruption')),
+    ...affixes.crafted.map((a) => entry(a, whole, crafted.name)),
+    ...affixes.eye.map((a) => entry(a, whole, `${eye.name}, and counts while the ${a.aura} is on`)),
+  ];
+}
 
 export const rollsAt = (rarity: Rarity) => ({
   whole: { ...rarity, minPercent: 0, maxPercent: 100 },
@@ -123,6 +167,13 @@ function entries(level: number, rarity: Rarity): Entry[] {
       title: a.name,
       lines: [`Style: ${a.style}`, `Needs level ${a.minLevel}`, `Reserves ${a.reserves} Augment Capacity`, ...statLines(a.stats, rarity, level)],
     })),
+    ...classEntries(level),
+    ...skills.supports.map((s): Entry => ({
+      category: 'supports',
+      title: s.name,
+      lines: [`Style: ${s.style}`, `Needs level ${s.minLevel}`, `Its skill costs ${s.cost}% as much to cast`, ...(s.oneKind ? [`Only one ${s.oneKind} support per skill`] : []), ...statLines(s.stats, whole, level)],
+    })),
+    ...jewelEntries(level, rarity, whole),
     ...Object.entries(TREES).flatMap(([key, { name, tree }]) =>
       tree.perks.map((p, i): Entry => ({
         category: 'talents',

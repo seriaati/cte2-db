@@ -12,7 +12,7 @@ const handler = createMcpHandler(({ requestInfo }) => {
     {
       title: 'Search the Craft to Exile 2 database',
       description:
-        'Look up game data for the Minecraft modpack Craft to Exile 2 (Mine and Slash): gear affixes, infusions, base gear, unique items, runes, runewords, gems, augments, talents (talent, ascendancy and atlas trees) and stat descriptions. Returns matching entries with their stats. Leave query empty to list a whole category. A talent lists the tree nodes it sits on, like [talents-412]; search for that id to find the talent on a node, and use talent_links to see what a node connects to.',
+        'Look up game data for the Minecraft modpack Craft to Exile 2 (Mine and Slash): gear affixes, infusions, base gear, unique items, runes, runewords, gems, augments, class spells and passives, support gems, jewel affixes, talents (talent, ascendancy and atlas trees) and stat descriptions. Returns matching entries with their stats. Leave query empty to list a whole category. A talent lists the tree nodes it sits on, like [talents-412]; search for that id to find the talent on a node, and use talent_links to see what a node connects to.',
       inputSchema: z.object({
         query: z
           .string()
