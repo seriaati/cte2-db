@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { rolled, type StatMod } from '../../lib/affix';
 import { RESISTS, type Build } from '../../lib/buildRules';
 import { ELEMENTS, UNARMED, attackDamage, attackRate, skillDamage, type ByElement, type Element, type Fighter, type SkillHit } from '../../lib/damageRules';
 import { bonusSkillLevels, type Exact } from '../../lib/statRules';
 import { Dropdown } from '../controls';
-import { Loading, NumberField, useSection, type TabProps } from './shared';
+import { Loading, NumberField, Popover, useSection, type TabProps } from './shared';
 import { useTotals } from './totals';
 
 const show = (n: number) => (n >= 100 ? Math.round(n).toLocaleString('en') : `${+n.toFixed(1)}`);
@@ -37,16 +37,6 @@ export default function DamageTab({ core, build, change }: TabProps) {
     return [...exact(chosen.spell.stats, Math.trunc(Math.fround(rank / top) * 100)), ...supports];
   }, [skills, rules, build.hotbar, build.classes, build.perks, build.damage.skill, rank, top, level]);
   const unit = useTotals(build, extra);
-
-  // The target's settings float over the page, and a click anywhere else puts them away.
-  const targetBox = useRef<HTMLDetailsElement>(null);
-  useEffect(() => {
-    const close = (e: PointerEvent) => {
-      if (targetBox.current && !targetBox.current.contains(e.target as Node)) targetBox.current.open = false;
-    };
-    document.addEventListener('pointerdown', close);
-    return () => document.removeEventListener('pointerdown', close);
-  }, []);
 
   if (!rules || !skills || !own || !unit) return <Loading />;
 
@@ -101,24 +91,21 @@ export default function DamageTab({ core, build, change }: TabProps) {
             </span>
           </label>
         )}
-        <details className="more float" ref={targetBox}>
-          <summary className="btn">Target</summary>
-          <div className="more-body">
-            <NumberField label="Level" value={enemy.level} min={1} max={core.maxLevel} onChange={(n) => aim({ level: n === level ? undefined : n })} />
-            <NumberField label="Armor" value={target.armor} min={0} max={10000000} onChange={(armor) => aim({ armor })} />
-            {RESISTS.map((id) => (
-              <NumberField
-                key={id}
-                label={`${elementName(id)} resistance`}
-                value={target.resists[id] ?? 0}
-                min={-300}
-                max={75}
-                suffix="%"
-                onChange={(n) => aim({ resists: { ...target.resists, [id]: n } })}
-              />
-            ))}
-          </div>
-        </details>
+        <Popover label="Target">
+          <NumberField label="Level" value={enemy.level} min={1} max={core.maxLevel} onChange={(n) => aim({ level: n === level ? undefined : n })} />
+          <NumberField label="Armor" value={target.armor} min={0} max={10000000} onChange={(armor) => aim({ armor })} />
+          {RESISTS.map((id) => (
+            <NumberField
+              key={id}
+              label={`${elementName(id)} resistance`}
+              value={target.resists[id] ?? 0}
+              min={-300}
+              max={75}
+              suffix="%"
+              onChange={(n) => aim({ resists: { ...target.resists, [id]: n } })}
+            />
+          ))}
+        </Popover>
       </div>
 
       {choices.length === 0 && <p className="note">Skills on the hotbar that deal damage can be picked here too.</p>}

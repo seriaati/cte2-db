@@ -131,6 +131,24 @@ export function Picker({ title, choices, onPick, onClose }: PickerProps) {
   );
 }
 
+// Settings that float over the page under their button; a click anywhere else puts them away.
+export function Popover({ label, children }: { label: string; children: ReactNode }) {
+  const box = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    const close = (e: PointerEvent) => {
+      if (box.current && !box.current.contains(e.target as Node)) box.current.open = false;
+    };
+    document.addEventListener('pointerdown', close);
+    return () => document.removeEventListener('pointerdown', close);
+  }, []);
+  return (
+    <details className="more float" ref={box}>
+      <summary className="btn">{label}</summary>
+      <div className="more-body">{children}</div>
+    </details>
+  );
+}
+
 // A whole number typed into a small box, kept inside its limits.
 export function NumberField(props: { label: string; value: number; min: number; max: number; onChange: (value: number) => void; suffix?: string }) {
   const { label, value, min, max, onChange, suffix } = props;
