@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
-import { rolled, type StatMod } from '../../lib/affix';
+import { buildDamage } from '../../lib/buildCalc';
 import { RESISTS, type Build } from '../../lib/buildRules';
-import { ELEMENTS, UNARMED, attackDamage, attackRate, skillDamage, type ByElement, type Element, type Fighter, type SkillHit } from '../../lib/damageRules';
-import { bonusSkillLevels, type Exact } from '../../lib/statRules';
+import { ELEMENTS, type ByElement, type Element, type SkillHit } from '../../lib/damageRules';
 import { Dropdown } from '../controls';
 import { Loading, NumberField, Popover, useSection, type TabProps } from './shared';
-import { useTotals } from './totals';
+import { useData } from './totals';
 
 const show = (n: number) => (n >= 100 ? Math.round(n).toLocaleString('en') : `${+n.toFixed(1)}`);
 const sum = (damage: ByElement) => Object.values(damage).reduce((total, value) => total + value, 0);
@@ -15,45 +14,9 @@ const WHEN: Record<SkillHit['when'], string> = { cast: 'when cast', hit: 'when a
 // What the skill picked on this tab deals, for the tab and for the summary beside the editor. Null
 // until the game data it draws on has arrived.
 export function useDamage(build: Build) {
-  const rules = useSection('damage');
-  const skills = useSection('skills');
-  const own = useTotals(build);
-  const { level } = build;
-  const { target } = build.damage;
-
-  // Skills on the hotbar that deal damage themselves.
-  const perks = skills?.classes.filter((c) => build.classes.includes(c.id)).flatMap((c) => c.perks) ?? [];
-  const choices = build.hotbar.flatMap((slot) => {
-    const perk = perks.find((p) => p.id === slot?.spell);
-    return slot && perk?.spell && build.perks[perk.id] > 0 && rules?.skills[perk.id] ? [{ slot, perk, spell: perk.spell }] : [];
-  });
-  const chosen = choices.find((c) => c.perk.id === build.damage.skill);
-  const top = chosen ? chosen.spell.maxLevel + skills!.bonusLevels : 1;
-  const rank = chosen && own ? build.perks[chosen.perk.id] + bonusSkillLevels(own.stats, chosen.spell.tagIds, skills!.bonusLevels) : 0;
-
-  // StatCalculation.calc: a skill is used with its own stats and its support gems' on top of the character's.
-  const extra = useMemo((): Exact[] => {
-    if (!chosen) return [];
-    const exact = (stats: StatMod[], roll: number) => stats.map((s): Exact => ({ id: s.id, type: s.type, value: rolled(s, roll, level) }));
-    const supports = chosen.slot.supports.flatMap((gem) => exact(skills!.supports.find((s) => s.id === gem.id)?.stats ?? [], gem.roll ?? 100));
-    return [...exact(chosen.spell.stats, Math.trunc(Math.fround(rank / top) * 100)), ...supports];
-  }, [skills, rules, build.hotbar, build.classes, build.perks, build.damage.skill, rank, top, level]);
-  const unit = useTotals(build, extra);
-
-  if (!rules || !skills || !own || !unit) return null;
-
-  const who: Fighter = { level, own: own.stats, unit: unit.stats, weapon: (own.weapon && rules.weapons[own.weapon]) || UNARMED, dualWield: own.dualWield };
-  // The target has armor and resistances and nothing else.
-  const defenses = [['armor', target.armor] as const, ...RESISTS.map((id) => [`${id}_resist`, target.resists[id] ?? 0] as const)];
-  const enemy = { level: target.level ?? level, stats: new Map(defenses.map(([id, value]) => [id, { value, more: 1 }])), rules: {} };
-  // The states a skill can be used in go by the effects they take.
-  const variants = chosen ? rules.skills[chosen.perk.id].variants.map((variant) => ({ variant, name: variant.needs.join(' and ') })) : [];
-  const under = variants.find((v) => v.name === build.damage.under) ?? variants[0];
-  const damage = chosen ? skillDamage(rules, who, enemy, rules.skills[chosen.perk.id], under.variant, rank, top) : attackDamage(rules, who, enemy, build.damage.attacks ?? attackRate(who));
-  // The stats the hit is made with.
-  const stats = chosen ? who.unit : who.own;
-  const crit = Math.min(100, Math.max(0, stats.get('critical_hit')?.value ?? 0));
-  return { rules, own, choices, chosen, variants, under, enemy, damage, stats, crit };
+  const damage = useSection('damage');
+  const data = useData();
+  return useMemo(() => (damage && data ? buildDamage({ ...data, damage }, build) : null), [damage, data, build]);
 }
 
 export default function DamageTab({ core, build, change }: TabProps) {

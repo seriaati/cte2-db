@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
+import { percent, resistText, show } from '../../lib/buildCalc';
 import type { Build } from '../../lib/buildRules';
 import type { Core } from '../../lib/builds';
 import { ELEMENTS } from '../../lib/damageRules';
 import { useDamage } from './DamageTab';
-import { percent, resistText, show, useDefense } from './DefenseTab';
+import { useDefense } from './DefenseTab';
 import { Loading } from './shared';
 
 const RESOURCES = ['health', 'magic_shield', 'mana', 'energy'];

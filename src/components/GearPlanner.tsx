@@ -11,14 +11,16 @@ import {
   matches,
   rollWindows,
   slotCount,
+  socketPart,
   type Part,
   type PlanAffix,
   type PlanBase,
   type PlanRarity,
+  type Socketed,
 } from '../lib/plannerRules';
 import type { Rune, Runeword } from '../lib/runes';
 import { gearOptions, GearRail, GearSelect, LevelStepper, RaritySwatches } from './controls';
-import { Sockets, socketPart, type Socketed } from './planner/Sockets';
+import { Sockets } from './planner/Sockets';
 import { StatLine, StatLines } from './StatLine';
 import { useStored } from '../lib/useStored';
 

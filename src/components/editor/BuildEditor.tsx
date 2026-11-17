@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { jewelSockets } from '../../lib/buildCalc';
 import { AUGMENT_SLOTS, GEAR_SLOTS, TREES, emptyBuild, exportBuild, importBuild, pointsAt, readBuild, type Build, type Pool } from '../../lib/buildRules';
 import type { Core } from '../../lib/builds';
 import { LevelStepper } from '../controls';
@@ -7,7 +8,7 @@ import CalculatorTab from './CalculatorTab';
 import DamageTab from './DamageTab';
 import DefenseTab from './DefenseTab';
 import GearTab from './GearTab';
-import JewelsTab, { jewelSockets } from './JewelsTab';
+import JewelsTab from './JewelsTab';
 import SkillsTab from './SkillsTab';
 import StatsTab from './StatsTab';
 import Summary from './Summary';

@@ -1,56 +1,9 @@
 import { useState, type CSSProperties } from 'react';
-import { MAX_JEWELS, TREES, exactly, jewelAffixes, type Build, type Jewel, type Rolled } from '../../lib/buildRules';
-import type { Core, Sections } from '../../lib/builds';
-import type { Part } from '../../lib/plannerRules';
+import { describeJewel, jewelSockets } from '../../lib/buildCalc';
+import { MAX_JEWELS, exactly, type Jewel, type Rolled } from '../../lib/buildRules';
 import { RaritySwatches } from '../controls';
 import { StatLines } from '../StatLine';
 import { Loading, NumberField, Picker, Slot, useSection, type Choice, type TabProps } from './shared';
-
-// Sockets come from the talents that give one and from two uniques (JewelSocketStat).
-export function jewelSockets(core: Core, build: Build) {
-  const { trees, uniques } = core.jewelSockets;
-  const talents = TREES.reduce((sum, tree) => sum + trees[tree].filter((node) => build.trees[tree].includes(node)).length, 0);
-  const gear = Object.values(build.gear).reduce((sum, item) => {
-    const gives = item.unique && uniques[item.unique];
-    return gives ? sum + Math.trunc(gives.min + ((gives.max - gives.min) * (item.uniqueRolls?.[gives.stat] ?? 100)) / 100) : sum;
-  }, 0);
-  return Math.min(MAX_JEWELS, talents + gear);
-}
-
-// JewelBlueprint and UberBossTier: an Abyssal Eye is an intelligence jewel of unique rarity, with
-// up to three affixes of its own on top. CraftedJewelTier: three of a crafted unique's six upgrades add an affix.
-const UNIQUE_SLOTS = { crafted: 3, eye: 3 };
-
-// What a jewel is, and the affixes it can hold: the ordinary ones of its colour, and the ones only its kind has.
-function describe(data: Sections['sockets'], jewel: Jewel) {
-  const { kinds, crafted, eye, affixes } = data.jewels;
-  const unique = jewel.kind === 'crafted' || jewel.kind === 'eye';
-  const kind = kinds.find((k) => k.id === (jewel.kind === 'eye' ? 'int' : jewel.kind));
-  const rarity = unique ? null : (data.rarities.find((r) => r.id === jewel.rarity) ?? data.rarities.at(-1)!);
-  return {
-    item: jewel.kind === 'crafted' ? crafted : jewel.kind === 'eye' ? eye : kind!,
-    rarity,
-    // An affix is rolled no higher than the jewel's rarity, though an orb can raise it past that later.
-    best: rarity?.maxPercent ?? 100,
-    pool: kind ? affixes.jewel.filter((a) => a.tags.includes('any_jewel') || a.tags.includes(kind.tag)) : [],
-    slots: jewel.kind === 'crafted' ? 0 : rarity ? jewelAffixes(rarity.affixCount) : 1,
-    own: jewel.kind === 'crafted' ? affixes.crafted : jewel.kind === 'eye' ? affixes.eye : [],
-    ownSlots: unique ? UNIQUE_SLOTS[jewel.kind as 'crafted' | 'eye'] : 0,
-  };
-}
-
-// What each affix a jewel holds gives at its roll, and the augment that has to be on for it to count.
-export function jewelParts(data: Sections['sockets'], jewel: Jewel): { part: Part; auraId: string }[] {
-  const about = describe(data, jewel);
-  const placed = (held: Rolled[], pool: typeof about.pool, count: number) =>
-    held
-      .flatMap((a) => {
-        const affix = pool.find((x) => x.id === a.id);
-        return affix ? [{ part: { stats: affix.stats, rolls: exactly(a.roll ?? about.best), level: jewel.level }, auraId: affix.auraId }] : [];
-      })
-      .slice(0, count);
-  return [...placed(jewel.affixes, about.pool, about.slots), ...placed(jewel.affixes, about.own, about.ownSlots), ...placed(jewel.corruption, data.jewels.affixes.corruption, 2)];
-}
 
 export default function JewelsTab({ core, build, change, rolls, reset }: TabProps) {
   const data = useSection('sockets');
@@ -72,7 +25,7 @@ export default function JewelsTab({ core, build, change, rolls, reset }: TabProp
   const open = typeof picking === 'object' ? picking : null;
   const opened = open && build.jewels[open.jewel];
   const affixChoices = (): Choice[] => {
-    const about = describe(data, opened!);
+    const about = describeJewel(data, opened!);
     const pool = open!.pool === 'affix' ? about.pool : open!.pool === 'own' ? about.own : affixes.corruption;
     const taken = [...opened!.affixes, ...opened!.corruption].map((a) => a.id);
     return pool
@@ -93,7 +46,7 @@ export default function JewelsTab({ core, build, change, rolls, reset }: TabProp
 
       <div className="jewels">
         {build.jewels.map((jewel, index) => {
-          const about = describe(data, jewel);
+          const about = describeJewel(data, jewel);
           const set = (patch: Partial<Jewel>) => setJewel(index, { ...jewel, ...patch });
           const rows = (label: string, pool: typeof affixes.jewel, count: number, key: 'affixes' | 'corruption', pick: 'affix' | 'own' | 'corruption') => {
             const placed = jewel[key].filter((a) => pool.some((x) => x.id === a.id)).slice(0, count);

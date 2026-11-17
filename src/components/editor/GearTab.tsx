@@ -1,8 +1,9 @@
 import { useState, type CSSProperties } from 'react';
+import { nameOf, readItem } from '../../lib/buildCalc';
 import { GEAR_SLOTS, exactly, type GearSlot, type Item } from '../../lib/buildRules';
 import { GearIcon } from '../controls';
 import { CodexEditor } from './CodexEditor';
-import { ItemEditor, nameOf, readItem, spriteOf } from './ItemEditor';
+import { ItemEditor, spriteOf } from './ItemEditor';
 import { Loading, Picker, useSection, type Choice, type TabProps } from './shared';
 
 export default function GearTab({ core, build, change, rolls, reset }: TabProps) {

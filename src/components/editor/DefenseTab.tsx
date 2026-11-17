@@ -1,48 +1,17 @@
+import { buildDefense, percent, resistText, show } from '../../lib/buildCalc';
 import type { Build } from '../../lib/buildRules';
-import { ELEMENTS, armorShare, resistance, type Element } from '../../lib/damageRules';
-import { avoidance, mobStats, taken } from '../../lib/defenseRules';
+import { ELEMENTS } from '../../lib/damageRules';
 import { Dropdown } from '../controls';
 import { Loading, NumberField, Popover, useSection, type TabProps } from './shared';
 import { useTotals } from './totals';
-
-const HITS: Element[] = ['Physical', 'Fire', 'Cold', 'Nature', 'Shadow'];
-export const show = (n: number) => (!Number.isFinite(n) ? '∞' : n >= 100 ? Math.round(n).toLocaleString('en') : `${+n.toFixed(1)}`);
-export const percent = (share: number) => `${+(share * 100).toFixed(1)}%`;
 
 // How the build holds up against the enemy set on this tab, for the tab and for the summary beside
 // the editor. Null until the game data it draws on has arrived.
 export function useDefense(build: Build) {
   const rules = useSection('defense');
   const totals = useTotals(build);
-  if (!rules || !totals) return null;
-
-  const { stats, shield } = totals;
-  const value = (id: string) => stats.get(id)?.value ?? 0;
-
-  // A mob rolls as many affixes as its rarity has; the ones here are those that change its hits.
-  const rarity = rules.mob.rarities.find((r) => r.id === build.defense.rarity) ?? rules.mob.rarities[0];
-  const slots = Array.from({ length: rarity.affixes }, (_, i) => build.defense.affixes[i] ?? '');
-  const affixes = slots.flatMap((id) => rules.mob.affixes.find((a) => a.id === id) ?? []);
-  const enemy = { ...build.defense, level: build.defense.level ?? build.level, rarity, affixes };
-  const mob = mobStats(rules, totals.rules, enemy);
-  const pierces = (id: string) => mob.get(id)?.value ?? 0;
-
-  const avoid = avoidance(rules, stats, enemy, mob, shield);
-  const rows = HITS.map((element) => {
-    const { id } = ELEMENTS[element];
-    // The share of the hit that armor stops, or the resistance that counts against it and the whole of it, in percent.
-    const resisted =
-      element === 'Physical'
-        ? { used: armorShare(rules.scaling, value('armor'), pierces('armor_penetration'), enemy.level) * 100, all: 0 }
-        : { used: resistance(stats, id, pierces(`${id}_penetration`)), all: Math.trunc(value(`${id}_resist`)) };
-    return { element, resisted, ...taken(rules, build.level, stats, enemy, mob, avoid, element) };
-  });
-  const weakest = rows.reduce((low, row) => (row.effectiveHealth < low.effectiveHealth ? row : low));
-  return { rules, totals, value, rarity, slots, enemy, avoid, rows, weakest };
+  return rules && totals ? buildDefense(rules, build, totals) : null;
 }
-
-// A resistance, with the whole of it where a cap or the enemy's penetration keeps some from counting.
-export const resistText = ({ used, all }: { used: number; all: number }) => (all > used ? `${used}% of ${all}%` : `${used}%`);
 
 export default function DefenseTab({ core, build, change }: TabProps) {
   const found = useDefense(build);

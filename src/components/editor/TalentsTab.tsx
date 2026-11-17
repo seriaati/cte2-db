@@ -1,17 +1,10 @@
 import { useMemo, useState } from 'react';
+import { connected } from '../../lib/buildCalc';
 import { TREES, type TreeId } from '../../lib/buildRules';
-import { neighbours, rooted } from '../../lib/talentRules';
-import type { TalentTree } from '../../lib/talents';
 import { TreeEditor } from '../TalentTree';
 import { Loading, useSection, type TabProps } from './shared';
 
 const LABELS: Record<TreeId, string> = { talents: 'Talents', ascendancy: 'Ascendancy', atlas: 'Atlas' };
-
-// A build made on another pack release can hold talents that no longer connect; those start over.
-export function connected(tree: TalentTree, nodes: number[]): number[] {
-  const taken = new Set(nodes.filter((n) => n < tree.nodes.length));
-  return rooted(tree, neighbours(tree), taken).size === taken.size ? [...taken] : [];
-}
 
 export default function TalentsTab({ core, build, change, reset }: TabProps) {
   const [id, setId] = useState<TreeId>('talents');

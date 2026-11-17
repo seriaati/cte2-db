@@ -1,20 +1,10 @@
 import { useState } from 'react';
 import type { Rarity } from '../../lib/affix';
 import type { Gem, GemRank } from '../../lib/gems';
-import { matches, type Part, type PlanBase, type PlanRarity } from '../../lib/plannerRules';
+import { matches, socketPart, type PlanBase, type PlanRarity, type Socketed } from '../../lib/plannerRules';
 import type { Rune, Runeword } from '../../lib/runes';
 import { Dropdown } from '../controls';
 import { StatLines } from '../StatLine';
-
-export type Socketed = { kind: 'gem'; item: Gem } | { kind: 'rune'; item: Rune };
-
-// Runes and gems give different stats by the kind of gear; off-hand gear counts as armor.
-const kindOf = (base: PlanBase) => (base.family === 'Weapon' ? 'Weapon' : base.family === 'Jewelry' ? 'Jewelry' : 'Armor');
-
-// A rune rolls anywhere in its range and grows with the gear's level; a gem's value is fixed.
-export function socketPart(socketed: Socketed, base: PlanBase, rolls: Rarity, level: number): Part {
-  return { stats: socketed.item.stats[kindOf(base)], rolls, level: socketed.kind === 'rune' ? level : 1 };
-}
 
 interface Props {
   base: PlanBase;

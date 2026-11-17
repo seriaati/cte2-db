@@ -1,6 +1,7 @@
 import { useState, type CSSProperties } from 'react';
 import type { StatMod } from '../../lib/affix';
-import { RARITY_TYPES, codexBonuses, codexPercent, exactly, type Build, type Codex, type RarityType } from '../../lib/buildRules';
+import { readCodex } from '../../lib/buildCalc';
+import { RARITY_TYPES, codexBonuses, exactly, type Build, type Codex, type RarityType } from '../../lib/buildRules';
 import type { Sections } from '../../lib/builds';
 import { Dropdown, RaritySwatches } from '../controls';
 import { StatLines } from '../StatLine';
@@ -9,42 +10,6 @@ import { NumberField, Picker, Slot, type Choice } from './shared';
 type Gear = Sections['gear'];
 
 const TYPE_NAMES: Record<RarityType, string> = { normal: 'Normal', unique: 'Unique', runed: 'Runed' };
-
-// OmenData.calcPiecesEquipped: a worn item counts toward its kind of rarity until the codex has
-// enough of that kind, unless the codex wants its slot to hold another kind.
-function piecesWorn(data: Gear, build: Build, codex: Codex) {
-  const counted: Record<string, number> = {};
-  for (const item of Object.values(build.gear)) {
-    const base = data.bases.find((b) => b.id === item.base);
-    const type = data.rarityTypes[item.unique ? data.uniqueRarity.id : item.rarity];
-    if (!base || !type || codex.slots.some((req) => req.slot === base.slot && req.type !== type)) continue;
-    if ((counted[type] ?? 0) < codex.pieces[type]) counted[type] = (counted[type] ?? 0) + 1;
-  }
-  return Object.values(counted).reduce((sum, n) => sum + n, 0);
-}
-
-// The build's codex as game data still knows it: what it gives, and how much of it the worn gear earns.
-export function readCodex(data: Gear, build: Build) {
-  const { codex } = build;
-  const kind = codex && data.codex.kinds.find((k) => k.id === codex.id);
-  if (!codex || !kind) return null;
-  const tiers = data.rarities.filter((r) => !r.runewords);
-  const rarity = tiers.find((r) => r.id === codex.rarity) ?? tiers.at(-1)!;
-  const limits = data.codex.rarities[rarity.id];
-  const slots = codex.slots.slice(0, limits.slots);
-  const pool = data.codex.affixes.filter((a) => kind.affixTypes.includes(a.type));
-  return {
-    codex,
-    kind,
-    rarity,
-    limits,
-    slots,
-    percent: codexPercent({ ...codex, slots }, limits.statMulti),
-    pool,
-    affixes: codex.affixes.flatMap((id) => pool.find((a) => a.id === id) ?? []).slice(0, limits.affixes),
-    worn: piecesWorn(data, build, codex),
-  };
-}
 
 interface Props {
   data: Gear;

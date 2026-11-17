@@ -1,87 +1,16 @@
 import { useState, type CSSProperties } from 'react';
 import { canRoll, formatRange, type StatMod } from '../../lib/affix';
+import { itemParts, nameOf, readItem } from '../../lib/buildCalc';
 import { exactly, rollIn, type Item, type Rolled } from '../../lib/buildRules';
 import type { Sections } from '../../lib/builds';
-import { baseRange, formedRuneword, itemName, rollWindows, slotCount, type Part } from '../../lib/plannerRules';
+import { baseRange, rollWindows, slotCount, socketPart, type Part, type Socketed } from '../../lib/plannerRules';
 import { Dropdown, RaritySwatches } from '../controls';
-import { socketPart, type Socketed } from '../planner/Sockets';
 import { StatLine, StatLines } from '../StatLine';
 import { NumberField, Picker, Slot, type Choice } from './shared';
 
 type Gear = Sections['gear'];
 
-// The parts of an item that game data still knows, with what each gives at its roll.
-export function readItem(data: Gear, item: Item) {
-  const base = data.bases.find((b) => b.id === item.base);
-  if (!base) return null;
-  const unique = data.uniques.find((u) => u.id === item.unique && u.base === base.id);
-  const tiers = data.rarities.filter((r) => !r.runewords);
-  const rarity = unique ? data.uniqueRarity : (data.rarities.find((r) => r.id === item.rarity) ?? tiers.at(-1)!);
-  const rollable = data.affixes.filter((a) => canRoll(a, base));
-  const implicits = rollable.filter((a) => a.type === 'implicit');
-  const affixes = (type: 'prefix' | 'suffix') =>
-    item[type].flatMap((placed) => rollable.find((a) => a.id === placed.id && a.type === type) ?? []).slice(0, slotCount(rarity, type));
-  const kind = data.corruption.kinds.find((k) => k.id === item.corruption?.kind && k.rarities.includes(rarity.id));
-  const kept = { gem: 0, rune: 0 };
-  const sockets = item.sockets
-    .flatMap((s): (Socketed & { roll?: number })[] => {
-      const found = s.kind === 'gem' ? data.gems.find((g) => g.id === s.id) : data.runes.find((r) => r.id === s.id);
-      return found ? [{ kind: s.kind, item: found, roll: s.roll } as Socketed & { roll?: number }] : [];
-    })
-    .slice(0, rarity.sockets + (kind?.sockets ?? 0))
-    .filter((s) => kept[s.kind]++ < (s.kind === 'gem' ? rarity.maxGems : rarity.maxRunes));
-  const runes = sockets.filter((s) => s.kind === 'rune').map((s) => s.item.id);
-  const infusion = data.infusions.find((a) => a.id === item.infusion?.id && canRoll(a, base));
-  return {
-    base,
-    unique,
-    rarity,
-    tiers,
-    rollable,
-    implicits,
-    // A drop always has an implicit when its base has any, uniques included (GearCreationUtils).
-    implicit: implicits.find((a) => a.id === item.implicit?.id) ?? implicits[0],
-    prefix: affixes('prefix'),
-    suffix: affixes('suffix'),
-    kind,
-    corrupted: kind ? item.corruption!.affixes.flatMap((placed) => data.corruption.affixes.find((a) => a.id === placed.id && canRoll(a, base)) ?? []).slice(0, kind.affixes) : [],
-    sockets,
-    socketCount: rarity.sockets + (kind?.sockets ?? 0),
-    runeword: rarity.runewords ? formedRuneword(data.runewords, runes, base.slot) : undefined,
-    infusion,
-    infusionRarity: tiers.find((r) => r.id === item.infusion?.rarity) ?? tiers.at(-1)!,
-    enchants: item.enchants.flatMap((e) => {
-      const enchant = data.enchants.find((x) => x.id === e.id);
-      return enchant ? [{ ...enchant, level: e.level }] : [];
-    }),
-  };
-}
-
-export const nameOf = (parts: NonNullable<ReturnType<typeof readItem>>) =>
-  parts.unique?.name ?? itemName(parts.base, parts.implicit, parts.prefix[0], parts.suffix[0]);
-
 const whole = { minPercent: 0, maxPercent: 100 };
-
-// What the item gives at its rolls: the base stats, and every other part, which can change them.
-export function itemParts(parts: NonNullable<ReturnType<typeof readItem>>, item: Item): { base: Part; others: Part[] } {
-  const { base, unique, rarity, implicit, runeword, infusion, infusionRarity } = parts;
-  const { level } = item;
-  // An affix can be of any tier up to the item's rarity, so it rolls anywhere below that rarity's best.
-  const affixWindow = { minPercent: 0, maxPercent: rarity.maxPercent };
-  const at = (stats: StatMod[], percent: number): Part => ({ stats, rolls: exactly(percent), level });
-  return {
-    base: at(base.stats, rollIn(item.baseRoll, rollWindows(rarity).base)),
-    others: [
-      ...(unique ? unique.stats.map((stat, i) => at([stat], item.uniqueRolls?.[i] ?? 100)) : []),
-      ...(implicit ? [at(implicit.stats, rollIn(item.implicit?.roll, whole))] : []),
-      ...(['prefix', 'suffix'] as const).flatMap((type) => parts[type].map((a, i) => at(a.stats, rollIn(item[type][i]?.roll, affixWindow)))),
-      ...parts.sockets.map((s) => socketPart(s, base, exactly(rollIn(s.roll, whole)), level)),
-      ...(runeword ? [at(runeword.stats, rollIn(item.runewordRoll, whole))] : []),
-      ...(infusion ? [at(infusion.stats, infusionRarity.maxPercent)] : []),
-      ...parts.corrupted.map((a, i) => at(a.stats, rollIn(item.corruption!.affixes[i]?.roll, whole))),
-    ],
-  };
-}
 
 // The item's picture; empty for the two vanilla items the pack has no picture of.
 export const spriteOf = (parts: NonNullable<ReturnType<typeof readItem>>) => parts.unique?.sprite ?? parts.base.sprites[parts.rarity.id];

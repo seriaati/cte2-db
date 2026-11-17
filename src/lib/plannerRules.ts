@@ -1,5 +1,7 @@
 // Client-safe types and game rules for the gear planner. Like affix.ts, no data imports here.
 import { formatStat, rolled, type Affix, type Base, type Rarity, type StatMod } from './affix';
+import type { Gem } from './gems';
+import type { Rune } from './runes';
 
 export interface PlanBase extends Base {
   stats: StatMod[];
@@ -26,6 +28,16 @@ export interface Part {
   stats: StatMod[];
   rolls: Rarity;
   level: number;
+}
+
+export type Socketed = { kind: 'gem'; item: Gem } | { kind: 'rune'; item: Rune };
+
+// Runes and gems give different stats by the kind of gear; off-hand gear counts as armor.
+const kindOf = (base: PlanBase) => (base.family === 'Weapon' ? 'Weapon' : base.family === 'Jewelry' ? 'Jewelry' : 'Armor');
+
+// A rune rolls anywhere in its range and grows with the gear's level; a gem's value is fixed.
+export function socketPart(socketed: Socketed, base: PlanBase, rolls: Rarity, level: number): Part {
+  return { stats: socketed.item.stats[kindOf(base)], rolls, level: socketed.kind === 'rune' ? level : 1 };
 }
 
 // Whether the name or a stat line, as shown, contains the lower-case search text.
