@@ -13,7 +13,7 @@ import effectsData from '../data/exile_effect.json';
 import calcData from '../data/value_calc.json';
 import weaponData from '../data/weapon_type.json';
 import type { StatMod } from './affix';
-import { AILMENTS, type Act, type Cond, type DamageCalc, type DamageRules, type Element, type Layer, type Rule, type SkillDamage, type SkillHit, type Weapon } from './damageRules';
+import { AILMENTS, type Act, type AuraDamage, type Cond, type DamageCalc, type DamageRules, type Element, type Layer, type Rule, type SkillDamage, type SkillHit, type Weapon } from './damageRules';
 import { statMod, text } from './gear';
 import type { Leveled } from './spellRules';
 
@@ -183,7 +183,7 @@ const calc = (id: string): DamageCalc => {
 interface RawPart {
   acts: { type: string; map: Raw }[];
   ifs: { type: string; map: Raw }[];
-  targets: { type: string }[];
+  targets: { type: string; map: Raw }[];
 }
 interface RawSpell {
   attached: { on_cast: RawPart[]; entity_components: Record<string, RawPart[]> };
@@ -204,7 +204,14 @@ interface RawSpell {
   };
 }
 const rawSpells = spellData as unknown as Record<string, RawSpell>;
-const casterEffects = effectsData as unknown as Record<string, { one_of_a_kind_id: string; max_stacks: number; stats: Parameters<typeof statMod>[0][] }>;
+interface RawEffect {
+  one_of_a_kind_id: string;
+  max_stacks: number;
+  stats: Parameters<typeof statMod>[0][];
+  tags: { tags: string[] };
+  spell?: { entity_components: Record<string, RawPart[]> };
+}
+const casterEffects = effectsData as unknown as Record<string, RawEffect>;
 const effectName = (id: string) => text(`mmorpg.effect.${id}`, id);
 
 const EFFECT_IF = 'caster_has_mns_effect';
@@ -322,18 +329,77 @@ function skill(spell: RawSpell): SkillDamage | null {
   };
 }
 
+const classSpells = Object.values(schoolData)
+  .flatMap((school) => Object.keys(school.perks))
+  .filter((id) => id in rawSpells);
 const skills: Record<string, SkillDamage> = Object.fromEntries(
-  Object.values(schoolData)
-    .flatMap((school) => Object.keys(school.perks))
-    .flatMap((id) => {
-      const damage = id in rawSpells && skill(rawSpells[id]);
-      return damage ? [[id, damage] as const] : [];
-    }),
+  classSpells.flatMap((id) => {
+    const damage = skill(rawSpells[id]);
+    return damage ? [[id, damage] as const] : [];
+  }),
 );
+
+// ExilePotionEvent: the stats that make an effect with one of these tags stronger, of the one
+// giving it or of the one it is on.
+const strength = (tags: string[], side: 'Source' | 'Target') =>
+  Object.entries(rawStats).flatMap(([id, raw]) => {
+    const boosts = (raw.data ?? raw).effect?.some(
+      (e) =>
+        e.events.includes('on_exile_effect') &&
+        e.side === side &&
+        e.effects.some((effect) => rawEffects[effect].ser === 'modify_stat_layer') &&
+        e.ifs.every((c) => rawConditions[c].ser === 'effect_has_tag' && tags.includes(rawConditions[c].tag)),
+    );
+    return boosts ? [id] : [];
+  });
+
+// An aura is a skill that leaves an effect tagged as one on its caster for good
+// (ExileEffectAction.INFINITE_DURATION). While it is on, the effect's script runs on the caster:
+// every so many ticks it damages enemies in reach or the caster, and renews an effect on allies,
+// the caster among them, or on enemies.
+const AURA = { tag: 'aura', forever: -1 };
+
+function aura(spell: RawSpell) {
+  const acts = Object.values(spell.attached.entity_components).flatMap((parts) => parts.flatMap((part) => part.acts));
+  const kept = acts.find((act) => act.type === 'exile_effect' && act.map.potion_dur === AURA.forever && casterEffects[act.map.exile_potion_id]?.tags.tags.includes(AURA.tag));
+  if (!kept) return null;
+  const own = casterEffects[kept.map.exile_potion_id];
+  // What it puts on its caster or on an enemy, and the stats that make that stronger.
+  const effects = [{ enemy: false, stats: own.stats.map(statMod), given: [] as string[], onYou: [] as string[] }];
+  const damage: AuraDamage = { style: spell.config.style, tags: spell.config.tags.tags, hits: [], self: [] };
+  for (const part of own.spell?.entity_components.default_entity_name ?? []) {
+    const rate = part.ifs.find((i) => i.type === 'x_ticks_condition')?.map.tick_rate;
+    const reach = (who: string) => part.targets.some((t) => t.map.en_predicate === who);
+    const self = part.targets.some((t) => t.type === 'self');
+    if (!rate || !(self || reach('allies') || reach('enemies'))) continue;
+    for (const act of part.acts) {
+      if (act.type === 'damage' && !reach('allies')) (self ? damage.self : damage.hits).push({ calc: act.map.value_calculation, element: act.map.element, count: 20 / rate, when: 'aura' });
+      if (act.type !== 'exile_effect' || act.map.potion_action !== 'GIVE_STACKS') continue;
+      const given = casterEffects[act.map.exile_potion_id];
+      effects.push({ enemy: reach('enemies'), stats: given.stats.map(statMod), given: strength(given.tags.tags, 'Source'), onYou: strength(given.tags.tags, 'Target') });
+    }
+  }
+  return { effects, damage };
+}
+
+const found = classSpells.flatMap((id) => {
+  const about = aura(rawSpells[id]);
+  return about ? [{ id, ...about }] : [];
+});
+// The effects of each aura, for working out a character's stats.
+export const auraSkills = found.map(({ id, effects }) => ({ id, effects }));
 // A pet can only cast what the calculator can work out.
 for (const { pets } of Object.values(skills)) if (pets) pets.spells = pets.spells.filter((id) => id in skills);
-const marked = Object.values(skills).flatMap((s) => s.variants.flatMap((v) => v.marks?.map((mark) => mark.id) ?? []));
-const usedCalcs = [...new Set(Object.values(skills).flatMap((s) => s.variants.flatMap((v) => v.hits.map((hit) => hit.calc))))];
+const marked = [
+  ...Object.values(skills).flatMap((s) => s.variants.flatMap((v) => v.marks?.map((mark) => mark.id) ?? [])),
+  ...found.flatMap((a) => a.effects.filter((e) => e.enemy).flatMap((e) => e.stats.map((s) => s.id))).filter((id) => id in taken),
+];
+const usedCalcs = [
+  ...new Set([
+    ...Object.values(skills).flatMap((s) => s.variants.flatMap((v) => v.hits.map((hit) => hit.calc))),
+    ...found.flatMap((a) => [...a.damage.hits, ...a.damage.self].map((hit) => hit.calc)),
+  ]),
+];
 
 // What the pack's own weapons (RoE Weapons 0.1.7) add to the 4 swings a second every player
 // starts with, read from the lowest tier of each; higher tiers swing up to 0.3 faster. Bows and
@@ -364,6 +430,7 @@ export const damage: DamageRules = {
   layers,
   calcs: Object.fromEntries(usedCalcs.map((id) => [id, calc(id)])),
   skills,
+  auras: Object.fromEntries(found.map((a) => [a.id, a.damage])),
   weapons,
   situational: [...situational].sort(),
   scaling: { base: balance.NORMAL_STAT_SCALING.base_scaling, perLevel: balance.NORMAL_STAT_SCALING.per_level_scaling },

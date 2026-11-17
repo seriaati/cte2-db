@@ -77,7 +77,16 @@ export interface SkillHit {
   element: Element;
   // How many times it lands on one target each cast.
   count: number;
-  when: 'cast' | 'hit' | 'tick' | 'end' | 'attack' | 'spell';
+  when: 'cast' | 'hit' | 'tick' | 'end' | 'attack' | 'spell' | 'aura';
+}
+
+// What an aura deals on its own while it is on, as a spell of its skill: its hits on an enemy in
+// reach and on its caster, each with how many times it lands a second.
+export interface AuraDamage {
+  style: string;
+  tags: string[];
+  hits: SkillHit[];
+  self: SkillHit[];
 }
 
 // What a summon skill puts out: pets whose attacks are its damage. A pet's attack is a spell of
@@ -132,6 +141,7 @@ export interface DamageRules {
   layers: Record<string, Layer>;
   calcs: Record<string, DamageCalc>;
   skills: Record<string, SkillDamage>;
+  auras: Record<string, AuraDamage>;
   weapons: Record<string, Weapon>;
   // Stats whose effect on damage depends on the moment: health, buffs, curses, the time of day.
   situational: string[];
@@ -505,7 +515,8 @@ function ailmentDamage(rules: HitRules, who: Fighter, target: Target, hits: { co
     let rolls = 0;
     for (const { count, from, by, mean } of hits) {
       const landed = mean.landed[element] ?? 0;
-      const chance = stat('chance', by) / 100;
+      // AilmentReceiveChance: the target's own chance to take the ailment is rolled apart from the attacker's.
+      const chance = (stat('chance', by) + (target.stats.get(`${id}_receive_chance`)?.value ?? 0)) / 100;
       if (!landed) continue;
       rolls += count * landed;
       if (chance <= 0) continue;
@@ -548,6 +559,23 @@ export interface Used {
   topRank: number;
 }
 
+// DamageAction: what each hit of a skill starts as against the target, cast as a spell of `as`.
+function strikes(rules: DamageRules, { who, rank, topRank }: Omit<Used, 'skill'>, target: Target, hits: SkillHit[], as: { style: string; tags: string[] }, summon?: true) {
+  return hits.map((hit) => {
+    const calc = rules.calcs[hit.calc];
+    const amount = calcValue(rules, calc, who, rank, topRank);
+    const effectiveness = leveled(calc.effectiveness, rank, topRank);
+    const from: Hit = { amount, element: hit.element, bonus: false, depth: 0, style: as.style, tags: as.tags, basic: false, effectiveness, multis: [levelPenalty(who, target)], summon };
+    return { hit, count: hit.count, from, by: who };
+  });
+}
+
+// What an aura's own hits deal to one target while it is on. Its script runs on a clock of its
+// own, so a use of it is a second.
+export function auraDamage(rules: DamageRules, aura: AuraDamage, hits: SkillHit[], used: Omit<Used, 'skill'>, target: Target): Damage {
+  return dealt(rules, used.who, target, [], strikes(rules, used, target, hits, aura), 1);
+}
+
 // SummonSpellCaster: the stat that adds to the chance a golem casts its spell as it attacks.
 const GOLEM = { tag: 'golem', chance: 'golem_spell_chance' };
 
@@ -556,26 +584,18 @@ const GOLEM = { tag: 'golem', chance: 'golem_spell_chance' };
 // pause, with one attack of one pet for a use. `cast` has the skills its pets may cast, which the
 // character casts through them at the level it has them itself.
 export function skillDamage(rules: DamageRules, used: Used, target: Target, variant: SkillDamage['variants'][number], cast: Record<string, Used> = {}): Damage {
-  const hitsOf = ({ who, rank, topRank }: Used, hits: SkillHit[], as: { style: string; tags: string[] }, summon?: true) =>
-    hits.map((hit) => {
-      const calc = rules.calcs[hit.calc];
-      const amount = calcValue(rules, calc, who, rank, topRank);
-      const effectiveness = leveled(calc.effectiveness, rank, topRank);
-      const from: Hit = { amount, element: hit.element, bonus: false, depth: 0, style: as.style, tags: as.tags, basic: false, effectiveness, multis: [levelPenalty(who, target)], summon };
-      return { hit, count: hit.count, from, by: who };
-    });
   const { skill, who } = used;
   const { ticks, duration, summons } = castNumbers(rules, who, skill);
   const { pets } = skill;
-  if (!pets) return dealt(rules, who, target, variant.needs, hitsOf(used, variant.hits, skill), 20 / ticks);
+  if (!pets) return dealt(rules, who, target, variant.needs, strikes(rules, used, target, variant.hits, skill), 20 / ticks);
 
   // SummonPetAction: pets past what their kind allows are sent away, the oldest first.
   const out = Math.min((pets.count * Math.trunc(pets.lifeTicks * duration)) / ticks, pets.capped ? summons : Infinity);
   const chance = clamp(Math.trunc(pets.chance + (skill.tags.includes(GOLEM.tag) ? (who.own.get(GOLEM.chance)?.value ?? 0) : 0)) / 100, 0, 1);
   const spells = pets.spells.flatMap((id) =>
-    hitsOf(cast[id], cast[id].skill.variants[0].hits, cast[id].skill, true).map(({ hit, count, ...rest }) => ({ ...rest, hit: { ...hit, when: 'spell' as const }, count: (count * chance) / pets.spells.length })),
+    strikes(rules, cast[id], target, cast[id].skill.variants[0].hits, cast[id].skill, true).map(({ hit, count, ...rest }) => ({ ...rest, hit: { ...hit, when: 'spell' as const }, count: (count * chance) / pets.spells.length })),
   );
-  const hits = [...hitsOf(used, variant.hits, pets, true), ...(chance > 0 ? spells : [])];
+  const hits = [...strikes(rules, used, target, variant.hits, pets, true), ...(chance > 0 ? spells : [])];
   return { ...dealt(rules, who, target, variant.needs, hits, (out * 20) / pets.attackTicks), pets: out };
 }
 

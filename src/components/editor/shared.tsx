@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 
 import { RETRIBUTION, type Build } from '../../lib/buildRules';
 import type { Core, Sections } from '../../lib/builds';
 import { matches, type Part } from '../../lib/plannerRules';
+import { Dropdown } from '../controls';
 import { StatLines } from '../StatLine';
 
 // What every part of the editor is given.
@@ -176,6 +177,16 @@ export function RetributionField({ build, change }: Pick<TabProps, 'build' | 'ch
   if (!skills || !build.classes.includes(RETRIBUTION.class)) return null;
   const { name, max } = skills.retribution;
   return <NumberField label={`${name} stacks`} value={Math.min(max, build.retribution)} min={0} max={max} onChange={(retribution) => change({ retribution })} />;
+}
+
+// Which of the auras the build has learned is on, for the tabs whose numbers it changes.
+export function AuraField({ build, change }: Pick<TabProps, 'build' | 'change'>) {
+  const skills = useSection('skills');
+  const perks = (skills?.classes ?? []).filter((c) => build.classes.includes(c.id)).flatMap((c) => c.perks);
+  const learned = perks.filter((p) => build.perks[p.id] > 0 && skills!.auras.some((a) => a.id === p.id));
+  if (!learned.length) return null;
+  const options = [{ value: '', label: 'None' }, ...learned.map((p) => ({ value: p.id, label: p.spell!.name, icon: p.icon }))];
+  return <Dropdown label="Aura" value={learned.some((p) => p.id === build.aura) ? build.aura : ''} groups={[{ options }]} onChange={(aura) => change({ aura })} />;
 }
 
 interface SlotProps {

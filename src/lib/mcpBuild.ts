@@ -388,7 +388,7 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
   if (build.jewels.length > jewelRoom) problems.push(`The build has ${count(build.jewels.length, 'jewel')} but ${count(jewelRoom, 'jewel socket')}. Sockets come from talents and from a few uniques.`);
   const attack = buildDamage(sections, build);
   const totals = attack.own;
-  const guard = buildDefense(defense, build, totals);
+  const guard = buildDefense(sections, build, totals);
   problems.push(...totals.skipped);
   const reserved = augments.reduce((sum, { found }) => sum + augmentCost(totals.stats, found), 0);
   const capacity = augmentCapacity(totals.rules, totals.stats);

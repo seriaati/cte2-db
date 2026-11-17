@@ -2,22 +2,23 @@ import { buildDefense, percent, resistText, show } from '../../lib/buildCalc';
 import type { Build } from '../../lib/buildRules';
 import { ELEMENTS } from '../../lib/damageRules';
 import { Dropdown } from '../controls';
-import { Loading, NumberField, Popover, RetributionField, useSection, type TabProps } from './shared';
+import { AuraField, Loading, NumberField, Popover, RetributionField, useSection, type TabProps } from './shared';
 import { useTotals } from './totals';
 
 // How the build holds up against the enemy set on this tab, for the tab and for the summary beside
 // the editor. Null until the game data it draws on has arrived.
 export function useDefense(build: Build) {
-  const rules = useSection('defense');
+  const defense = useSection('defense');
+  const damage = useSection('damage');
   const totals = useTotals(build);
-  return rules && totals ? buildDefense(rules, build, totals) : null;
+  return defense && damage && totals ? buildDefense({ damage, defense }, build, totals) : null;
 }
 
 export default function DefenseTab({ core, build, change }: TabProps) {
   const found = useDefense(build);
   if (!found) return <Loading />;
 
-  const { rules, totals, value, rarity, slots, enemy, avoid, rows, weakest } = found;
+  const { rules, totals, value, rarity, slots, enemy, avoid, rows, weakest, aura } = found;
   const { shield } = totals;
   const set = (patch: Partial<Build['defense']>) => change({ defense: { ...build.defense, ...patch } });
   const left = rules.situational.filter((id) => value(id)).map((id) => totals.rules.defs[id].name.replace('[VAL1]', 'X'));
@@ -49,6 +50,7 @@ export default function DefenseTab({ core, build, change }: TabProps) {
           <NumberField label="Hits a second" value={enemy.rate} min={1} max={20} onChange={(rate) => set({ rate })} />
         </Popover>
         <RetributionField build={build} change={change} />
+        <AuraField build={build} change={change} />
       </div>
 
       <dl className="totals-main">
@@ -151,6 +153,24 @@ export default function DefenseTab({ core, build, change }: TabProps) {
         {!shield && value('block_chance') > 0 && <p className="note skipped">Blocking needs a shield in the off hand, so the build's block chance does nothing.</p>}
       </section>
 
+      {aura && aura.cost > 0 && (
+        <section className="group">
+          <div className="group-head">
+            <h2>{aura.name}</h2>
+          </div>
+          <ul className="totals one">
+            <li>
+              <span>Damage it deals its caster a second, after defenses</span>
+              <span className="v">{show(aura.cost)}</span>
+            </li>
+            <li>
+              <span>Share of health and magic shield</span>
+              <span className="v">{percent(aura.cost / (value('health') + value('magic_shield')))}</span>
+            </li>
+          </ul>
+        </section>
+      )}
+
       {(value('magic_shield') > 0 || value('mana_shield') > 0) && (
         <section className="group">
           <div className="group-head">
@@ -176,8 +196,8 @@ export default function DefenseTab({ core, build, change }: TabProps) {
       {left.length > 0 && <p className="note">Left out, because they depend on the moment: {left.join(', ')}.</p>}
       <p className="note">
         Every mob has some accuracy and armor penetration and deals half again as much elemental and chaos damage, so a hit can come to more than its size. Its rarity multiplies its hits,
-        and an affix that adds an element adds it to physical hits. Its hits are attacks. Neither side has buffs, curses or ailments on it but the Retribution stacks a Crusader is set to hold, and
-        regeneration, leech and healing aren't counted.
+        and an affix that adds an element adds it to physical hits. Its hits are attacks. Neither side has buffs, curses or ailments on it but the Retribution stacks a Crusader is set to hold and
+        what the aura set to be on gives. What an aura costs its caster is left out of effective health, as are regeneration, leech and healing.
       </p>
     </div>
   );

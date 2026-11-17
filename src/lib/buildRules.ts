@@ -124,6 +124,8 @@ export interface Build {
   defense: { level?: number; rarity: string; affixes: string[]; hit: number; rate: number };
   // The Retribution stacks a Crusader is taken to hold.
   retribution: number;
+  // The aura skill that is on, of the ones the build has learned: only one can be at a time.
+  aura: string;
 }
 
 // GemInventoryHelper in Mine and Slash 6.4.13.
@@ -166,6 +168,7 @@ export const emptyBuild = ({ maxLevel, points }: Limits, name = 'New build'): Bu
   damage: { skill: '', under: '', target: { armor: 0, resists: {} } },
   defense: ENEMY,
   retribution: 0,
+  aura: '',
 });
 
 // SpellSchool.isLevelEnoughFor and isLevelEnoughForSpellLevelUp: a perk opens at its row's level,
@@ -319,6 +322,7 @@ export function readBuild(v: unknown, limits: Limits): Build | null {
     damage: readDamage(v.damage, maxLevel),
     defense: readDefense(v.defense, maxLevel),
     retribution: int(v.retribution, 0, 100),
+    aura: id(v.aura),
   };
 }
 

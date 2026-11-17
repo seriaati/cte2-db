@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { buildDamage } from '../../lib/buildCalc';
 import { RESISTS, type Build } from '../../lib/buildRules';
-import { ELEMENTS, type ByElement, type Element, type SkillHit } from '../../lib/damageRules';
+import { ELEMENTS, type ByElement, type SkillHit } from '../../lib/damageRules';
 import { Dropdown } from '../controls';
-import { Loading, NumberField, Popover, RetributionField, useSection, type TabProps } from './shared';
+import { AuraField, Loading, NumberField, Popover, RetributionField, useSection, type TabProps } from './shared';
 import { useData } from './totals';
 
 const show = (n: number) => (n >= 100 ? Math.round(n).toLocaleString('en') : `${+n.toFixed(1)}`);
@@ -16,6 +16,7 @@ const WHEN: Record<SkillHit['when'], string> = {
   end: 'as it ends',
   attack: 'when a pet attacks',
   spell: 'when a pet casts its spell',
+  aura: 'a second',
 };
 
 // What the skill picked on this tab deals, for the tab and for the summary beside the editor. Null
@@ -30,12 +31,11 @@ export default function DamageTab({ core, build, change }: TabProps) {
   const found = useDamage(build);
   if (!found) return <Loading />;
 
-  const { rules, own, choices, chosen, variants, under, enemy, damage, stats, crit, retribution } = found;
+  const { rules, own, choices, chosen, variants, under, enemy, damage, aura, dps, elements, stats, crit, retribution } = found;
   // A summon skill is used by its pets, one attack at a time.
   const casts = chosen && damage.pets === undefined;
   const { level } = build;
   const { target } = build.damage;
-  const elements = (Object.entries(damage.perUse) as [Element, number][]).filter(([, value]) => value > 0).sort((a, b) => b[1] - a[1]);
   const left = rules.situational.filter((id) => stats.get(id)?.value || (stats.get(id)?.more ?? 1) !== 1).map((id) => own.rules.defs[id].name.replace('[VAL1]', 'X'));
 
   const set = (patch: Partial<Build['damage']>) => change({ damage: { ...build.damage, ...patch } });
@@ -62,6 +62,7 @@ export default function DamageTab({ core, build, change }: TabProps) {
           <Dropdown label="Used with" value={under.name} groups={[{ options: variants.map((v) => ({ value: v.name, label: v.name || 'No effect' })) }]} onChange={(name) => set({ under: name })} />
         )}
         {retribution.spends && <RetributionField build={build} change={change} />}
+        <AuraField build={build} change={change} />
         {!chosen && (
           <label className="field number">
             <span className="cap">Attacks a second</span>
@@ -101,7 +102,7 @@ export default function DamageTab({ core, build, change }: TabProps) {
       <dl className="totals-main damage-main">
         <div>
           <dt className="cap">Damage a second</dt>
-          <dd>{show(damage.dps)}</dd>
+          <dd>{show(dps)}</dd>
         </div>
         <div>
           <dt className="cap">{casts ? 'Each cast' : 'Each attack'}</dt>
@@ -120,6 +121,11 @@ export default function DamageTab({ core, build, change }: TabProps) {
       {variants.length === 1 && under.name && <p className="note">Worked out as used with {under.name}, which the skill needs.</p>}
       {damage.pets !== undefined && <p className="note">Worked out with {+damage.pets.toFixed(2)} pets out, the most the skill keeps up.</p>}
       {retribution.spends && <p className="note">While any {retribution.name} stack is held, every cast is taken to spend one, and what that puts on the target to be there already.</p>}
+      {aura?.damage && (
+        <p className="note">
+          {aura.name} is on and deals {show(aura.damage.dps)} of the damage a second on its own, whatever is used.
+        </p>
+      )}
       {!own.weapon && <p className="note skipped">No weapon is held, so basic attacks are unarmed and skills that build on weapon damage have little to build on.</p>}
 
       {chosen && (
@@ -129,6 +135,24 @@ export default function DamageTab({ core, build, change }: TabProps) {
           </div>
           <ul className="totals one">
             {damage.parts.map(({ hit, count, damage: each }, i) => (
+              <li key={i}>
+                <span>
+                  <span className="v">{+count.toFixed(2)} ×</span> {ELEMENTS[hit!.element].name} {WHEN[hit!.when]}
+                </span>
+                <span className="v">{show(sum(each))}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {aura?.damage && (
+        <section className="group">
+          <div className="group-head">
+            <h2>{aura.name}</h2>
+          </div>
+          <ul className="totals one">
+            {aura.damage.parts.map(({ hit, count, damage: each }, i) => (
               <li key={i}>
                 <span>
                   <span className="v">{+count.toFixed(2)} ×</span> {ELEMENTS[hit!.element].name} {WHEN[hit!.when]}
@@ -150,7 +174,7 @@ export default function DamageTab({ core, build, change }: TabProps) {
               <li key={element}>
                 <span>{ELEMENTS[element].name}</span>
                 <span>
-                  <span className="v">{show(value * damage.rate)}</span> a second, {Math.round((value / damage.total) * 100)}%
+                  <span className="v">{show(value)}</span> a second, {Math.round((value / dps) * 100)}%
                 </span>
               </li>
             ))}
@@ -160,7 +184,7 @@ export default function DamageTab({ core, build, change }: TabProps) {
 
       {left.length > 0 && <p className="note">Left out, because they depend on the moment: {left.join(', ')}.</p>}
       <p className="note">
-        The target has no dodge or block, and neither side has buffs, curses or ailments on it. Ailments and the damage they deal over time, and spells set off by other effects, aren't worked
+        The target has no dodge or block, and neither side has buffs, curses or ailments on it but what the aura set to be on gives. Ailments and the damage they deal over time, and spells set off by other effects, aren't worked
         out yet.
       </p>
     </div>

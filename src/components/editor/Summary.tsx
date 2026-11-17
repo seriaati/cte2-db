@@ -26,7 +26,7 @@ export default function Summary({ core, build }: { core: Core; build: Build }) {
   const defense = useDefense(build);
   if (!attack || !defense) return <Loading />;
 
-  const { chosen, under, damage, stats, crit, retribution } = attack;
+  const { chosen, under, damage, aura, dps, stats, crit, retribution } = attack;
   const casts = chosen && damage.pets === undefined;
   const { totals, value, avoid, rows, weakest } = defense;
   const { defs } = totals.rules;
@@ -47,7 +47,9 @@ export default function Summary({ core, build }: { core: Core; build: Build }) {
           <Row label="Skill" value={chosen?.spell.name ?? 'Basic attack'} />
           {under?.name && <Row kind="sub" label="Used with" value={under.name} />}
           {retribution.spends && retribution.stacks > 0 && <Row kind="sub" label="Spends" value={retribution.name} />}
-          <Row kind="key" label="Damage a second" value={show(damage.dps)} />
+          {aura && <Row kind="sub" label="Aura" value={aura.name} />}
+          <Row kind="key" label="Damage a second" value={show(dps)} />
+          {aura?.damage && <Row kind="sub" label={`From ${aura.name}`} value={show(aura.damage.dps)} />}
           <Row label={casts ? 'Each cast' : 'Each attack'} value={show(damage.total)} />
           <Row label={casts ? 'Casts a second' : 'Attacks a second'} value={+damage.rate.toFixed(2)} />
           {damage.pets !== undefined && <Row label="Pets out" value={+damage.pets.toFixed(2)} />}
@@ -77,6 +79,7 @@ export default function Summary({ core, build }: { core: Core; build: Build }) {
             <Row key={id} label={defs[id].name} value={show(value(id))} />,
             // OnServerTick: a resource's regen stat comes in once a second.
             value(`${id}_regen`) > 0 && <Row key={`${id} regen`} kind="sub" label="Regeneration" value={`${show(value(`${id}_regen`))}/s`} />,
+            id === 'health' && defense.aura && defense.aura.cost > 0 && <Row key="aura" kind="sub" label={`Lost to ${defense.aura.name}`} value={`${show(defense.aura.cost)}/s`} />,
           ])}
           <Row label="Armor" value={`${percent(rows[0].resisted.used / 100)} (${show(value('armor'))})`} />
           <Row label="Attacks dodged" value={`${percent(avoid.dodge)} (${show(value('dodge'))})`} />
