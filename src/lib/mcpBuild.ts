@@ -8,6 +8,7 @@ import {
   MAX_CLASSES,
   RARITY_TYPES,
   RESISTS,
+  RETRIBUTION,
   TREES as TREE_IDS,
   exactly,
   exportBuild,
@@ -74,6 +75,7 @@ export interface GivenBuild {
   jewels?: { kind: string; rarity?: string; level?: number; affixes?: Given[]; corruption?: Given[] }[];
   damage?: { skill?: string; under?: string; attacks?: number; target?: { level?: number; armor?: number; resists?: Record<string, number> } };
   defense?: { level?: number; rarity?: string; affixes?: string[]; hit?: number; rate?: number };
+  retribution?: number;
 }
 
 interface Named {
@@ -350,10 +352,14 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
   for (const kind of ['crafted', 'eye']) if (jewels.filter((j) => j.kind === kind).length > 1) problems.push(`Only one ${describeJewel(sockets, jewels.find((j) => j.kind === kind)!).item.name} can be socketed.`);
 
   const skill = given.damage?.skill ? pick(spells, given.damage.skill, `a spell of ${whose}`, problems) : undefined;
-  const states = (skill && damage.skills[skill.id]?.variants.map((v) => v.needs.join(' and '))) || [];
+  const states = [...new Set((skill && damage.skills[skill.id]?.variants.map((v) => v.needs.join(' and '))) || [])];
   const stateNames = states.map((state) => state || 'no effect').join(', ');
   const under = states.find((state) => same(state, given.damage?.under ?? ''));
   if (given.damage?.under && under === undefined) problems.push(`"${given.damage.under}" is not something ${skill?.name ?? 'a basic attack'} is used with.${states.length ? ` The choices: ${stateNames}.` : ''}`);
+
+  const { retribution } = skills;
+  if (given.retribution && !classes.some((c) => c.id === RETRIBUTION.class)) problems.push(`Only a Crusader holds ${retribution.name} stacks.`);
+  if ((given.retribution ?? 0) > retribution.max) problems.push(`At most ${retribution.max} ${retribution.name} stacks can be held, but ${given.retribution} were given.`);
 
   const mob = given.defense?.rarity ? pick(defense.mob.rarities, given.defense.rarity, 'a mob rarity', problems) : defense.mob.rarities[0];
   // An empty one stands for an affix that changes nothing about the mob's hits.
@@ -396,7 +402,10 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
   const { defs } = totals.rules;
   const { chosen, damage: dealt, crit } = attack;
   const { value, avoid, rows, weakest, enemy } = guard;
-  const each = chosen ? 'cast' : 'attack';
+  // A summon skill is used by its pets, one attack at a time.
+  const casts = chosen && dealt.pets === undefined;
+  const each = casts ? 'cast' : 'attack';
+  const held = attack.retribution.stacks;
   const elements = (Object.entries(dealt.perUse) as [keyof typeof ELEMENTS, number][]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]);
   const others = attack.choices.filter((c) => c !== chosen).map((c) => c.spell.name);
   // Stats that came to something but depend on the moment, which neither tab of the editor counts.
@@ -417,10 +426,11 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
     ...(gearLines.length ? [['## Gear', ...gearLines]] : []),
     [
       '## Damage',
-      `Skill: ${chosen?.spell.name ?? 'Basic attack'}${attack.under?.name ? `, used with ${attack.under.name}` : ''}`,
+      `Skill: ${chosen?.spell.name ?? 'Basic attack'}${attack.under?.name ? `, used with ${attack.under.name}` : ''}${attack.retribution.spends && held ? `, spending a ${retribution.name} stack every cast` : ''}`,
       `Damage a second: ${amount(dealt.dps)}`,
       `Each ${each}: ${amount(dealt.total)}`,
-      `${chosen ? 'Casts' : 'Attacks'} a second: ${+dealt.rate.toFixed(2)}`,
+      `${casts ? 'Casts' : 'Attacks'} a second: ${+dealt.rate.toFixed(2)}`,
+      ...(dealt.pets === undefined ? [] : [`Pets out: ${+dealt.pets.toFixed(2)}, all attacking the target without pause`]),
       `${defs.critical_hit.name}: ${+crit.toFixed(1)}%`,
       `${defs.critical_damage.name}: ${amount(attack.stats.get('critical_damage')?.value ?? defs.critical_damage.base)}%`,
       ...(elements.length ? [`By element: ${elements.map(([element, n]) => `${ELEMENTS[element].name} ${amount(n * dealt.rate)} a second (${Math.round((n / dealt.total) * 100)}%)`).join(', ')}`] : []),
@@ -446,6 +456,7 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
         ({ element, resisted, lands, effectiveHealth }) =>
           `${ELEMENTS[element].name} hits: ${element === 'Physical' ? `${percent(resisted.used / 100)} stopped by armor` : `${resistText(resisted)} resisted`}, ${amount(lands)} of ${amount(enemy.hit)} taken, effective health ${amount(effectiveHealth)}`,
       ),
+      ...(held ? [`${retribution.name} stacks held: ${held}, each giving ${statLines(retribution.stats, exactly(100), level).join(', ')}`] : []),
       `Enemy: level ${enemy.level} ${enemy.rarity.name} mob${enemy.affixes.length ? ` (${enemy.affixes.map((a) => a.name).join(', ')})` : ''}, a common mob's hit being ${amount(enemy.hit)} before defenses, ${enemy.rate} hits a second`,
       ...leftOut(guard.rules.situational.filter((id) => value(id))),
     ],

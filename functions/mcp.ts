@@ -105,6 +105,7 @@ const build = z.object({
     .partial()
     .optional()
     .describe('The mob whose hits effective health is measured against.'),
+  retribution: points.optional().describe('Retribution stacks a Crusader is taken to hold. Each lowers the damage taken, and a Crusader skill that does more for a stack spends one every cast.'),
 });
 
 const handler = createMcpHandler(({ requestInfo }) => {
@@ -195,7 +196,7 @@ const handler = createMcpHandler(({ requestInfo }) => {
     {
       title: 'Work out a character build',
       description:
-        "Work out a whole Craft to Exile 2 character the way the site's build editor does: the points it spends and has, what one skill deals a second to a target, its effective health against a mob's hits, and every stat when asked. Use it to put a build together, to improve one, or to see what a change does; send the whole build each time. Things go by name as the search tool gives them, or by id. What has no name (passives, infusions, and the affixes of jewels, corruption and codexes) goes by the id the search gives or by a stat it gives. The build of a file exported from the editor works as it is. The build has to be one the game allows; when it isn't, the answer lists everything that is wrong, with the choices where there are few, instead of the numbers. Damage is one skill used over and over on one enemy, with chances counted as their average; buffs, curses, ailments, summons and spells set off by other effects are not counted, and neither are regeneration and leech in effective health. The editor opens builds from files, not links: set file for the file to hand to the user.",
+        "Work out a whole Craft to Exile 2 character the way the site's build editor does: the points it spends and has, what one skill deals a second to a target, its effective health against a mob's hits, and every stat when asked. Use it to put a build together, to improve one, or to see what a change does; send the whole build each time. Things go by name as the search tool gives them, or by id. What has no name (passives, infusions, and the affixes of jewels, corruption and codexes) goes by the id the search gives or by a stat it gives. The build of a file exported from the editor works as it is. The build has to be one the game allows; when it isn't, the answer lists everything that is wrong, with the choices where there are few, instead of the numbers. Damage is one skill used over and over on one enemy, with chances counted as their average, and for a summon skill what its pets deal attacking that enemy without pause; buffs other than a Crusader's Retribution stacks, curses, ailments and spells set off by other effects are not counted, and neither are regeneration and leech in effective health. The editor opens builds from files, not links: set file for the file to hand to the user.",
       inputSchema: z.object({
         build,
         connect: z.boolean().optional().describe('Add the nodes needed to join the given talents to an entry point and to each other, in each tree, as talent_build_link does. The answer lists what was added.'),
