@@ -223,17 +223,16 @@ function joinUp(tree: TalentTree, links: number[][], wanted: Set<number>, entrie
   return new Set([...taken, ...left]);
 }
 
-// A link to the talent planner with the build loaded. Throws, saying what is wrong, for a build the game wouldn't allow.
-export function talentBuildLink(origin: string, ids: string[], level = maxLevel, bonus?: number, connect = false): string {
-  const unknown = ids.filter((id) => !nodeAt(id));
-  if (unknown.length) throw new Error(`Not talent nodes: ${unknown.join(', ')}.`);
-  const at = ids.map((id) => nodeAt(id)!);
-  const { key, found } = at[0];
-  if (at.some((a) => a.key !== key)) throw new Error('A link holds one tree. Make a separate link for each tree.');
-  const { tree, links, name, path } = found;
+export type TreeKey = keyof typeof TREES;
+export const nodeList = (key: string, nodes: number[]) => nodes.map((n) => `[${key}-${n}]`).join(', ');
+
+// The nodes a build takes of one tree, with the nodes that join them up when asked for, and what
+// the game wouldn't allow about them. Left out, the bonus is what the planner page starts from:
+// none, or all of them on a tree that gives no points per level.
+export function planTree(key: TreeKey, wanted: Set<number>, level: number, bonus: number | undefined, connect: boolean) {
+  const { tree, links, name } = TREES[key];
   const { points } = tree;
-  const wanted = new Set(at.map((a) => a.index));
-  const list = (nodes: number[]) => nodes.map((n) => `[${key}-${n}]`).join(', ');
+  const list = (nodes: number[]) => nodeList(key, nodes);
   const problems: string[] = [];
 
   const looseIn = (build: Set<number>) => {
@@ -261,7 +260,6 @@ export function talentBuildLink(origin: string, ids: string[], level = maxLevel,
   const kinds = Map.groupBy([...taken].filter((n) => tree.perks[tree.nodes[n][2]].oneKind), (n) => tree.perks[tree.nodes[n][2]].oneKind);
   for (const [kind, nodes] of kinds) if (nodes.length > 1) problems.push(`Only one ${kind} talent can be taken, but the build has ${list(nodes)}.`);
 
-  // The planner page starts from the same bonus: none, or all of them on a tree that gives no points per level.
   bonus ??= points.perLevel ? 0 : points.maxBonus;
   if (bonus > points.maxBonus) problems.push(`The ${name} tree allows at most ${points.maxBonus} bonus points.`);
   const total = Math.min(points.maxTotal, points.base + Math.trunc(level * points.perLevel) + bonus);
@@ -269,14 +267,29 @@ export function talentBuildLink(origin: string, ids: string[], level = maxLevel,
     const most = Math.min(points.maxTotal, points.base + Math.trunc(maxLevel * points.perLevel) + points.maxBonus);
     problems.push(`The build takes ${taken.size} talents${added.length ? `, ${added.length} of them added to join it up` : ''}, but ${points.perLevel ? `level ${level} with ` : ''}${bonus} bonus points gives ${total} points. This tree never gives more than ${most}.`);
   }
+  return { taken, added, total, bonus, problems };
+}
+
+export const addedLine = (key: TreeKey, added: number[], level: number) => {
+  const { tree } = TREES[key];
+  return `Added to join the build up (${added.length}): ${added.map((n) => brief(key, tree, n, level) + (tree.perks[tree.nodes[n][2]].type === 'MAJOR' ? ' (game changer)' : '')).join('; ')}`;
+};
+
+// A link to the talent planner with the build loaded. Throws, saying what is wrong, for a build the game wouldn't allow.
+export function talentBuildLink(origin: string, ids: string[], level = maxLevel, given?: number, connect = false): string {
+  const unknown = ids.filter((id) => !nodeAt(id));
+  if (unknown.length) throw new Error(`Not talent nodes: ${unknown.join(', ')}.`);
+  const at = ids.map((id) => nodeAt(id)!);
+  const key = at[0].key as TreeKey;
+  if (at.some((a) => a.key !== key)) throw new Error('A link holds one tree. Make a separate link for each tree.');
+  const { tree, name, path } = TREES[key];
+  const { taken, added, total, bonus, problems } = planTree(key, new Set(at.map((a) => a.index)), level, given, connect);
   if (problems.length) throw new Error(problems.join('\n'));
 
   return [
     `${origin}${path}#${encodeBuild({ level, bonus, nodes: [...taken] })}`,
-    `${name} tree, ${taken.size} of ${total} points spent${points.perLevel ? ` at level ${level}` : ''}${points.perLevel && bonus ? `, ${bonus} of them bonus points` : ''}.`,
-    ...(added.length
-      ? [`Added to join the build up (${added.length}): ${added.map((n) => brief(key, tree, n, level) + (tree.perks[tree.nodes[n][2]].type === 'MAJOR' ? ' (game changer)' : '')).join('; ')}`]
-      : []),
+    `${name} tree, ${taken.size} of ${total} points spent${tree.points.perLevel ? ` at level ${level}` : ''}${tree.points.perLevel && bonus ? `, ${bonus} of them bonus points` : ''}.`,
+    ...(added.length ? [addedLine(key, added, level)] : []),
   ].join('\n');
 }
 
