@@ -18,7 +18,7 @@ const MADE_OF: Partial<Record<Element, Element[]>> = { Elemental: ['Nature', 'Fi
 const RESISTED: Element[] = ['Fire', 'Cold', 'Nature', 'Shadow'];
 
 // Elements.elementsMatch: the same element, or one that is part of the other.
-const matches = (a: Element, b: Element) => a === b || !!MADE_OF[a]?.includes(b) || !!MADE_OF[b]?.includes(a);
+export const matches = (a: Element, b: Element) => a === b || !!MADE_OF[a]?.includes(b) || !!MADE_OF[b]?.includes(a);
 
 // What a stat's effect asks of the hit before it does anything.
 export type Cond = { not?: true } & (
@@ -112,6 +112,8 @@ export interface DamageRules {
   // Stats whose effect on damage depends on the moment: health, buffs, curses, the time of day.
   situational: string[];
   scaling: { base: number; perLevel: number };
+  // Where among the layers physical damage is turned into the elements its target takes it as.
+  takenAs: number;
   globalCooldownTicks: number;
   minCooldown: number;
   channelSpeed: number;
@@ -134,12 +136,35 @@ export interface Fighter {
 
 export interface Target {
   level: number;
-  armor: number;
-  // By element id, as in fire_resist.
-  resists: Record<string, number>;
+  // Its stats, and the effects they have on a hit it takes.
+  stats: Map<string, Total>;
+  rules: Record<string, Rule[]>;
 }
 
-interface Hit {
+// What working out a hit takes of the rules.
+export type HitRules = Pick<DamageRules, 'rules' | 'layers' | 'scaling' | 'takenAs'>;
+
+// ElementalResist: a resistance counts up to a cap that the target's stats can raise.
+const RESIST = { min: -300, cap: 75, max: 90 };
+// Armor.getMaxMulti.
+const MAX_ARMOR = 0.9;
+
+// ArmorEffect: the share of a physical hit that armor stops at the attacker's level. Penetration
+// past what armor there is turns into more damage.
+export function armorShare(scaling: DamageRules['scaling'], armor: number, penetration: number, level: number) {
+  const left = armor - penetration;
+  const points = Math.round(Math.abs(left));
+  // IUsableStat.getUsableValue.
+  return clamp(points / (points + 100 * multiplier(scaling, level)), 0, MAX_ARMOR) * (left > 0 ? 1 : -1);
+}
+
+// ElementalResistEffect: the resistance that counts against a hit, in percent, by element id as in fire_resist.
+export function resistance(stats: Map<string, Total>, element: string, penetration: number) {
+  const of = (id: string) => stats.get(id)?.value ?? 0;
+  return clamp(Math.trunc(of(`${element}_resist`) - penetration), RESIST.min, clamp(RESIST.cap + of(`max_${element}_resist`), RESIST.min, RESIST.max));
+}
+
+export interface Hit {
   amount: number;
   element: Element;
   bonus: boolean;
@@ -151,35 +176,47 @@ interface Hit {
   effectiveness: number;
   // "More" multipliers the hit starts with.
   multis: number[];
+  // The target blocked it, which stops the share of it that the target's blocks do.
+  blocked?: boolean;
+  // Damage the target took as another element, which nothing of the attacker's acts on.
+  takenAs?: boolean;
 }
 
 const f = Math.fround;
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const active = (total: Total) => total.value !== 0 || total.more !== 1;
-const rulesOf = (rules: DamageRules, unit: Map<string, Total>, on: Rule['on']) =>
+const rulesOf = (rules: Record<string, Rule[]>, unit: Map<string, Total>, on: Rule['on']) =>
   [...unit]
     .filter(([, total]) => active(total))
-    .flatMap(([id, total]) => (rules.rules[id] ?? []).filter((rule) => rule.on === on).map((rule) => ({ id, total, rule })))
+    .flatMap(([id, total]) => (rules[id] ?? []).filter((rule) => rule.on === on).map((rule) => ({ id, total, rule })))
     .sort((a, b) => a.rule.order - b.rule.order);
 
 // DamageEvent for one outcome of every roll: `luck` says which of the chances come through. Gives
-// the damage in the hit's own element, what it adds in others, and the chances it came across.
-function strike(rules: DamageRules, who: Fighter, target: Target, hit: Hit, luck: Map<string, boolean>) {
-  const bools = new Set<string>([...(hit.basic ? ['is_basic_atk'] : []), ...(hit.bonus ? ['is_bonus_element_damage'] : [])]);
+// the damage in the hit's own element, what it adds in others, what the target takes of it as
+// other elements, and the chances it came across.
+function strike(rules: HitRules, who: Fighter, target: Target, hit: Hit, luck: Map<string, boolean>) {
+  const bools = new Set<string>([...(hit.basic ? ['is_basic_atk'] : []), ...(hit.bonus ? ['is_bonus_element_damage'] : []), ...(hit.blocked ? ['is_blocked'] : [])]);
   const strings: Record<string, string> = { attack_type: hit.bonus ? 'bonus_dmg' : 'hit', style: hit.style };
   const layers = new Map<string, number>();
   const conversion = new Map<Element, number>();
   const extra = new Map<Element, number>();
   const other = new Map<Element, number>();
+  const takenAs = new Map<Element, number>();
   const chances = new Map<string, number>();
   const multis = [...hit.multis];
+  const defense = (id: string) => target.stats.get(id)?.value ?? 0;
   let penetration = 0;
 
   const layer = (id: string, amount: number) => layers.set(id, (layers.get(id) ?? 0) + amount);
   // DamageEvent.addBonusEleDmg: damage of another element becomes a hit of its own.
   const add = (to: Element, amount: number) => (to === hit.element ? layer('flat_damage', amount) : other.set(to, Math.trunc((other.get(to) ?? 0) + amount)));
 
-  for (const { id, total, rule } of rulesOf(rules, who.unit, 'damage')) {
+  // The attacker's effects and the target's, each roll told apart by whose it is.
+  const acting = [
+    ...(hit.takenAs ? [] : rulesOf(rules.rules, who.unit, 'damage').map((r) => ({ ...r, key: r.id }))),
+    ...rulesOf(target.rules, target.stats, 'damage').map((r) => ({ ...r, key: `taken ${r.id}` })),
+  ].sort((a, b) => a.rule.order - b.rule.order);
+  for (const { key, total, rule } of acting) {
     const met = (cond: Cond): boolean => !!cond.not !== test(cond);
     const test = (cond: Cond): boolean => {
       switch (cond.k) {
@@ -213,8 +250,8 @@ function strike(rules: DamageRules, who: Fighter, target: Target, hit: Hit, luck
           return false;
         case 'roll': {
           const chance = total.value / 100;
-          if (chance > 0 && chance < 1) chances.set(id, chance);
-          return chance >= 1 || (chance > 0 && !!luck.get(id));
+          if (chance > 0 && chance < 1) chances.set(key, chance);
+          return chance >= 1 || (chance > 0 && !!luck.get(key));
         }
       }
     };
@@ -232,16 +269,16 @@ function strike(rules: DamageRules, who: Fighter, target: Target, hit: Hit, luck
     }
   }
 
-  // ArmorEffect and ElementalResistEffect. Penetration past what the target has turns into more damage.
+  // ArmorEffect and ElementalResistEffect, then BlockChance and DamageShield.
   if (hit.element === 'Physical') {
-    const left = target.armor - penetration;
-    const points = Math.round(Math.abs(left));
-    // IUsableStat.getUsableValue, at the attacker's level.
-    const blocked = clamp(points / (points + 100 * multiplier(rules.scaling, who.level)), 0, 0.9);
-    if (points) layer('armor_mitigation', -blocked * (left > 0 ? 100 : -100));
+    const stopped = armorShare(rules.scaling, defense('armor'), penetration, who.level);
+    if (stopped) layer('armor_mitigation', -100 * stopped);
+    if (defense('physical_resist')) layer('physical_mitigation', -resistance(target.stats, 'physical', 0));
   } else if (RESISTED.includes(hit.element) && !bools.has('resisted_already')) {
-    layer('elemental_mitigation', -clamp(Math.trunc((target.resists[ELEMENTS[hit.element].id] ?? 0) - penetration), -300, 75));
+    layer('elemental_mitigation', -resistance(target.stats, ELEMENTS[hit.element].id, penetration));
   }
+  if (hit.blocked) layer('damage_block', -(target.stats.get('block_damage_reduction')?.value ?? 100));
+  if (defense('damage_shield')) layer('flat_damage_reduction', -defense('damage_shield'));
 
   // EffectEvent.calculateStatLayersAndMoreMultis: the layers in their order, then every "more" multiplier.
   let damage = f(hit.amount + (layers.get('flat_damage') ?? 0));
@@ -259,25 +296,43 @@ function strike(rules: DamageRules, who: Fighter, target: Target, hit: Hit, luck
   }
   for (const [to, percent] of extra) if (percent > 0 && damage > 0) add(to, (damage * percent) / 100);
   const rest = [...layers].filter(([id]) => id !== 'flat_damage').sort((a, b) => rules.layers[a[0]].priority - rules.layers[b[0]].priority);
-  for (const [id, amount] of rest) {
-    const { action, min, max } = rules.layers[id];
-    damage = action === 'ADD' ? damage + amount : damage * clamp(1 + amount / 100, min, max);
+  const run = (steps: typeof rest) => {
+    for (const [id, amount] of steps) {
+      const { action, min, max } = rules.layers[id];
+      damage = action === 'ADD' ? damage + amount : damage * clamp(1 + amount / 100, min, max);
+    }
+  };
+  run(rest.filter(([id]) => rules.layers[id].priority < rules.takenAs));
+  // PhysicalDamageTakenAs: shares that add up to more than the whole hit are scaled down to it.
+  if (hit.element === 'Physical' && hit.depth < 2) {
+    const shares = RESISTED.map((to) => [to, Math.trunc(defense(`phys_taken_as_${ELEMENTS[to].id}`))] as const).filter(([, percent]) => percent > 0);
+    const scale = Math.min(1, 100 / shares.reduce((sum, [, percent]) => sum + percent, 0));
+    const whole = damage;
+    for (const [to, percent] of shares) {
+      const moved = (whole * percent * scale) / 100;
+      takenAs.set(to, Math.trunc(moved));
+      damage -= moved;
+    }
   }
+  run(rest.filter(([id]) => rules.layers[id].priority >= rules.takenAs));
   for (const multi of multis) damage *= multi;
-  return { damage: Math.max(0, damage), other, chances };
+  return { damage: Math.max(0, damage), other, takenAs, chances };
 }
 
 export type ByElement = Partial<Record<Element, number>>;
 
 // What a hit comes to on average, by element: every roll weighed by its chance, and the damage it
-// adds in other elements worked out as hits of their own (DamageEvent.calculateAllBonusElementalDamage).
-function average(rules: DamageRules, who: Fighter, target: Target, hit: Hit): ByElement {
+// adds in other elements or is taken as worked out as hits of their own
+// (DamageEvent.calculateAllBonusElementalDamage). What is taken as another element gets none of
+// the "more" multipliers the hit started with.
+export function average(rules: HitRules, who: Fighter, target: Target, hit: Hit): ByElement {
   const chances = new Map<string, number>();
   for (;;) {
     const rolls = [...chances];
     let damage = 0;
     let found = false;
     const other = new Map<Element, number>();
+    const takenAs = new Map<Element, number>();
     for (let outcome = 0; outcome < 2 ** rolls.length; outcome++) {
       const luck = new Map(rolls.map(([id], i) => [id, !!(outcome & (1 << i))]));
       const weight = rolls.reduce((p, [id, chance]) => p * (luck.get(id) ? chance : 1 - chance), 1);
@@ -288,15 +343,20 @@ function average(rules: DamageRules, who: Fighter, target: Target, hit: Hit): By
       }
       damage += weight * result.damage;
       for (const [to, amount] of result.other) other.set(to, (other.get(to) ?? 0) + weight * amount);
+      for (const [to, amount] of result.takenAs) takenAs.set(to, (takenAs.get(to) ?? 0) + weight * amount);
     }
     // A roll that only showed up now wasn't weighed, so the outcomes are gone over again with it.
     if (found) continue;
     const total: ByElement = { [hit.element]: damage };
     if (hit.depth < 2) {
-      for (const [to, amount] of other) {
-        if (amount <= 0) continue;
-        const more = average(rules, who, target, { ...hit, amount, element: to, bonus: true, depth: hit.depth + 1 });
-        for (const [element, value] of Object.entries(more) as [Element, number][]) total[element] = (total[element] ?? 0) + value;
+      const next = { ...hit, bonus: true, depth: hit.depth + 1 };
+      const more = [
+        ...[...other].map(([to, amount]) => ({ ...next, amount, element: to })),
+        ...[...takenAs].map(([to, amount]) => ({ ...next, amount, element: to, takenAs: true, multis: [] })),
+      ];
+      for (const bonus of more) {
+        if (bonus.amount <= 0) continue;
+        for (const [element, value] of Object.entries(average(rules, who, target, bonus)) as [Element, number][]) total[element] = (total[element] ?? 0) + value;
       }
     }
     return total;
@@ -324,7 +384,7 @@ function castTicks(rules: DamageRules, who: Fighter, skill: SkillDamage) {
   const start: Record<string, number> = { cast_ticks: skill.castTicks, cast_speed_ticks: skill.recoveryTicks, cd_ticks: skill.cooldownTicks, charge_cd_ticks: skill.chargeTicks };
   const now = { ...start };
   const strings: Record<string, string> = { style: skill.style };
-  for (const { total, rule } of rulesOf(rules, who.unit, 'cast')) {
+  for (const { total, rule } of rulesOf(rules.rules, who.unit, 'cast')) {
     const met = (cond: Cond): boolean => !!cond.not !== (cond.k === 'tag' ? skill.tags.includes(cond.tag) : cond.k === 'str' ? strings[cond.key] === cond.value : cond.k === 'any' && cond.ifs.some(met));
     if (!rule.ifs.every(met)) continue;
     for (const act of rule.acts) {

@@ -98,24 +98,31 @@ interface RawStat {
 }
 const rawStats = statData as unknown as Record<string, RawStat>;
 
-const situational = new Set<string>();
-const rules: Record<string, Rule[]> = {};
-for (const [id, raw] of Object.entries(rawStats)) {
-  const stat = raw.data ?? raw;
-  for (const effect of stat.effect ?? []) {
-    const on = effect.events.map((event) => EVENTS[event]).find(Boolean);
-    const acts = effect.effects.map(action).filter((act) => act !== undefined);
-    // The calculator's target has no stats of this kind, and what comes after the layers doesn't change the hit.
-    if (!on || effect.side !== 'Source' || !(effect.order in ORDER) || !acts.length) continue;
-    const ifs = effect.ifs.map(condition);
-    if (acts.includes(null) || ifs.includes(null)) {
-      if (on === 'damage') situational.add(id);
-      continue;
+// The effects stats have on a hit and on a cast, for the one dealing the hit or the one taking it,
+// and the stats whose effect on a hit depends on the moment.
+export function statRules(side: 'Source' | 'Target') {
+  const situational = new Set<string>();
+  const rules: Record<string, Rule[]> = {};
+  for (const [id, raw] of Object.entries(rawStats)) {
+    const stat = raw.data ?? raw;
+    for (const effect of stat.effect ?? []) {
+      const on = effect.events.map((event) => EVENTS[event]).find(Boolean);
+      const acts = effect.effects.map(action).filter((act) => act !== undefined);
+      // What comes after the layers doesn't change the hit.
+      if (!on || effect.side !== side || !(effect.order in ORDER) || !acts.length) continue;
+      const ifs = effect.ifs.map(condition);
+      if (acts.includes(null) || ifs.includes(null)) {
+        if (on === 'damage') situational.add(id);
+        continue;
+      }
+      const element = effect.ifs.some((c) => rawConditions[c].ser === 'ele_match_stat') ? { element: stat.ele } : {};
+      (rules[id] ??= []).push({ on, order: ORDER[effect.order], ...element, ifs: ifs as Cond[], acts: acts as Act[] });
     }
-    const element = effect.ifs.some((c) => rawConditions[c].ser === 'ele_match_stat') ? { element: stat.ele } : {};
-    (rules[id] ??= []).push({ on, order: ORDER[effect.order], ...element, ifs: ifs as Cond[], acts: acts as Act[] });
   }
+  return { rules, situational };
 }
+// The calculator's target has no stats of its own.
+const { rules, situational } = statRules('Source');
 
 // Stats built into the mod, whose effects are in its code (6.4.13) and need rechecking when it updates.
 const HIT: Cond = { k: 'str', key: 'attack_type', value: 'hit' };
@@ -312,4 +319,5 @@ export const damage: DamageRules = {
   globalCooldownTicks: balance.GLOBAL_COOLDOWN_TICKS,
   minCooldown: balance.MIN_SPELL_COOLDOWN_MULTI,
   channelSpeed: balance.CHANNEL_GENERAL_SPEED_TRANSFER,
+  takenAs: layerData.damage_taken_as.priority,
 };

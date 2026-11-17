@@ -41,7 +41,9 @@ export default function DamageTab({ core, build, change }: TabProps) {
   if (!rules || !skills || !own || !unit) return <Loading />;
 
   const who: Fighter = { level, own: own.stats, unit: unit.stats, weapon: (own.weapon && rules.weapons[own.weapon]) || UNARMED, dualWield: own.dualWield };
-  const enemy = { level: target.level ?? level, armor: target.armor, resists: target.resists };
+  // The target has armor and resistances and nothing else.
+  const defenses = [['armor', target.armor] as const, ...RESISTS.map((id) => [`${id}_resist`, target.resists[id] ?? 0] as const)];
+  const enemy = { level: target.level ?? level, stats: new Map(defenses.map(([id, value]) => [id, { value, more: 1 }])), rules: {} };
   // The states a skill can be used in go by the effects they take.
   const variants = chosen ? rules.skills[chosen.perk.id].variants.map((variant) => ({ variant, name: variant.needs.join(' and ') })) : [];
   const under = variants.find((v) => v.name === build.damage.under) ?? variants[0];
