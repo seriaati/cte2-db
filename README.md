@@ -10,6 +10,6 @@ All site data and assets are extracted from the modpack.
 
 ## MCP server
 
-AI clients can query the database through an [MCP](https://modelcontextprotocol.io) server at `https://cte2.seria.moe/mcp` (Streamable HTTP, no sign-in). `search` covers everything the site lists, `talent_links` shows how the nodes of a talent tree connect, `talent_build_link` turns a talent build into a link that opens it in the planner, filling in the nodes between the chosen talents when asked to, and `gear_plan_link` does the same for a piece of gear in the gear planner.
+AI clients can query the database through an [MCP](https://modelcontextprotocol.io) server at `https://cte2.seria.moe/mcp` (Streamable HTTP, no sign-in). `search` covers everything the site lists, `talent_links` shows how the nodes of a talent tree connect, `talent_build_link` turns a talent build into a link that opens it in the planner, filling in the nodes between the chosen talents when asked to, `gear_plan_link` does the same for a piece of gear in the gear planner, and `character_build` works out a whole build the way the build editor does (points, damage, effective health, stats) and returns it as a file the editor imports.
 
 It runs as a Cloudflare Pages Function (`functions/mcp.ts`). To try it locally, run `bun run build` and then `bunx wrangler pages dev dist`, and connect to `http://localhost:8788/mcp`.

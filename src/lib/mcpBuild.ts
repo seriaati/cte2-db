@@ -1,0 +1,461 @@
+// Server-side only: the build tool of functions/mcp.ts. It reads a whole build given by names or
+// ids, says what the game wouldn't allow about it, and reports what the build editor works out for it.
+import { canRoll, type StatMod } from './affix';
+import { buildDamage, buildDefense, describeJewel, jewelSockets, nameOf, percent, readCodex, readItem, resistText, show as amount, statGroups } from './buildCalc';
+import {
+  AUGMENT_SLOTS,
+  GEAR_SLOTS,
+  MAX_CLASSES,
+  RARITY_TYPES,
+  RESISTS,
+  TREES as TREE_IDS,
+  exactly,
+  exportBuild,
+  maxRank,
+  pointsAt,
+  readBuild,
+  supportSlots,
+  type Build,
+  type Codex,
+  type GearSlot,
+  type Item,
+  type Jewel,
+  type Pool,
+  type RarityType,
+  type Rolled,
+  type TreeId,
+} from './buildRules';
+import { core, sections } from './builds';
+import { ELEMENTS } from './damageRules';
+import { TREES, addedLine, planTree, show, statLines } from './mcp';
+import { slotCount } from './plannerRules';
+import { augmentCapacity, augmentCost } from './statRules';
+
+const { gear, skills, sockets, damage, defense } = sections;
+const { maxLevel } = core;
+const tiers = gear.rarities.filter((r) => !r.runewords);
+const top = tiers.at(-1)!;
+
+// A part of the build by name or id, with its roll when that isn't the best.
+type Given = string | { id: string; roll?: number };
+
+export interface GivenItem {
+  base?: string;
+  unique?: string;
+  rarity?: string;
+  level?: number;
+  baseRoll?: number;
+  implicit?: Given;
+  prefix?: Given[];
+  suffix?: Given[];
+  uniqueRolls?: number[];
+  sockets?: (string | { kind?: 'gem' | 'rune'; id: string; roll?: number })[];
+  runewordRoll?: number;
+  infusion?: string | { id: string; rarity?: string };
+  corruption?: { kind: string; affixes?: Given[] };
+  enchants?: { id: string; level: number }[];
+}
+
+type GivenCodex = { id: string; rarity?: string; level?: number; pieces?: Partial<Record<RarityType, number>>; slots?: { slot: string; type: RarityType }[]; affixes?: string[] };
+
+// The build of an exported file, with names allowed where it has ids and everything left out that isn't wanted.
+export interface GivenBuild {
+  name?: string;
+  level?: number;
+  bonus?: Partial<Record<Pool, number>>;
+  trees?: Partial<Record<TreeId, (number | string)[]>>;
+  stats?: Record<string, number>;
+  classes?: string[];
+  perks?: Record<string, number>;
+  hotbar?: ({ spell: string; supports?: Given[] } | null)[];
+  gear?: Partial<Record<GearSlot, GivenItem>>;
+  codex?: GivenCodex | null;
+  augments?: Given[];
+  jewels?: { kind: string; rarity?: string; level?: number; affixes?: Given[]; corruption?: Given[] }[];
+  damage?: { skill?: string; under?: string; attacks?: number; target?: { level?: number; armor?: number; resists?: Record<string, number> } };
+  defense?: { level?: number; rarity?: string; affixes?: string[]; hit?: number; rate?: number };
+}
+
+interface Named {
+  id: string;
+  name?: string;
+  stats?: StatMod[];
+}
+
+const idOf = (given: Given) => (typeof given === 'string' ? given : given.id);
+const rollOf = (given: Given) => (typeof given === 'string' ? undefined : given.roll);
+const same = (a: string, b: string) => a.toLowerCase() === b.trim().toLowerCase();
+
+// Infusions, passives and the affixes of jewels, corruption and codexes have no names in game, so
+// each goes by the stats it gives.
+const nameless = (x: Named) => !x.name || x.name === x.id;
+const label = (x: Named) => (nameless(x) && x.stats?.length ? x.stats.map((s) => s.name).join(' and ') : x.name || x.id);
+// Lists no longer than this are spelled out when nothing in them matches.
+const LISTED = 60;
+
+// One of a list by its id, by its name, or where it has none by a stat it gives. `what` says what
+// the list holds, for the problem that is noted when nothing or more than one thing matches.
+function pick<T extends Named>(pool: T[], given: string, what: string, problems: string[]): T | undefined {
+  const wanted = given.trim().toLowerCase();
+  const stat = (x: T, test: (name: string) => boolean) => nameless(x) && !!x.stats?.some((s) => test(s.name.toLowerCase()));
+  const found =
+    [
+      (x: T) => x.id.toLowerCase() === wanted,
+      (x: T) => (nameless(x) ? stat(x, (name) => name === wanted) : x.name!.toLowerCase() === wanted),
+      (x: T) => stat(x, (name) => name.includes(wanted)),
+    ]
+      .map((test) => pool.filter(test))
+      .find((hits) => hits.length) ?? [];
+  if (found.length === 1) return found[0];
+  problems.push(
+    found.length
+      ? `"${given}" could be more than one thing. Give one of these ids instead: ${found.map((x) => `${x.id}${x.stats?.length ? ` (${statLines(x.stats, exactly(100), maxLevel).join(', ')})` : ''}`).join('; ')}.`
+      : `"${given}" is not ${what}.${pool.length && pool.length <= LISTED ? ` The choices: ${pool.map(label).join(', ')}.` : ''}`,
+  );
+}
+
+const place = <T extends Named>(pool: T[], list: Given[] = [], what: string, problems: string[]) =>
+  list.flatMap((given) => {
+    const found = pick(pool, idOf(given), what, problems);
+    return found ? [{ found, roll: rollOf(given) }] : [];
+  });
+const rolled = (placed: { found: Named; roll?: number }[]): Rolled[] => placed.map(({ found, roll }) => ({ id: found.id, roll }));
+const repeated = (things: Named[]) => [...new Set(things.filter((x, i) => things.indexOf(x) !== i).map(label))];
+const once = (things: Named[], problems: string[]) => {
+  if (repeated(things).length) problems.push(`Given more than once: ${repeated(things).join(', ')}.`);
+};
+const count = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
+const wereGiven = (n: number) => `${n} ${n === 1 ? 'was' : 'were'} given`;
+
+function givenItem(slot: (typeof GEAR_SLOTS)[number], given: GivenItem, level: number, problems: string[]): Item | undefined {
+  const baseOf = (id: string) => gear.bases.find((b) => b.id === id)!;
+  const fitting = gear.uniques.filter((u) => slot.fits(baseOf(u.base)));
+  const unique = given.unique ? pick(fitting, given.unique, 'a unique that goes in this slot', problems) : undefined;
+  if (given.unique && !unique) return;
+  if (!unique && !given.base) problems.push('Needs a base or a unique.');
+  const base = unique ? baseOf(unique.base) : given.base ? pick(gear.bases, given.base, 'base gear', problems) : undefined;
+  if (!base) return;
+  if (!slot.fits(base)) return void problems.push(`${base.name} doesn't go in this slot.`);
+  const rarity = unique ? gear.uniqueRarity : given.rarity ? pick(gear.rarities, given.rarity, 'a gear rarity', problems) : top;
+  if (!rarity) return;
+
+  const rollable = gear.affixes.filter((a) => canRoll(a, base));
+  const affixes = (type: 'prefix' | 'suffix') => {
+    const fits = rollable.filter((a) => a.type === type);
+    const placed = place(fits, given[type], `a ${type} that rolls on ${base.name}`, problems);
+    const most = slotCount(rarity, type);
+    if (placed.length > most) problems.push(`${rarity.name} gear has ${count(most, `${type} slot`)}, but ${wereGiven(placed.length)}.`);
+    once(placed.filter((p) => !p.found.repeatable).map((p) => p.found), problems);
+    return rolled(placed);
+  };
+  const implicits = rollable.filter((a) => a.type === 'implicit');
+  const implicit = place(implicits, given.implicit ? [given.implicit] : [], `an implicit of ${base.name}`, problems);
+
+  const kinds = gear.corruption.kinds.filter((k) => k.rarities.includes(rarity.id));
+  const kind = given.corruption ? pick(kinds, given.corruption.kind, `a corruption of ${rarity.name} gear`, problems) : undefined;
+  const corruptions = gear.corruption.affixes.filter((a) => canRoll(a, base));
+  const corrupted = place(corruptions, given.corruption?.affixes, `a corruption affix that rolls on ${base.name}`, problems);
+  if (kind && corrupted.length > kind.affixes) problems.push(`${kind.name} corruption adds ${count(kind.affixes, 'affix', 'affixes')}, but ${wereGiven(corrupted.length)}.`);
+  once(corrupted.map((p) => p.found), problems);
+
+  const socketed = (given.sockets ?? []).flatMap((entry) => {
+    const only = typeof entry === 'string' ? undefined : entry.kind;
+    const fits = (['gem', 'rune'] as const).flatMap((type) => (only && only !== type ? [] : (type === 'gem' ? gear.gems : gear.runes).map(({ id, name }) => ({ id, name, kind: type }))));
+    const found = pick(fits, idOf(entry), 'a gem or a rune', problems);
+    return found ? [{ kind: found.kind, found, roll: rollOf(entry) }] : [];
+  });
+  const of = (type: 'gem' | 'rune') => socketed.filter((s) => s.kind === type);
+  const room = rarity.sockets + (kind?.sockets ?? 0);
+  if (socketed.length > room) problems.push(`This ${rarity.name} item has ${count(room, 'socket')}, but ${socketed.length} were filled.`);
+  if (of('gem').length > rarity.maxGems) problems.push(`${rarity.name} gear holds ${count(rarity.maxGems, 'gem')} at most.`);
+  if (of('rune').length > rarity.maxRunes) problems.push(`${rarity.name} gear holds ${count(rarity.maxRunes, 'rune')} at most.`);
+  if (repeated(of('rune').map((s) => s.found)).length) problems.push('A rune fits once per item.');
+
+  const infusions = gear.infusions.filter((a) => canRoll(a, base));
+  const infusion = given.infusion ? pick(infusions, idOf(given.infusion), `an infusion that rolls on ${base.name}`, problems) : undefined;
+  const infusionRarity = typeof given.infusion === 'object' && given.infusion.rarity ? pick(tiers, given.infusion.rarity, 'an infusion rarity', problems) : top;
+
+  const enchants = (given.enchants ?? []).flatMap((e) => {
+    const found = pick(gear.enchants, e.id, 'an enchantment the pack gives stats for', problems);
+    return found ? [{ found, level: e.level }] : [];
+  });
+  once(enchants.map((e) => e.found), problems);
+
+  return {
+    base: base.id,
+    unique: unique?.id,
+    rarity: rarity.id,
+    level: given.level ?? level,
+    baseRoll: given.baseRoll,
+    implicit: rolled(implicit)[0],
+    prefix: affixes('prefix'),
+    suffix: affixes('suffix'),
+    uniqueRolls: given.uniqueRolls,
+    sockets: socketed.map(({ kind: type, found, roll }) => ({ kind: type, id: found.id, roll })),
+    runewordRoll: given.runewordRoll,
+    infusion: infusion && infusionRarity && { id: infusion.id, rarity: infusionRarity.id },
+    corruption: kind && { kind: kind.id, affixes: rolled(corrupted) },
+    enchants: enchants.map(({ found, level: at }) => ({ id: found.id, level: at })),
+  };
+}
+
+function givenCodex(given: GivenCodex, level: number, problems: string[]): Codex | null {
+  const kind = pick(gear.codex.kinds, given.id, 'a codex', problems);
+  const rarity = given.rarity ? pick(tiers, given.rarity, 'a codex rarity', problems) : top;
+  if (!kind || !rarity) return null;
+  const limits = gear.codex.rarities[rarity.id];
+  // Left out, a kind of piece is asked for as little as the rarity lets it be.
+  const pieces = Object.fromEntries(
+    RARITY_TYPES.map((type) => {
+      const { min, max } = limits.pieces[type];
+      const asked = given.pieces?.[type] ?? min;
+      if (asked < min || asked > max) problems.push(`The number of ${type} pieces a ${rarity.name} codex asks for is ${min === max ? min : `${min} to ${max}`}, not ${asked}.`);
+      return [type, asked];
+    }),
+  ) as Codex['pieces'];
+  // Off-hand slots are never asked for (Omen.getRandomSlotReq).
+  const asked = [...new Set(gear.bases.filter((b) => b.family !== 'OffHand').map((b) => b.slot))].map((id) => ({ id, name: gear.slotNames[id] }));
+  const slots = (given.slots ?? []).flatMap(({ slot, type }) => {
+    const found = pick(asked, slot, 'a kind of gear a codex can ask for', problems);
+    return found ? [{ slot: found.id, type }] : [];
+  });
+  if (slots.length > limits.slots) problems.push(`A ${rarity.name} codex has ${count(limits.slots, 'slot condition')}, but ${wereGiven(slots.length)}.`);
+  const pool = gear.codex.affixes.filter((a) => kind.affixTypes.includes(a.type));
+  const affixes = place(pool, given.affixes, 'an affix of a codex', problems);
+  if (affixes.length > limits.affixes) problems.push(`A ${rarity.name} codex has ${count(limits.affixes, 'affix', 'affixes')}, but ${wereGiven(affixes.length)}.`);
+  once(affixes.map((a) => a.found), problems);
+  return { id: kind.id, rarity: rarity.id, level: given.level ?? level, pieces, slots, affixes: affixes.map((a) => a.found.id) };
+}
+
+function givenJewel(given: NonNullable<GivenBuild['jewels']>[number], level: number, problems: string[]): Jewel | undefined {
+  const { kinds, crafted, eye, affixes } = sockets.jewels;
+  const kind = pick<Named>([...kinds, { id: 'crafted', name: crafted.name }, { id: 'eye', name: eye.name }], given.kind, 'a jewel', problems);
+  const rarity = given.rarity && kinds.includes(kind as (typeof kinds)[number]) ? pick(sockets.rarities, given.rarity, 'a jewel rarity', problems) : sockets.rarities.at(-1)!;
+  if (!kind || !rarity) return;
+  const jewel: Jewel = { kind: kind.id as Jewel['kind'], rarity: rarity.id, level: given.level ?? level, affixes: [], corruption: [] };
+  const about = describeJewel(sockets, jewel);
+  const placed = place([...about.pool, ...about.own], given.affixes, `an affix of ${about.item.name}`, problems);
+  for (const [pool, slots] of [
+    [about.pool, about.slots],
+    [about.own, about.ownSlots],
+  ] as const) {
+    const held = placed.filter((p) => pool.includes(p.found)).length;
+    if (held > slots) problems.push(`${about.rarity?.name ?? 'This'} ${about.item.name} holds ${slots} of ${pool === about.own ? 'the affixes only it has' : 'the ordinary jewel affixes'}, but ${wereGiven(held)}.`);
+  }
+  const corrupted = place(affixes.corruption, given.corruption, 'a jewel corruption', problems);
+  if (corrupted.length > 2) problems.push(`A jewel holds 2 corruption affixes, but ${wereGiven(corrupted.length)}.`);
+  once([...placed, ...corrupted].map((p) => p.found), problems);
+  return { ...jewel, affixes: rolled(placed), corruption: rolled(corrupted) };
+}
+
+const elementName = (id: string) => Object.values(ELEMENTS).find((element) => element.id === id)!.name;
+
+// What a build comes to: its points, damage and defense as the build editor works them out, every
+// stat when `stats` is set, and the file the editor imports when `file` is. Throws, saying what is
+// wrong, for a build the game wouldn't allow.
+export function characterBuild(origin: string, given: GivenBuild, options: { connect?: boolean; stats?: boolean; file?: boolean } = {}): string {
+  const problems: string[] = [];
+  // Problems of one part of the build, noted under that part's name.
+  const within = <T>(where: string, read: (issues: string[]) => T) => {
+    const issues: string[] = [];
+    const result = read(issues);
+    problems.push(...issues.map((issue) => `${where}: ${issue}`));
+    return result;
+  };
+  const level = given.level ?? maxLevel;
+  const tally: string[] = [];
+  const pool = (id: Pool, spent: number, name: string) => {
+    const points = core.points[id];
+    const bonus = given.bonus?.[id] ?? (points.perLevel ? 0 : points.maxBonus);
+    if (bonus > points.maxBonus) problems.push(`${name}: at most ${points.maxBonus} bonus points.`);
+    const total = pointsAt(points, level, bonus);
+    if (spent > total) problems.push(`${name}: ${spent} are spent, but level ${level} with ${bonus} bonus points gives ${total}.`);
+    tally.push(`${name}: ${spent} of ${total} spent`);
+  };
+
+  const trees = {} as Build['trees'];
+  for (const key of TREE_IDS) {
+    const { tree, name } = TREES[key];
+    const wanted = new Set<number>();
+    const unknown: string[] = [];
+    for (const node of given.trees?.[key] ?? []) {
+      const index = typeof node === 'number' ? node : Number(node.match(new RegExp(`^\\[?(?:${key}-)?(\\d+)\\]?$`))?.[1] ?? NaN);
+      if (tree.nodes[index]) wanted.add(index);
+      else unknown.push(`${node}`);
+    }
+    if (unknown.length) problems.push(`${name}: not nodes of this tree: ${unknown.join(', ')}.`);
+    const plan = planTree(key, wanted, level, given.bonus?.[key], !!options.connect && wanted.size > 0);
+    problems.push(...plan.problems.map((issue) => `${name}: ${issue}`));
+    trees[key] = [...plan.taken];
+    tally.push(`${name}: ${plan.taken.size} of ${plan.total} spent`, ...(plan.added.length ? [addedLine(key, plan.added, level)] : []));
+  }
+
+  const classes = [...new Set((given.classes ?? []).flatMap((c) => pick(skills.classes, c, 'a class', problems) ?? []))];
+  if (classes.length > MAX_CLASSES) problems.push(`A character has ${MAX_CLASSES} classes at most.`);
+  const known = classes.flatMap((c) => c.perks.map((perk) => ({ id: perk.id, name: perk.spell?.name, stats: perk.stats, perk })));
+  const spells = known.filter((k) => k.perk.spell);
+  const whose = classes.map((c) => c.name).join(' or ') || 'a class the build has';
+  const perks: Record<string, number> = {};
+  for (const [key, points] of Object.entries(given.perks ?? {})) {
+    const found = points > 0 && pick(known, key, `a spell or passive of ${whose}`, problems);
+    if (!found) continue;
+    const most = maxRank(found.perk, level);
+    if (points > most) problems.push(`${label(found)} ${most ? `takes ${most} points at most at level ${level}` : `opens at level ${found.perk.level}`}, but was given ${points}.`);
+    perks[found.id] = points;
+  }
+  const spent = (spell: boolean) => known.filter((k) => !!k.perk.spell === spell).reduce((sum, k) => sum + (perks[k.id] ?? 0), 0);
+  pool('spells', spent(true), 'Spell points');
+  pool('passives', spent(false), 'Passive points');
+
+  const hotbar = (given.hotbar ?? []).map((slot) => {
+    const found = slot?.spell ? pick(spells, slot.spell, `a spell of ${whose}`, problems) : undefined;
+    if (!found) return null;
+    return within(found.name!, (issues) => {
+      const points = perks[found.id] ?? 0;
+      if (!points) issues.push('It is on the hotbar, but no points are in it.');
+      const supports = place(skills.supports, slot!.supports, 'a support gem', issues);
+      const open = supportSlots(points, level, core.linkLevels);
+      if (supports.length > open) issues.push(`With ${points} points at level ${level} it has ${count(open, 'support slot')}, but ${wereGiven(supports.length)}.`);
+      for (const { found: gem } of supports) if (gem.minLevel > level) issues.push(`${gem.name} needs level ${gem.minLevel}.`);
+      once(supports.map((s) => s.found), issues);
+      const kinds = Map.groupBy(supports.filter((s) => s.found.oneKind), (s) => s.found.oneKind);
+      for (const [kind, gems] of kinds) if (gems.length > 1) issues.push(`Only one ${kind} support fits a skill.`);
+      return { spell: found.id, supports: rolled(supports) };
+    });
+  });
+  const slotted = hotbar.flatMap((slot) => spells.find((s) => s.id === slot?.spell) ?? []);
+  if (repeated(slotted).length) problems.push(`On the hotbar more than once: ${repeated(slotted).join(', ')}.`);
+
+  const attributes: Record<string, number> = {};
+  for (const [key, points] of Object.entries(given.stats ?? {})) {
+    const found = pick(core.attributes, key, 'an attribute', problems);
+    if (found && points > 0) attributes[found.id] = points;
+  }
+  pool('stats', Object.values(attributes).reduce((sum, n) => sum + n, 0), 'Stat points');
+
+  const worn = Object.fromEntries(
+    GEAR_SLOTS.flatMap((slot) => {
+      const item = given.gear?.[slot.id] && within(slot.name, (issues) => givenItem(slot, given.gear![slot.id]!, level, issues));
+      return item ? [[slot.id, item]] : [];
+    }),
+  );
+  const codex = given.codex ? within('Codex', (issues) => givenCodex(given.codex!, level, issues)) : null;
+
+  const augments = place(sockets.auras, given.augments, 'an augment', problems);
+  if (augments.length > AUGMENT_SLOTS) problems.push(`A character has ${AUGMENT_SLOTS} augment slots, but ${augments.length} augments were given.`);
+  for (const { found } of augments) if (found.minLevel > level) problems.push(`${found.name} needs level ${found.minLevel}.`);
+  once(augments.map((a) => a.found), problems);
+
+  const jewels = (given.jewels ?? []).flatMap((jewel, i) => within(`Jewel ${i + 1}`, (issues) => givenJewel(jewel, level, issues)) ?? []);
+  for (const kind of ['crafted', 'eye']) if (jewels.filter((j) => j.kind === kind).length > 1) problems.push(`Only one ${describeJewel(sockets, jewels.find((j) => j.kind === kind)!).item.name} can be socketed.`);
+
+  const skill = given.damage?.skill ? pick(spells, given.damage.skill, `a spell of ${whose}`, problems) : undefined;
+  const states = (skill && damage.skills[skill.id]?.variants.map((v) => v.needs.join(' and '))) || [];
+  const stateNames = states.map((state) => state || 'no effect').join(', ');
+  const under = states.find((state) => same(state, given.damage?.under ?? ''));
+  if (given.damage?.under && under === undefined) problems.push(`"${given.damage.under}" is not something ${skill?.name ?? 'a basic attack'} is used with.${states.length ? ` The choices: ${stateNames}.` : ''}`);
+
+  const mob = given.defense?.rarity ? pick(defense.mob.rarities, given.defense.rarity, 'a mob rarity', problems) : defense.mob.rarities[0];
+  // An empty one stands for an affix that changes nothing about the mob's hits.
+  const mobAffixes = (given.defense?.affixes ?? []).map((affix) => (affix && pick(defense.mob.affixes, affix, "a mob affix that changes the mob's hits", problems)?.id) || '');
+  if (mob && mobAffixes.length > mob.affixes) problems.push(`A ${mob.name} mob has ${count(mob.affixes, 'affix', 'affixes')}, but ${wereGiven(mobAffixes.length)}.`);
+
+  const build = readBuild(
+    {
+      ...given,
+      trees,
+      stats: attributes,
+      classes: classes.map((c) => c.id),
+      perks,
+      hotbar,
+      gear: worn,
+      codex,
+      augments: rolled(augments),
+      jewels,
+      damage: { ...given.damage, skill: skill?.id, under },
+      defense: { ...given.defense, rarity: mob?.id, affixes: mobAffixes },
+    },
+    core,
+  )!;
+
+  const jewelRoom = jewelSockets(core, build);
+  if (build.jewels.length > jewelRoom) problems.push(`The build has ${count(build.jewels.length, 'jewel')} but ${count(jewelRoom, 'jewel socket')}. Sockets come from talents and from a few uniques.`);
+  const attack = buildDamage(sections, build);
+  const totals = attack.own;
+  const guard = buildDefense(defense, build, totals);
+  problems.push(...totals.skipped);
+  const reserved = augments.reduce((sum, { found }) => sum + augmentCost(totals.stats, found), 0);
+  const capacity = augmentCapacity(totals.rules, totals.stats);
+  if (reserved > capacity) problems.push(`The augments take ${reserved} augment capacity, but the build has ${capacity}.`);
+  if (skill && !attack.chosen) {
+    const choices = attack.choices.map((c) => c.spell.name);
+    problems.push(`${skill.name} is not a skill on the hotbar whose damage can be worked out. ${choices.length ? `The choices: ${choices.join(', ')}.` : 'No skill on the hotbar is.'}`);
+  }
+  if (problems.length) throw new Error(problems.join('\n'));
+
+  const { defs } = totals.rules;
+  const { chosen, damage: dealt, crit } = attack;
+  const { value, avoid, rows, weakest, enemy } = guard;
+  const each = chosen ? 'cast' : 'attack';
+  const elements = (Object.entries(dealt.perUse) as [keyof typeof ELEMENTS, number][]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]);
+  const others = attack.choices.filter((c) => c !== chosen).map((c) => c.spell.name);
+  // Stats that came to something but depend on the moment, which neither tab of the editor counts.
+  const leftOut = (ids: string[]) => (ids.length ? [`Left out, because they depend on the moment: ${ids.map((id) => defs[id].name.replace('[VAL1]', 'X')).join(', ')}`] : []);
+  const resource = (id: string) => `${defs[id].name}: ${amount(value(id))}${value(`${id}_regen`) > 0 ? `, ${amount(value(`${id}_regen`))} regenerated a second` : ''}`;
+
+  const gearLines = GEAR_SLOTS.flatMap((slot) => {
+    const item = build.gear[slot.id];
+    const parts = item && readItem(gear, item);
+    return parts ? [`${slot.name}: ${nameOf(parts)}, ${parts.rarity.name} ${parts.base.name}, level ${item.level}${parts.runeword ? `, forms the runeword ${parts.runeword.name}` : ''}`] : [];
+  });
+  const book = readCodex(gear, build);
+  if (book) gearLines.push(`Codex: ${book.rarity.name} ${book.kind.name}, level ${book.codex.level}, ${book.worn} of the ${RARITY_TYPES.reduce((sum, type) => sum + book.codex.pieces[type], 0)} pieces it asks for are worn`);
+
+  return [
+    [`# ${build.name}`, `Level ${level}, ${classes.map((c) => c.name).join(' and ') || 'no class'}. Worked out for pack ${core.pack}.`],
+    ['## Points', ...tally, `Augment capacity: ${reserved} of ${capacity} reserved`, `Jewel sockets: ${build.jewels.length} of ${jewelRoom} filled`],
+    ...(gearLines.length ? [['## Gear', ...gearLines]] : []),
+    [
+      '## Damage',
+      `Skill: ${chosen?.spell.name ?? 'Basic attack'}${attack.under?.name ? `, used with ${attack.under.name}` : ''}`,
+      `Damage a second: ${amount(dealt.dps)}`,
+      `Each ${each}: ${amount(dealt.total)}`,
+      `${chosen ? 'Casts' : 'Attacks'} a second: ${+dealt.rate.toFixed(2)}`,
+      `${defs.critical_hit.name}: ${+crit.toFixed(1)}%`,
+      `${defs.critical_damage.name}: ${amount(attack.stats.get('critical_damage')?.value ?? defs.critical_damage.base)}%`,
+      ...(elements.length ? [`By element: ${elements.map(([element, n]) => `${ELEMENTS[element].name} ${amount(n * dealt.rate)} a second (${Math.round((n / dealt.total) * 100)}%)`).join(', ')}`] : []),
+      `Target: level ${attack.enemy.level}, ${build.damage.target.armor} armor, resistances ${RESISTS.map((id) => `${elementName(id)} ${build.damage.target.resists[id] ?? 0}%`).join(', ')}`,
+      ...(attack.variants.length > 1 ? [`${chosen!.spell.name} can be used with: ${attack.variants.map((v) => v.name || 'no effect').join(', ')}`] : []),
+      ...(others.length ? [`Other skills on the hotbar that can be worked out: ${others.join(', ')}`] : []),
+      ...(totals.weapon ? [] : ['No weapon is held, so basic attacks are unarmed and skills that build on weapon damage have little to build on.']),
+      ...leftOut(attack.rules.situational.filter((id) => attack.stats.get(id)?.value || (attack.stats.get(id)?.more ?? 1) !== 1)),
+    ],
+    [
+      '## Defense',
+      `Effective health: ${amount(weakest.effectiveHealth)}, the lowest of the five below, against ${ELEMENTS[weakest.element].name.toLowerCase()} hits`,
+      ...['health', 'magic_shield', 'mana', 'energy'].map(resource),
+      `Attributes: ${core.attributes.map((stat) => `${stat.name} ${amount(Math.trunc(value(stat.id)))}`).join(', ')}`,
+      `Armor: ${amount(value('armor'))}`,
+      `Attacks dodged: ${percent(avoid.dodge)}, magic spells dodged: ${percent(avoid.spellDodge)}`,
+      ...(totals.shield
+        ? [`Hits blocked at ${enemy.rate} a second: ${percent(avoid.blocked)}. A block is ready again after ${avoid.recovery} s, is made ${percent(avoid.block)} of the time and stops ${percent(avoid.stops)} of the hit`]
+        : value('block_chance') > 0
+          ? ['Blocking needs a shield in the off hand, so the block chance does nothing.']
+          : []),
+      ...rows.map(
+        ({ element, resisted, lands, effectiveHealth }) =>
+          `${ELEMENTS[element].name} hits: ${element === 'Physical' ? `${percent(resisted.used / 100)} stopped by armor` : `${resistText(resisted)} resisted`}, ${amount(lands)} of ${amount(enemy.hit)} taken, effective health ${amount(effectiveHealth)}`,
+      ),
+      `Enemy: level ${enemy.level} ${enemy.rarity.name} mob${enemy.affixes.length ? ` (${enemy.affixes.map((a) => a.name).join(', ')})` : ''}, a common mob's hit being ${amount(enemy.hit)} before defenses, ${enemy.rate} hits a second`,
+      ...leftOut(guard.rules.situational.filter((id) => value(id))),
+    ],
+    ...(options.stats
+      ? statGroups(totals)
+          .filter((group) => group.rows.length)
+          .map((group) => [`## Stats: ${group.name}`, ...group.rows.map(show)])
+      : []),
+    ...(options.file ? [['## File', `Give the user the text below as a file whose name ends in .json. They open it at ${origin}/build, under Builds, then Import a file.`, JSON.stringify(JSON.parse(exportBuild(build, core.pack)))]] : []),
+  ]
+    .map((part) => part.join('\n'))
+    .join('\n\n');
+}

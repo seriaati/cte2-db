@@ -1,9 +1,111 @@
 // Cloudflare Pages Function: serves the MCP endpoint at /mcp next to the static site.
 import { createMcpHandler, McpServer } from '@modelcontextprotocol/server';
 import * as z from 'zod/v4';
+import { AUGMENT_SLOTS, GEAR_SLOTS, HOTBAR_SLOTS, MAX_CLASSES, MAX_JEWELS, RARITY_TYPES } from '../src/lib/buildRules';
 import { CATEGORIES, gearPlanLink, maxLevel, PLAN_RARITIES, RARITIES, search, talentBuildLink, talentLinks } from '../src/lib/mcp';
+import { characterBuild } from '../src/lib/mcpBuild';
 
 const level = z.number().int().min(1).max(maxLevel).optional().describe(`Item or character level the stat values are worked out at. Defaults to ${maxLevel}, the highest.`);
+
+// A build as the build editor's files hold it, with names taken wherever a file has an id.
+const top = RARITIES.at(-1);
+const roll = z.number().min(0).max(100).optional();
+const part = z.union([z.string(), z.object({ id: z.string(), roll })]);
+const parts = z.array(part).optional();
+const points = z.number().int().min(0);
+// Left out, a level is the character's own.
+const own = z.number().int().min(1).max(maxLevel).optional();
+const nodes = z.array(z.union([z.number().int(), z.string()])).describe('Node ids as the search tool gives them, e.g. "talents-412".');
+const item = z.object({
+  base: z.string().optional().describe('Base gear, e.g. "Staff". Not needed with a unique.'),
+  unique: z.string().optional().describe('A unique item, which has no prefixes or suffixes.'),
+  rarity: z.string().optional().describe(`One of ${PLAN_RARITIES.join(', ')}. Defaults to ${top}. Gear of the last has no affixes and more sockets, and forms runewords.`),
+  level: own.describe("Gear above the character's level can't be worn."),
+  baseRoll: roll,
+  implicit: part.optional().describe("One of the base's implicits. Left out, it is the likeliest one."),
+  prefix: parts,
+  suffix: parts,
+  uniqueRolls: z.array(z.number().min(0).max(100)).optional().describe("A roll for each of the unique's stats, in order."),
+  sockets: z
+    .array(z.union([z.string(), z.object({ kind: z.enum(['gem', 'rune']).optional(), id: z.string(), roll })]))
+    .optional()
+    .describe('Gems and runes in socket order, e.g. ["Ano Rune", "Grand Ruby"]. The runes of a runeword, in its order, form it.'),
+  runewordRoll: roll,
+  infusion: z.union([z.string(), z.object({ id: z.string(), rarity: z.enum(RARITIES).optional() })]).optional().describe('A stat the infusion gives, e.g. "Fire Damage".'),
+  corruption: z.object({ kind: z.string().describe('Upgraded, Elevated or Ascended: how many affixes and sockets the corruption added.'), affixes: parts }).optional(),
+  enchants: z.array(z.object({ id: z.string(), level: z.number().int().min(1).max(10) })).optional().describe('Vanilla enchantments the pack turns into stats, e.g. {"id": "Sharpness", "level": 5}.'),
+});
+const build = z.object({
+  name: z.string().optional(),
+  level: level.describe(`Character level. Defaults to ${maxLevel}, the highest.`),
+  bonus: z
+    .object({ talents: points, ascendancy: points, atlas: points, spells: points, passives: points, stats: points })
+    .partial()
+    .optional()
+    .describe('Points on top of what the level gives. Defaults to none, and to the most there can be for ascendancy and atlas, which give nothing per level.'),
+  trees: z.object({ talents: nodes, ascendancy: nodes, atlas: nodes }).partial().optional().describe('The talents taken in each tree.'),
+  stats: z.record(z.string(), points).optional().describe('Stat points put in each attribute, e.g. {"Intelligence": 60}.'),
+  classes: z.array(z.string()).max(MAX_CLASSES).optional().describe('One class or two, e.g. ["Elementalist"].'),
+  perks: z.record(z.string(), points).optional().describe("Points in the classes' spells and passives, e.g. {\"Fire Ball\": 16}. Spells and passives have points of their own."),
+  hotbar: z
+    .array(z.object({ spell: z.string(), supports: parts.describe('Its support gems. A slot opens for every 4 points in the spell, as the character level allows.') }).nullable())
+    .max(HOTBAR_SLOTS)
+    .optional()
+    .describe('The spells in use, each of which has points in it.'),
+  gear: z.partialRecord(z.enum(GEAR_SLOTS.map((slot) => slot.id)), item).optional().describe('What is worn in each slot.'),
+  codex: z
+    .object({
+      id: z.string().describe('e.g. "Codex of Flames".'),
+      rarity: z.enum(RARITIES).optional(),
+      level: own,
+      pieces: z.object(Object.fromEntries(RARITY_TYPES.map((type) => [type, points])) as Record<(typeof RARITY_TYPES)[number], typeof points>).partial().optional().describe('How many worn pieces of each kind of rarity it asks for. It gives its stats while they are worn.'),
+      slots: z.array(z.object({ slot: z.string(), type: z.enum(RARITY_TYPES) })).optional().describe('Kinds of gear it wants to be of one kind of rarity, e.g. {"slot": "Ring", "type": "unique"}.'),
+      affixes: z.array(z.string()).optional(),
+    })
+    .nullable()
+    .optional(),
+  augments: z.array(part).max(AUGMENT_SLOTS).optional().describe('Each reserves augment capacity.'),
+  jewels: z
+    .array(
+      z.object({
+        kind: z.string().describe('A jewel by name, or str, dex, int, crafted or eye.'),
+        rarity: z.enum(RARITIES).optional(),
+        level: own,
+        affixes: parts,
+        corruption: parts,
+      }),
+    )
+    .max(MAX_JEWELS)
+    .optional()
+    .describe('One for each jewel socket, which come from talents named Jewel Sockets and from a few uniques.'),
+  damage: z
+    .object({
+      skill: z.string().optional().describe('The spell on the hotbar whose damage is worked out. Left out, it is the basic attack.'),
+      under: z.string().optional().describe('The effect the skill is used with, where it has more than one state, e.g. "Combo Starter". The answer lists them.'),
+      attacks: z.number().positive().max(20).optional().describe("Basic attacks a second, when not the weapon's own."),
+      target: z
+        .object({
+          level: own,
+          armor: points,
+          resists: z.object({ fire: z.number(), water: z.number(), lightning: z.number(), chaos: z.number() }).partial().describe('In percent, from -300 to 75. Water is cold.'),
+        })
+        .partial()
+        .optional()
+        .describe("The enemy hit. Defaults to one of the character's level with no armor and no resistances."),
+    })
+    .optional(),
+  defense: z
+    .object({
+      level: own,
+      rarity: z.string().describe('The mob\'s rarity, e.g. "Rare" or "Boss". Defaults to Common.'),
+      affixes: z.array(z.string()).describe('Its affixes that change its hits, e.g. ["of Flames"].'),
+      hit: z.number().int().min(1).describe("What a common mob's hit is before defenses. Defaults to 1000."),
+      rate: z.number().int().min(1).max(20).describe('Hits a second. Defaults to 2.'),
+    })
+    .partial()
+    .optional()
+    .describe('The mob whose hits effective health is measured against.'),
+});
 
 const handler = createMcpHandler(({ requestInfo }) => {
   const server = new McpServer({ name: 'cte2-db', version: '1.0.0' });
@@ -87,6 +189,22 @@ const handler = createMcpHandler(({ requestInfo }) => {
       annotations: { readOnlyHint: true },
     },
     async ({ infusion_rarity, ...plan }) => ({ content: [{ type: 'text', text: gearPlanLink(new URL(requestInfo!.url).origin, { ...plan, infusionRarity: infusion_rarity }) }] }),
+  );
+  server.registerTool(
+    'character_build',
+    {
+      title: 'Work out a character build',
+      description:
+        "Work out a whole Craft to Exile 2 character the way the site's build editor does: the points it spends and has, what one skill deals a second to a target, its effective health against a mob's hits, and every stat when asked. Use it to put a build together, to improve one, or to see what a change does; send the whole build each time. Things go by name as the search tool gives them, or by id. What has no name (passives, infusions, and the affixes of jewels, corruption and codexes) goes by the id the search gives or by a stat it gives. The build of a file exported from the editor works as it is. The build has to be one the game allows; when it isn't, the answer lists everything that is wrong, with the choices where there are few, instead of the numbers. Damage is one skill used over and over on one enemy, with chances counted as their average; buffs, curses, ailments, summons and spells set off by other effects are not counted, and neither are regeneration and leech in effective health. The editor opens builds from files, not links: set file for the file to hand to the user.",
+      inputSchema: z.object({
+        build,
+        connect: z.boolean().optional().describe('Add the nodes needed to join the given talents to an entry point and to each other, in each tree, as talent_build_link does. The answer lists what was added.'),
+        stats: z.boolean().optional().describe('Also list every stat the build comes to.'),
+        file: z.boolean().optional().describe('Also return the build as the file the build editor imports. Ask for it once the build is settled, and pass the text on unchanged.'),
+      }),
+      annotations: { readOnlyHint: true },
+    },
+    async ({ build, ...options }) => ({ content: [{ type: 'text', text: characterBuild(new URL(requestInfo!.url).origin, build, options) }] }),
   );
   return server;
 });
