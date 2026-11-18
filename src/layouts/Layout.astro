@@ -2,6 +2,7 @@
 import { ClientRouter } from 'astro:transitions';
 import Footer from './Footer.astro';
 import Head from './Head.astro';
+import SponsorPrompt from './SponsorPrompt.astro';
 import { auras } from '../lib/auras';
 import { codexKinds } from '../lib/codexes';
 import { effects } from '../lib/effects';
@@ -106,43 +107,8 @@ const nav: [href: string, label: string, icon: string, count?: number][] = [
       <slot />
       <Footer />
     </main>
-    <aside class="sponsor-prompt" aria-label="Sponsor the site" hidden>
-      <strong>Getting good use out of this?</strong>
-      <p>The site is free and has no ads. If it has helped you, you can sponsor its upkeep.</p>
-      <div>
-        <a class="btn primary" href="https://link.seria.moe/donate" target="_blank" rel="noopener" data-sponsor-answered>Sponsor</a>
-        <button class="btn" type="button" data-sponsor-answered>No thanks</button>
-      </div>
-    </aside>
+    <SponsorPrompt />
     <script>
-      // Asks once, after ten minutes of the site being open and visible, counted across visits.
-      const ASK_AFTER = 600;
-      const TICK = 15;
-      // Storage access throws when the browser blocks it; then the prompt simply never shows.
-      const read = (key: string) => {
-        try {
-          return localStorage.getItem(key);
-        } catch {
-          return null;
-        }
-      };
-      const write = (key: string, value: string) => {
-        try {
-          localStorage.setItem(key, value);
-        } catch {}
-      };
-      const update = () => {
-        const due = Number(read('usedSeconds')) >= ASK_AFTER && !read('sponsorAnswered');
-        document.querySelector<HTMLElement>('.sponsor-prompt')!.hidden = !due;
-      };
-
-      setInterval(() => {
-        if (document.visibilityState !== 'visible') return;
-        write('usedSeconds', `${Number(read('usedSeconds')) + TICK}`);
-        update();
-      }, TICK * 1000);
-      // Page changes swap the body, so the prompt is found again each time instead of being held on to.
-      document.addEventListener('astro:page-load', update);
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') document.querySelector('[data-menu-toggle]')!.setAttribute('aria-expanded', 'false');
       });
@@ -152,9 +118,6 @@ const nav: [href: string, label: string, icon: string, count?: number][] = [
         const menu = document.querySelector('[data-menu-toggle]')!;
         const opening = target.closest('[data-menu-toggle]') && menu.getAttribute('aria-expanded') !== 'true';
         menu.setAttribute('aria-expanded', `${!!opening}`);
-        if (!target.closest('[data-sponsor-answered]')) return;
-        write('sponsorAnswered', '1');
-        update();
       });
     </script>
     <script src="../lib/siteSearch.ts"></script>

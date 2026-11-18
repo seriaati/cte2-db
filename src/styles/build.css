@@ -184,6 +184,16 @@ body.editor-page:has(.stats-side:not(.leaving)) {
   padding-right: 340px;
 }
 
+/* No menu button down here to keep clear of, as the database pages have on a phone. */
+body.editor-page aside.sponsor-prompt {
+  bottom: 16px;
+}
+
+/* The prompt would cover the bottom of the panel. */
+body.editor-page:has(.stats-side:not(.leaving)) .sponsor-prompt {
+  right: 356px;
+}
+
 .stats-side {
   position: fixed;
   inset: 0 0 0 auto;
