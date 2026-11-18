@@ -81,6 +81,7 @@ export interface GivenBuild {
   retribution?: number;
   aura?: string;
   effects?: Record<string, number>;
+  defensive?: string[];
 }
 
 interface Named {
@@ -363,6 +364,9 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
 
   const learned = spells.filter((s) => perks[s.id] > 0 && skills.auras.some((a) => a.id === s.id));
   const aura = given.aura ? pick(learned, given.aura, 'an aura the build has learned', problems) : undefined;
+  const healers = spells.filter((s) => sections.damage.heals[s.id] && !sections.damage.skills[s.id]);
+  const defensive = (given.defensive ?? []).flatMap((key) => pick(healers, key, `a skill of ${whose} that heals and deals no damage`, problems) ?? []);
+  once(defensive, problems);
 
   const mob = given.enemy?.rarity ? pick(defense.mob.rarities, given.enemy.rarity, 'a mob rarity', problems) : defense.mob.rarities[0];
   // An empty one stands for an affix that changes nothing about the mob's hits or its defenses.
@@ -386,6 +390,7 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
         enemy: { ...given.enemy, rarity: mob?.id, affixes: mobAffixes },
         aura: aura?.id,
         effects,
+        defensive: defensive.map((d) => d.id),
       },
       core,
     )!;
@@ -422,6 +427,7 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
     const choices = attack.choices.map((c) => c.spell.name);
     problems.push(`${skill.name} is not a skill on the hotbar whose damage can be worked out. ${choices.length ? `The choices: ${choices.join(', ')}.` : 'No skill on the hotbar is.'}`);
   }
+  for (const d of defensive) if (!attack.defensive.offered.some((o) => o.id === d.id)) problems.push(`${d.name} can only be cast whenever it is ready from the hotbar, with points in it.`);
   if (problems.length) throw new Error(problems.join('\n'));
 
   const { defs } = totals.rules;
@@ -449,6 +455,13 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
   // What the skill costs and what comes back, for each resource it spends.
   const { cost, petCost, spent: paid, recovered, dry, kept } = attack.resources;
   const spending = (Object.keys(paid) as Resource[]).filter((id) => paid[id]! > 0);
+  const { defensive: guards } = attack;
+  const restored = (by: Partial<Record<Resource, number>>, times = 1) =>
+    (Object.entries(by) as [Resource, number][])
+      .filter(([, n]) => n > 0)
+      .map(([id, n]) => `${amount(n * times)} ${defs[id].name.toLowerCase()}`)
+      .join(' and ') || 'nothing';
+  const casting = guards.used.map((d) => d.name).join(' and ');
 
   const gearLines = GEAR_SLOTS.flatMap((slot) => {
     const item = build.gear[slot.id];
@@ -481,6 +494,7 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
       ...(effectNames(false, true).length ? [`Effects on: ${effectNames(false, true).join(', ')}`] : []),
       ...(effectNames(true, true).length ? [`Effects on the enemy: ${effectNames(true, true).join(', ')}`] : []),
       `Damage a second: ${amount(attack.dps)}`,
+      ...(guards.pace < 1 ? [`Casting ${casting} whenever ready leaves ${chosen ? chosen.spell.name : 'basic attacks'} ${percent(guards.pace)} of its full pace, which every number here counts`] : []),
       ...spending.map(
         (id) =>
           `${defs[id].name}: ${amount(cost[id] ?? 0)} each ${chosen ? 'cast' : 'attack'}${petCost?.[id] ? ` and ${amount(petCost[id])} each pet attack` : ''}, ${amount(paid[id]!)} spent a second at full pace and ${amount(recovered[id])} recovered a second (regeneration, leech and restores on hit, up to the leech cap)`,
@@ -532,6 +546,11 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
       `Against ${ELEMENTS[shortest.element].name.toLowerCase()} hits, which take ${amount(shortest.perSecond)} a second after defenses, dodges and blocks, ${Number.isFinite(shortest.lasts) ? `it falls after ${amount(shortest.lasts)} s from full, with the health and magic shield recovered while fighting coming back${guard.aura?.cost ? ` and ${guard.aura.name} taking its share` : ''}` : 'it recovers at least as fast, so it never falls'}`,
       ...(guard.aura?.cost
         ? [`${guard.aura.name} deals its caster ${amount(guard.aura.cost)} a second after defenses, ${percent(guard.aura.cost / (value('health') + value('magic_shield')))} of health and magic shield, which effective health leaves out`]
+        : []),
+      ...guards.used.map((d) => `Cast whenever ready: ${d.name}, ${+d.rate.toFixed(3)} casts a second, healing ${restored(d.perUse)} a cast and ${restored(d.perUse, d.rate)} a second, which the recovery above counts`),
+      ...(chosen && attack.rules.heals[chosen.perk.id] ? [`${chosen.spell.name} heals its user too, which the recovery above counts`] : []),
+      ...(guards.offered.some((o) => !guards.used.some((d) => d.id === o.id))
+        ? [`Skills on the hotbar that heal and can be set under defensive: ${guards.offered.filter((o) => !guards.used.some((d) => d.id === o.id)).map((o) => o.name).join(', ')}`]
         : []),
       ...(held ? [`${retribution.name} stacks held: ${held}, each giving ${statLines(retribution.stats, exactly(100), level).join(', ')}`] : []),
       `Enemy: level ${enemy.level} ${enemy.rarity.name} mob${enemy.affixes.length ? ` (${enemy.affixes.map((a) => a.name).join(', ')})` : ''}${effectNames(true, true).length ? ` under ${effectNames(true, true).join(', ')}` : ''}, a common mob's hit being ${amount(enemy.hit)} before defenses, ${enemy.rate} hits a second`,
