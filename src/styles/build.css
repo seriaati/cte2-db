@@ -4,7 +4,8 @@ body.editor-page {
 }
 
 .editor,
-.editor-loading {
+.editor-loading,
+.editor-foot {
   max-width: 1360px;
   margin: 0 auto;
   padding-inline: clamp(16px, 3vw, 32px);
@@ -12,6 +13,15 @@ body.editor-page {
 
 .editor-loading {
   padding-block: 32px;
+}
+
+.editor-foot {
+  padding-bottom: 32px;
+}
+
+/* The editor already ends in room of its own. */
+.editor-foot .site-footer {
+  margin-top: 0;
 }
 
 .editor-loading .btn {
