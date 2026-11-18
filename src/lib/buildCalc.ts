@@ -9,6 +9,7 @@ import {
   SOLO_CLASS,
   TARGETS,
   TREES,
+  TREE_NAMES,
   codexBonuses,
   codexPercent,
   exactly,
@@ -54,7 +55,7 @@ import {
 import { avoidance, mobStats, taken, type Enemy } from './defenseRules';
 import { MODIFIES, baseRange, formedRuneword, itemName, rollWindows, slotCount, socketPart, type Part, type Socketed } from './plannerRules';
 import { leveled, type Spell } from './spellRules';
-import { bonusSkillLevels, newbieResists, totalStats, type Exact, type Source, type StatDef, type Total } from './statRules';
+import { bonusSkillLevels, explainStat, newbieResists, totalStats, type Exact, type Source, type StatDef, type Total } from './statRules';
 import { neighbours, rooted } from './talentRules';
 import type { TalentTree } from './talents';
 
@@ -228,6 +229,8 @@ export function connected(tree: TalentTree, nodes: number[]): number[] {
 export interface Totals {
   rules: Sections['stats'];
   stats: Map<string, Total>;
+  // What the stats were worked out from, for explaining them.
+  sources: Source[];
   // Why parts of the build give nothing.
   skipped: string[];
   // The gear the game takes off because the character falls short of the attributes it asks for.
@@ -264,7 +267,7 @@ export interface Held {
   stats: Exact[];
 }
 
-const exact = ({ stats, rolls, level }: Part): Exact[] => stats.map((s) => ({ id: s.id, type: s.type, value: rolled(s, rolls.maxPercent, level) }));
+const exact = ({ stats, rolls, level }: Part, from?: string): Exact[] => stats.map((s) => ({ id: s.id, type: s.type, value: rolled(s, rolls.maxPercent, level), from }));
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
 // The Retribution stacks the build holds: only a Crusader gains any.
@@ -276,7 +279,7 @@ export const retributionHeld = (data: Pick<Data, 'skills'>, build: Build) => (bu
 function gather(data: Data, build: Build, dualWield: number, extra: Exact[], off: Map<GearSlot, string>) {
   const { level } = build;
   const skipped: string[] = [];
-  const others: Exact[] = [...extra, ...exact({ stats: data.stats.base, rolls: exactly(100), level }), ...newbieResists(level)];
+  const others: Exact[] = [...extra, ...exact({ stats: data.stats.base, rolls: exactly(100), level }, 'Base stats'), ...newbieResists(level).map((mod) => ({ ...mod, from: `Resistance at level ${level}` }))];
 
   // GearData: gear above the character's level gives nothing, and a weapon in the off hand gives
   // a share of its stats when it is one that can be dual wielded beside a one-handed weapon.
@@ -294,12 +297,13 @@ function gather(data: Data, build: Build, dualWield: number, extra: Exact[], off
       skipped.push(`${nameOf(parts)} gives nothing in the off hand: ${parts.base.dualWield ? `a ${mainHand!.name.toLowerCase()}` : 'it'} can't be dual wielded.`);
       return [];
     }
-    return [{ item, parts, share: second ? (OFFHAND_WEAPON_PERCENT / 100) * Math.max(0, 1 + dualWield / 100) : 1 }];
+    return [{ slot, item, parts, share: second ? (OFFHAND_WEAPON_PERCENT / 100) * Math.max(0, 1 + dualWield / 100) : 1 }];
   });
-  for (const { item, parts, share } of worn) {
+  for (const { slot, item, parts, share } of worn) {
     const { base, others: rest } = itemParts(parts, item);
+    const from = `${slot.name}: ${nameOf(parts)}${share === 1 ? '' : `, ${+(share * 100).toFixed(1)}% of it in the off hand`}`;
     // Gear's Defense and Gear's Weapon Damage are already in the base stats.
-    const stats = [...base.stats.map((s): Exact => ({ id: s.id, type: s.type, value: baseRange(s, base, rest)[1] })), ...rest.flatMap(exact).filter((mod) => !(mod.id in MODIFIES))];
+    const stats = [...base.stats.map((s): Exact => ({ id: s.id, type: s.type, value: baseRange(s, base, rest)[1], from })), ...rest.flatMap((part) => exact(part, from)).filter((mod) => !(mod.id in MODIFIES))];
     others.push(...stats.map((mod) => ({ ...mod, value: mod.value * share })));
   }
 
@@ -309,46 +313,52 @@ function gather(data: Data, build: Build, dualWield: number, extra: Exact[], off
       const held = item.enchants.find((e) => e.id === enchant.id);
       return held ? total + clamp(Math.trunc(held.level * enchant.stat.min), enchant.itemMin, enchant.itemMax) : total;
     }, 0);
-    if (sum) others.push({ id: enchant.stat.id, type: enchant.stat.type, value: clamp(sum, enchant.min, enchant.max) });
+    if (sum) others.push({ id: enchant.stat.id, type: enchant.stat.type, value: clamp(sum, enchant.min, enchant.max), from: `Enchantment: ${enchant.name}` });
   }
 
   // EquippedSets: a set counts each of its uniques once, and its bonuses are worked out at the pieces' average level.
   for (const set of data.gear.sets) {
     const pieces = worn.filter((w, i) => w.parts.unique && set.uniques.includes(w.parts.unique.id) && worn.findIndex((o) => o.parts.unique === w.parts.unique) === i);
     const average = Math.trunc(pieces.reduce((sum, w) => sum + w.item.level, 0) / pieces.length);
-    for (const bonus of set.bonuses) if (pieces.length >= bonus.pieces) others.push(...exact({ stats: bonus.stats, rolls: exactly(100), level: average }));
+    for (const bonus of set.bonuses) if (pieces.length >= bonus.pieces) others.push(...exact({ stats: bonus.stats, rolls: exactly(100), level: average }, `${set.name} set, ${bonus.pieces} pieces`));
   }
 
   const codex = readCodex(data.gear, build);
   if (codex) {
     for (const bonus of codexBonuses(codex.codex, codex.kind.mods, codex.affixes)) {
-      if (codex.worn >= bonus.pieces) others.push(...exact({ stats: [...(bonus.mods ?? []), ...(bonus.affix?.stats ?? [])], rolls: exactly(codex.percent), level: codex.codex.level }));
+      if (codex.worn >= bonus.pieces) others.push(...exact({ stats: [...(bonus.mods ?? []), ...(bonus.affix?.stats ?? [])], rolls: exactly(codex.percent), level: codex.codex.level }, `Codex: ${codex.kind.name}`));
     }
   }
 
-  for (const [id, points] of Object.entries(build.stats)) if (id in data.stats.core) others.push({ id, type: 'FLAT', value: points });
+  for (const [id, points] of Object.entries(build.stats)) if (id in data.stats.core) others.push({ id, type: 'FLAT', value: points, from: 'Stat points' });
 
   for (const id of TREES) {
     const tree = data[id];
-    for (const node of connected(tree, build.trees[id])) others.push(...exact({ stats: tree.perks[tree.nodes[node][2]].stats, rolls: exactly(100), level }));
+    for (const node of connected(tree, build.trees[id])) {
+      const perk = tree.perks[tree.nodes[node][2]];
+      others.push(...exact({ stats: perk.stats, rolls: exactly(100), level }, perk.name ? `${TREE_NAMES[id]}: ${perk.name}` : TREE_NAMES[id]));
+    }
   }
 
   // SpellSchoolsData: every level of a passive gives as much again, and a character with points
   // in one class alone gets a bonus.
-  const classes = data.skills.classes.filter((c) => build.classes.includes(c.id)).map((c) => c.perks.filter((perk) => build.perks[perk.id] > 0));
-  for (const perk of classes.flat()) {
-    if (!perk.spell) others.push(...perk.stats.map((s): Exact => ({ id: s.id, type: s.type, value: rolled(s, 100, level) * build.perks[perk.id] })));
+  const classes = data.skills.classes.filter((c) => build.classes.includes(c.id)).map((c) => ({ name: c.name, perks: c.perks.filter((perk) => build.perks[perk.id] > 0) }));
+  for (const { name, perks } of classes) {
+    for (const perk of perks) {
+      if (!perk.spell) others.push(...perk.stats.map((s): Exact => ({ id: s.id, type: s.type, value: rolled(s, 100, level) * build.perks[perk.id], from: `${name} passives` })));
+    }
   }
-  if (classes.filter((perks) => perks.length).length === 1) {
-    others.push({ id: 'total_damage', type: 'MORE', value: SOLO_CLASS.moreDamage }, { id: 'dmg_reduction', type: 'FLAT', value: SOLO_CLASS.damageReduction });
+  if (classes.filter((c) => c.perks.length).length === 1) {
+    const from = 'Points in one class only';
+    others.push({ id: 'total_damage', type: 'MORE', value: SOLO_CLASS.moreDamage, from }, { id: 'dmg_reduction', type: 'FLAT', value: SOLO_CLASS.damageReduction, from });
   }
   // ExileEffect.getExactStats: every stack of an effect gives its stats again.
   const stacks = retributionHeld(data, build);
-  if (stacks) others.push(...exact({ stats: data.skills.retribution.stats, rolls: exactly(100), level }).map((mod) => ({ ...mod, value: mod.value * stacks })));
+  if (stacks) others.push(...exact({ stats: data.skills.retribution.stats, rolls: exactly(100), level }, `${data.skills.retribution.name}, ${stacks} stacks`).map((mod) => ({ ...mod, value: mod.value * stacks })));
 
   const auras = build.augments.flatMap((a) => {
     const aura = data.sockets.auras.find((x) => x.id === a.id);
-    return aura ? [{ id: aura.id, stats: exact({ stats: aura.stats, rolls: exactly(a.roll ?? 100), level }) }] : [];
+    return aura ? [{ id: aura.id, stats: exact({ stats: aura.stats, rolls: exactly(a.roll ?? 100), level }, `Augment: ${aura.name}`) }] : [];
   });
 
   // JewelItemData: a jewel above the character's level can't be worn, and an Abyssal Eye's affix
@@ -360,7 +370,8 @@ function gather(data: Data, build: Build, dualWield: number, extra: Exact[], off
       skipped.push(`${name} is level ${jewel.level}, above the character's level.`);
       return [];
     }
-    return jewelParts(data.sockets, jewel).flatMap(({ part, auraId }) => (!auraId || auras.some((a) => a.id === auraId) ? exact(part) : []));
+    const from = `Jewel: ${describeJewel(data.sockets, jewel).item.name}`;
+    return jewelParts(data.sockets, jewel).flatMap(({ part, auraId }) => (!auraId || auras.some((a) => a.id === auraId) ? exact(part, from) : []));
   });
 
   const sources: Source[] = [{ kind: 'other', stats: others }, { kind: 'jewel', stats: jewels }, ...auras.map(({ stats }): Source => ({ kind: 'aura', stats }))];
@@ -392,7 +403,7 @@ function settle(data: Data, build: Build, extra: Exact[]): Omit<Totals, 'effects
       const { sources, skipped, secondWeapon, weapon, shield } = gather(data, build, dualWield, extra, off);
       const stats = totalStats(data.stats, sources);
       const next = stats.get('dual_wield_effectiveness')?.value ?? 0;
-      found = { rules: data.stats, stats, skipped: [...skipped, ...off.values()], weapon, dualWield: secondWeapon, shield, takenOff: Object.fromEntries(off) };
+      found = { rules: data.stats, stats, sources, skipped: [...skipped, ...off.values()], weapon, dualWield: secondWeapon, shield, takenOff: Object.fromEntries(off) };
       if (!secondWeapon || Math.abs(next - dualWield) <= 0.01 || pass === 5) break;
       dualWield = next;
     }
@@ -446,9 +457,9 @@ export function buildTotals(data: Data, build: Build, extra: Exact[] = [], held:
   const foe = { level: build.enemy.level ?? build.level, rarity, slots, affixes: slots.flatMap((id) => mob.affixes.find((a) => a.id === id) ?? []) };
   const bare = mobStats(data.defense, data.stats, foe, []);
   const stronger = (ids: string[], stats = before.stats) => ids.reduce((sum, id) => sum + (stats.get(id)?.value ?? 0), 0);
-  const given = (effect: Data['skills']['auras'][number]['effects'][number], percent: number, stacks = 1) => {
+  const given = (effect: Data['skills']['auras'][number]['effects'][number], from: string, percent: number, stacks = 1) => {
     const multi = stacks * (1 + (stronger(effect.given) + stronger(effect.onYou, effect.enemy ? bare : before.stats)) / 100);
-    return exact({ stats: effect.stats, rolls: exactly(percent), level: build.level }).map((mod) => ({ ...mod, value: mod.value * multi }));
+    return exact({ stats: effect.stats, rolls: exactly(percent), level: build.level }, from).map((mod) => ({ ...mod, value: mod.value * multi }));
   };
 
   const learned = known(data, build);
@@ -465,7 +476,7 @@ export function buildTotals(data: Data, build: Build, extra: Exact[] = [], held:
     // character can only have the ones a skill of its own gives too.
     const percent = Math.max(0, ...learned.filter((perk) => effect.from.includes(perk.id)).map((perk) => level(perk).percent));
     // ExileEffect.getExactStats: one whose stacks don't change its stats gives them once.
-    return { id: effect.id, effect: effect.effect, name: effect.name, enemy: effect.enemy, kind: effect.kind, max, stacks, stats: stacks ? given(effect, percent, effect.once ? 1 : stacks) : [] };
+    return { id: effect.id, effect: effect.effect, name: effect.name, enemy: effect.enemy, kind: effect.kind, max, stacks, stats: stacks ? given(effect, `Effect: ${effect.name}${stacks > 1 ? `, ${stacks} stacks` : ''}`, percent, effect.once ? 1 : stacks) : [] };
   };
   // EffectEvent.AddEffects: a skill's hit is made with the skill's own stats and the support gems
   // of its slot, so what those give on a hit is the character's to gain as well.
@@ -478,7 +489,7 @@ export function buildTotals(data: Data, build: Build, extra: Exact[] = [], held:
 
   const on = auraOn(data, build);
   const at = on && level({ id: on.aura.id, spell: on.spell });
-  const lit = (enemy: boolean) => (on ? on.aura.effects.filter((effect) => effect.enemy === enemy).flatMap((effect) => given(effect, at!.percent)) : []);
+  const lit = (enemy: boolean) => (on ? on.aura.effects.filter((effect) => effect.enemy === enemy).flatMap((effect) => given(effect, `Aura: ${on.spell.name}`, at!.percent)) : []);
   // An effect that is on, or the aura, can give the stat that gives a further effect: one more
   // round finds those.
   const lent = [...first.flatMap((effect) => (effect.enemy ? [] : effect.stats)), ...lit(false)];
@@ -513,9 +524,25 @@ export function statGroups({ rules, stats }: Totals) {
       const total = stats.get(id);
       // A stat nothing has touched isn't there, and one that came to nothing isn't worth a line.
       if (!total || (total.value === 0 && total.more === 1)) return [];
-      return totalLines(id, rules.defs[id], total);
+      return totalLines(id, rules.defs[id], total).map((line) => ({ ...line, id }));
     }),
   }));
+}
+
+// Where a stat's total came from: what each part of the build gave it, summed by part and by kind.
+export function statSources({ rules, sources }: Totals, id: string) {
+  const { parts, ...rest } = explainStat(rules, sources, id);
+  const kinds = (['FLAT', 'PERCENT', 'MORE'] as const).map((type) => {
+    const summed = new Map<string, number>();
+    for (const part of parts.filter((p) => p.type === type)) {
+      const from = `${part.from ?? 'Other'}${part.as ? `, as ${part.as}` : ''}`;
+      const had = summed.get(from);
+      summed.set(from, type === 'MORE' ? ((1 + (had ?? 0) / 100) * (1 + part.value / 100) - 1) * 100 : (had ?? 0) + part.value);
+    }
+    const rows = [...summed].filter(([, value]) => value !== 0).map(([from, value]) => ({ from, value }));
+    return { type, rows: rows.sort((a, b) => Math.abs(b.value) - Math.abs(a.value)) };
+  });
+  return { ...rest, kinds };
 }
 
 // What the skill picked for the build deals.

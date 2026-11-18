@@ -36,6 +36,8 @@ export interface Exact {
   id: string;
   type: StatMod['type'];
   value: number;
+  // What in the build gave it.
+  from?: string;
 }
 
 // Where stats come from matters for augments and jewels: Augment Effect and Jewel Effect add a
@@ -55,11 +57,35 @@ export interface Total {
 const f = Math.fround;
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
+// How one stat came to its total: every stat that went into it, what those added up to before
+// its limits, and what other stats then derived into it.
+export interface Breakdown {
+  // `as` is the stat it was given as, when that one hands itself over to this one.
+  parts: (Exact & { as?: string })[];
+  // Missing when nothing but derived stats went into it.
+  sum?: { base: number; flat: number; percent: number; more: number; value: number };
+  derived: { from: string; value: number }[];
+  total: Total;
+}
+
 // StatCalculation.calc for a character that is casting nothing: support gems only count for their own skill.
 export function totalStats(rules: StatRules, sources: Source[]): Map<string, Total> {
+  return calculate(rules, sources).stats;
+}
+
+export function explainStat(rules: StatRules, sources: Source[], id: string): Breakdown {
+  return calculate(rules, sources, id).breakdown;
+}
+
+function calculate(rules: StatRules, sources: Source[], watch?: string) {
   const calc = new Map<string, { flat: number; percent: number; multi: number }>();
   const entry = (id: string) => calc.get(id) ?? calc.set(id, { flat: 0, percent: 0, multi: 1 }).get(id)!;
-  const add = ({ id, type, value }: Exact) => {
+  const breakdown: Breakdown = { parts: [], derived: [], total: { value: 0, more: 1 } };
+  let handing = true;
+  const add = (mod: Exact) => {
+    const { id, type, value } = mod;
+    if (watch && id === watch) breakdown.parts.push(mod);
+    else if (watch && handing && rules.transfers[id]?.includes(watch)) breakdown.parts.push({ ...mod, as: rules.defs[id]?.name ?? id });
     const e = entry(id);
     if (type === 'FLAT') e.flat = f(e.flat + value);
     else if (type === 'PERCENT') e.percent = f(e.percent + value);
@@ -70,7 +96,7 @@ export function totalStats(rules: StatRules, sources: Source[]): Map<string, Tot
   all.forEach(add);
   for (const { kind, stats } of sources) {
     const share = all.filter((mod) => mod.id === EFFECT[kind]).reduce((sum, mod) => sum + mod.value, 0) / 100;
-    if (share) stats.forEach((mod) => add({ ...mod, value: f(mod.value * share) }));
+    if (share) stats.forEach((mod) => add({ ...mod, value: f(mod.value * share), from: `${mod.from ?? 'Other'}, through ${rules.defs[EFFECT[kind]!].name}` }));
   }
 
   for (const [id, from] of [...calc]) {
@@ -84,6 +110,7 @@ export function totalStats(rules: StatRules, sources: Source[]): Map<string, Tot
     }
     calc.delete(id);
   }
+  handing = false;
 
   const finish = () =>
     new Map(
@@ -99,11 +126,17 @@ export function totalStats(rules: StatRules, sources: Source[]): Map<string, Tot
   for (const [id, mods] of Object.entries(rules.core)) {
     if (!first.has(id)) continue;
     const points = Math.trunc(first.get(id)!.value);
-    for (const mod of mods) add({ id: mod.id, type: mod.type, value: f(points * mod.min) });
+    for (const mod of mods) add({ id: mod.id, type: mod.type, value: f(points * mod.min), from: `${points} ${rules.defs[id].name}` });
   }
 
   // Derived stats read from a copy, taken afresh each time the priority goes up, and add to the real thing.
   const stats = finish();
+  const e = watch && calc.get(watch);
+  if (e) {
+    const def = rules.defs[watch];
+    const value = f(f(def.base + e.flat) * f(1 + e.percent / 100));
+    breakdown.sum = { base: def.base, flat: e.flat, percent: e.percent, more: e.multi, value: def.apart ? value : f(value * e.multi) };
+  }
   const copied = () => new Map([...stats].map(([id, total]) => [id, { ...total }]));
   let copy = copied();
   let last: number | undefined;
@@ -114,8 +147,14 @@ export function totalStats(rules: StatRules, sources: Source[]): Map<string, Tot
     const amount = d.per ? Math.trunc(from / d.per) * first.get(d.id)!.value : from * ((copy.get(d.id)?.value ?? 0) / 100);
     const to = stats.get(d.to) ?? stats.set(d.to, { value: 0, more: 1 }).get(d.to)!;
     to.value = clamp(f(to.value + amount), rules.defs[d.to].min, rules.defs[d.to].max);
+    if (d.to === watch && amount) {
+      const of = rules.defs[d.from]?.name ?? d.from;
+      const by = +(d.per ? first.get(d.id)!.value : (copy.get(d.id)?.value ?? 0)).toFixed(2);
+      breakdown.derived.push({ from: d.per ? `${by} for every ${d.per} ${of}` : `${by}% of ${Math.round(from).toLocaleString('en')} ${of}`, value: amount });
+    }
   }
-  return stats;
+  if (watch) breakdown.total = stats.get(watch) ?? breakdown.total;
+  return { stats, breakdown };
 }
 
 // GemInventoryHelper.getTotalSpirit: capacity that works out below 1 falls back to what everyone starts with.

@@ -3,6 +3,7 @@ import type { Rarity, StatMod } from './affix';
 
 export const TREES = ['talents', 'ascendancy', 'atlas'] as const;
 export type TreeId = (typeof TREES)[number];
+export const TREE_NAMES: Record<TreeId, string> = { talents: 'Talents', ascendancy: 'Ascendancy', atlas: 'Atlas' };
 // Everything a character has points to spend on.
 export type Pool = TreeId | 'spells' | 'passives' | 'stats';
 export const POOLS: Pool[] = [...TREES, 'spells', 'passives', 'stats'];

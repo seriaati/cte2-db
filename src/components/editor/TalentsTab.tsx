@@ -1,10 +1,8 @@
 import { useMemo, useState } from 'react';
 import { connected } from '../../lib/buildCalc';
-import { TREES, type TreeId } from '../../lib/buildRules';
+import { TREES, TREE_NAMES, type TreeId } from '../../lib/buildRules';
 import { TreeEditor } from '../TalentTree';
 import { Loading, useSection, type TabProps } from './shared';
-
-const LABELS: Record<TreeId, string> = { talents: 'Talents', ascendancy: 'Ascendancy', atlas: 'Atlas' };
 
 export default function TalentsTab({ core, build, change, reset }: TabProps) {
   const [id, setId] = useState<TreeId>('talents');
@@ -17,7 +15,7 @@ export default function TalentsTab({ core, build, change, reset }: TabProps) {
       <div className="seg" role="group" aria-labelledby="tree-label">
         {TREES.map((t) => (
           <button key={t} className="btn" type="button" aria-pressed={t === id} onClick={() => setId(t)}>
-            {LABELS[t]}
+            {TREE_NAMES[t]}
             <span className="seg-count">{build.trees[t].length}</span>
           </button>
         ))}

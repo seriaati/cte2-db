@@ -1075,3 +1075,72 @@ body.editor-page:has(.stats-side:not(.leaving)) {
   padding-left: 0;
   text-align: left;
 }
+
+/* Stat breakdown */
+
+.stat-open {
+  display: block;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+
+.totals .stat-open:hover {
+  background: var(--line-soft);
+}
+
+.totals-main div {
+  position: relative;
+}
+
+.totals-main div:hover {
+  background: var(--line-soft);
+}
+
+.totals-main .stat-open::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.breakdown form {
+  align-items: center;
+}
+
+.breakdown h2 {
+  flex: 1;
+  margin: 0 0 0 4px;
+}
+
+.breakdown-body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 16px 16px;
+}
+
+.breakdown .formula {
+  margin: 0 0 6px;
+  font: 400 24px/1.2 var(--pixel);
+}
+
+.breakdown .formula .line {
+  display: block;
+  margin-top: 6px;
+  font: 14.5px/1.4 'Space Grotesk', 'Trebuchet MS', sans-serif;
+  color: var(--ink-2);
+}
+
+.breakdown section {
+  margin-top: 16px;
+}
+
+.breakdown h3 {
+  margin: 0 0 4px;
+}
