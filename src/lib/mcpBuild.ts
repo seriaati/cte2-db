@@ -48,6 +48,7 @@ export interface GivenItem {
   rarity?: string;
   level?: number;
   baseRoll?: number;
+  quality?: number;
   implicit?: Given;
   prefix?: Given[];
   suffix?: Given[];
@@ -194,6 +195,7 @@ function givenItem(slot: (typeof GEAR_SLOTS)[number], given: GivenItem, level: n
     rarity: rarity.id,
     level: given.level ?? level,
     baseRoll: given.baseRoll,
+    quality: given.quality || undefined,
     implicit: rolled(implicit)[0],
     prefix: affixes('prefix'),
     suffix: affixes('suffix'),

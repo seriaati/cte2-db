@@ -1,7 +1,7 @@
 // Cloudflare Pages Function: serves the MCP endpoint at /mcp next to the static site.
 import { createMcpHandler, McpServer } from '@modelcontextprotocol/server';
 import * as z from 'zod/v4';
-import { AUGMENT_SLOTS, GEAR_SLOTS, HOTBAR_SLOTS, MAX_CLASSES, MAX_JEWELS, RARITY_TYPES, TARGETS } from '../src/lib/buildRules';
+import { AUGMENT_SLOTS, GEAR_SLOTS, HOTBAR_SLOTS, MAX_CLASSES, MAX_JEWELS, MAX_QUALITY, RARITY_TYPES, TARGETS } from '../src/lib/buildRules';
 import { CATEGORIES, gearPlanLink, maxLevel, PLAN_RARITIES, RARITIES, search, talentBuildLink, talentLinks } from '../src/lib/mcp';
 import { characterBuild } from '../src/lib/mcpBuild';
 
@@ -29,6 +29,13 @@ const item = z.object({
   rarity: z.string().optional().describe(`One of ${PLAN_RARITIES.join(', ')}. Defaults to ${top}. Gear of the last has no affixes and more sockets, and forms runewords.`),
   level: own.describe("Gear above the character's level can't be worn."),
   baseRoll: roll,
+  quality: z
+    .number()
+    .int()
+    .min(0)
+    .max(MAX_QUALITY)
+    .optional()
+    .describe(`The item's quality, from 0 (the default) to ${MAX_QUALITY}. It is added to the base roll, so 20 quality on a 100 base roll gives the base stats at 120%.`),
   implicit: part.optional().describe("One of the base's implicits. Left out, it is the likeliest one."),
   prefix: parts,
   suffix: parts,

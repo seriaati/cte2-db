@@ -54,6 +54,8 @@ export interface Item {
   rarity: string;
   level: number;
   baseRoll?: number;
+  // Added to the base roll's percentage (BaseStatsData), so 20 quality on a 100% roll gives 120%.
+  quality?: number;
   implicit?: Rolled;
   prefix: Rolled[];
   suffix: Rolled[];
@@ -141,6 +143,8 @@ export const AUGMENT_SLOTS = 9;
 const RANKS_PER_SUPPORT_SLOT = 4;
 // JewelSocketStat's cap.
 export const MAX_JEWELS = 9;
+// Orb of Quality stops at 20, Entangled Quality at 25, and one Sharpening Stone adds up to 12 more.
+export const MAX_QUALITY = 37;
 export const MAX_CLASSES = 2;
 // SpellSchoolsData: what a character with a single class gets, as percentages.
 export const SOLO_CLASS = { moreDamage: 10, damageReduction: 5 };
@@ -243,6 +247,7 @@ function readItem(v: unknown, maxLevel: number): Item | null {
     rarity: id(v.rarity),
     level: int(v.level, 1, maxLevel, maxLevel),
     baseRoll: roll(v.baseRoll),
+    quality: int(v.quality, 0, MAX_QUALITY) || undefined,
     implicit: rolled([v.implicit], 1)[0],
     prefix: rolled(v.prefix, 6),
     suffix: rolled(v.suffix, 6),

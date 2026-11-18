@@ -1,7 +1,7 @@
 import { useState, type CSSProperties } from 'react';
 import { canRoll, formatRange, type StatMod } from '../../lib/affix';
 import { itemParts, nameOf, readItem } from '../../lib/buildCalc';
-import { exactly, rollIn, type Item, type Rolled } from '../../lib/buildRules';
+import { MAX_QUALITY, exactly, rollIn, type Item, type Rolled } from '../../lib/buildRules';
 import type { Sections } from '../../lib/builds';
 import { baseRange, rollWindows, slotCount, socketPart, type Part, type Socketed } from '../../lib/plannerRules';
 import { Dropdown, RaritySwatches } from '../controls';
@@ -188,6 +188,7 @@ export function ItemEditor({ data, item, rolls, maxLevel, needs, takenOff, onCha
       <div className="controls">
         {!unique && <RaritySwatches rarities={data.rarities} value={rarity.id} onChange={changeRarity} />}
         <NumberField label="Item level" value={level} min={1} max={maxLevel} onChange={(n) => set({ level: n })} />
+        <NumberField label="Quality" value={item.quality ?? 0} min={0} max={MAX_QUALITY} onChange={(n) => set({ quality: n || undefined })} />
       </div>
 
       <ul className="slots">

@@ -123,7 +123,7 @@ export function itemParts(parts: NonNullable<ReturnType<typeof readItem>>, item:
   const affixWindow = { minPercent: 0, maxPercent: rarity.maxPercent };
   const at = (stats: StatMod[], percent: number): Part => ({ stats, rolls: exactly(percent), level });
   return {
-    base: at(base.stats, rollIn(item.baseRoll, rollWindows(rarity).base)),
+    base: at(base.stats, rollIn(item.baseRoll, rollWindows(rarity).base) + (item.quality ?? 0)),
     others: [
       ...(unique ? unique.stats.map((stat, i) => at([stat], item.uniqueRolls?.[i] ?? 100)) : []),
       ...(implicit ? [at(implicit.stats, rollIn(item.implicit?.roll, whole))] : []),
