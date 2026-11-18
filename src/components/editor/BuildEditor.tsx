@@ -234,6 +234,17 @@ export default function BuildEditor({ core }: { core: Core }) {
                   <button type="button" role="menuitem" title="Open a build from a file" onClick={act(() => file.current!.click())}>
                     Import a file
                   </button>
+                  <a
+                    role="menuitem"
+                    href="https://github.com/seriaati/cte2-talent-loader"
+                    target="_blank"
+                    rel="noopener"
+                    title="A mod that takes an exported build and spends its talent, stat and skill points in game for you"
+                    onClick={() => setMenu(false)}
+                  >
+                    Load into the game
+                    <small>mod ↗</small>
+                  </a>
                   <hr />
                   <button type="button" role="menuitem" title="Empty the whole build. Its name is kept." onClick={act(resetBuild)}>
                     Reset the whole build
