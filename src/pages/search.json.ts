@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { formatRange, rolled, type Rarity, type StatMod } from '../lib/affix';
 import { auras } from '../lib/auras';
 import { baseGear } from '../lib/bases';
+import { codexAffixes, codexIcon, codexKinds, codexRarities } from '../lib/codexes';
 import { effects } from '../lib/effects';
 import { affixes, infusions, maxLevel, rarities } from '../lib/gear';
 import { gems, ranks } from '../lib/gems';
@@ -50,6 +51,16 @@ const groups: Group[] = [
       ...jewelAffixes.crafted.map((a) => unnamed(a.stats, lines(a.stats), craftedJewel.icon, [craftedJewel.name])),
       ...jewelAffixes.eye.map((a) => unnamed(a.stats, lines(a.stats, whole), abyssalEye.icon, [`${abyssalEye.name}, under ${a.aura}`])),
     ],
+  },
+  {
+    name: 'Codexes',
+    href: '/codexes',
+    // As the codex page starts out: a mythic codex asking for the most it can.
+    rows: (() => {
+      const { percent } = codexRarities.at(-1)!;
+      const at = (mods: StatMod[]) => mods.map((m) => show(formatRange(m, rolled(m, percent.min, maxLevel), rolled(m, percent.max, maxLevel))));
+      return [...codexKinds.map((k): Row => [k.name, at(k.mods), codexIcon]), ...codexAffixes.map((a) => unnamed(a.stats, at(a.stats), codexIcon, ['Codex affix']))];
+    })(),
   },
   ...Object.values(TREES).map(({ name, path, tree }) => ({
     name,

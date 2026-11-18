@@ -1,0 +1,11 @@
+---
+import CodexBrowser from '../components/CodexBrowser.tsx';
+import Layout from '../layouts/Layout.astro';
+import { AFFIX_TYPES, codexAffixes, codexIcon, codexKinds, codexRarities } from '../lib/codexes';
+import { maxLevel } from '../lib/gear';
+import '../styles/lists.css';
+---
+
+<Layout title="CTE2 Codexes | Craft to Exile 2 Database" description="Every Codex in Craft to Exile 2: its stats by rarity and level, the pieces each rarity asks for, and the affixes a codex can roll.">
+  <CodexBrowser client:load kinds={codexKinds} affixes={codexAffixes} rarities={codexRarities} affixTypes={AFFIX_TYPES} icon={codexIcon} maxLevel={maxLevel} />
+</Layout>

@@ -1,4 +1,4 @@
-/* Shared by the rune, gem, aura, support gem, jewel, spell and effect pages. */
+/* Shared by the rune, gem, aura, support gem, jewel, spell, effect and codex pages. */
 
 .sprite {
   flex: none;
@@ -15,15 +15,15 @@
 
 /* The site's tooltip opens rightwards from its label and can run off the page. Here it opens from
    the start of the stat line and stays inside that column. */
-.row:is(.rune, .runeword, .gem, .aura, .support, .eye, .spell, .effect) .tip {
+.row:is(.rune, .runeword, .gem, .aura, .support, .eye, .spell, .effect, .codex, .codex-affix) .tip {
   position: static;
 }
 
-.row:is(.rune, .runeword, .gem, .aura, .support, .eye, .spell, .effect) :is(.stats, .gem-stat) div {
+.row:is(.rune, .runeword, .gem, .aura, .support, .eye, .spell, .effect, .codex, .codex-affix) :is(.stats, .gem-stat) div {
   position: relative;
 }
 
-.row:is(.rune, .runeword, .gem, .aura, .support, .eye, .spell, .effect) .tip:hover::after {
+.row:is(.rune, .runeword, .gem, .aura, .support, .eye, .spell, .effect, .codex, .codex-affix) .tip:hover::after {
   box-sizing: border-box;
   max-width: min(340px, 100%);
 }
@@ -152,6 +152,16 @@ a.tag:hover {
   grid-template-columns: minmax(180px, 0.42fr) minmax(0, 1fr) 64px;
 }
 
+/* Codexes */
+
+.row.codex {
+  grid-template-columns: minmax(180px, 0.42fr) minmax(0, 1fr) minmax(96px, 0.36fr);
+}
+
+.row.codex-affix {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 @media (max-width: 1420px) {
   .by-gear {
     grid-template-columns: minmax(0, 1fr);
@@ -242,5 +252,9 @@ a.tag:hover {
 
   .row.eye {
     grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .row.codex {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
