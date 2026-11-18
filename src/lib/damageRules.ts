@@ -172,9 +172,10 @@ export interface SkillDamage {
   // One list of hits for each form the skill takes that deals damage, with the states of its
   // caster that come to it: the stacks of each effect, as its script tells them apart. `needs`
   // names the state that takes the fewest effects, and the form that takes the fewest is first.
-  // One that spends a Retribution stack has by then put `marks` on its target: stats at the
-  // skill's level. `gives` has the effects it leaves that deal damage themselves.
-  variants: { needs: string[]; when: Record<string, number>[]; hits: SkillHit[]; retribution?: true; marks?: StatMod[]; gives?: Gift[] }[];
+  // One used with Retribution has `retribution`, the stacks a use spends while any are held, and
+  // has by then put `marks` on its target: stats at the skill's level. `gives` has the effects it
+  // leaves that deal damage themselves.
+  variants: { needs: string[]; when: Record<string, number>[]; hits: SkillHit[]; retribution?: number; marks?: StatMod[]; gives?: Gift[] }[];
   pets?: Pets;
 }
 

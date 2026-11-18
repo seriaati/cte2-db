@@ -182,7 +182,7 @@ export default function DamageTab({ core, build, change }: TabProps) {
           Of projectiles shot together, {missed.map(({ shot, hit }) => `${hit} of ${shot}`).join(' and ')} {missed.length === 1 && missed[0].hit === 1 ? 'is' : 'are'} taken to hit the enemy.
         </p>
       )}
-      {retribution.spends && <p className="note">While any {retribution.name} stack is held, every cast is taken to spend one, and what that puts on the target to be there already.</p>}
+      {retribution.spends && <p className="note">While any {retribution.name} stack is held, every cast spends {retribution.spent > 1 ? retribution.spent : 'one'}, taken to be held again by the next, and what that puts on the target is taken to be there already.</p>}
       {aura?.damage && (
         <p className="note">
           {aura.name} is on and deals {show(aura.damage.dps)} of the damage a second on its own, whatever is used.

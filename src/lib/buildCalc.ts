@@ -548,12 +548,13 @@ export function buildDamage(data: Data & Pick<Sections, 'damage'>, build: Build)
 
   // A skill is used in the form the effects on its caster call for. Where it deals nothing
   // under them, it is worked out in the form that takes the fewest, as if those were on. One
-  // that does more for a Retribution stack spends one whenever any is held.
+  // that does more for Retribution spends stacks whenever any is held, as many as its script takes.
   const stacks = own.under.own[RETRIBUTION.effect];
   const spends = !!use?.skill.variants.some((variant) => variant.retribution);
   const fits = use && formOf(use.skill, who.effects);
   const form = use && (fits ?? use.skill.variants[0]);
   const forced = !!form && !fits;
+  const perCast = form?.retribution || use?.skill.variants.find((variant) => variant.retribution)?.retribution || 0;
 
   // The enemy has a mob's stats, and what the skill, the aura and the effects that are on put on
   // it at their level (ExileEffect.getExactStats).
@@ -616,7 +617,7 @@ export function buildDamage(data: Data & Pick<Sections, 'damage'>, build: Build)
   const slower = { ...damage, rate: damage.rate * sustained.pace, dps: damage.dps * sustained.pace };
   const kept = sustained.pace < 1 ? [slower, ...others, ...setOffBy(slower).map((proc) => proc.damage)].reduce((sum, dealt) => sum + dealt.dps, 0) : dps;
   const resources = { ...sustained, cost, petCost, spent, kept };
-  return { rules, own, choices, chosen, form, forced, enemy, damage, aura, lasting, procs, dps, elements, stats, crit, retribution: { stacks, spends, name: skills.retribution.name }, resources };
+  return { rules, own, choices, chosen, form, forced, enemy, damage, aura, lasting, procs, dps, elements, stats, crit, retribution: { stacks, spends, spent: perCast, name: skills.retribution.name }, resources };
 }
 
 const HITS: Element[] = ['Physical', 'Fire', 'Cold', 'Nature', 'Shadow'];

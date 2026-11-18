@@ -269,7 +269,7 @@ const holds = (i: { map: Raw }, stacks: Record<string, number>) => (stacks[i.map
 // every so many ticks it damages enemies in reach or the caster, and renews an effect on allies,
 // the caster among them, or on enemies.
 const AURA = { tag: 'aura', forever: -1 };
-// The Crusader's stacks. A skill spends one for something extra whenever its caster holds any, so
+// The Crusader's stacks. A skill spends some for something extra whenever its caster holds any, so
 // it isn't among the effects a skill is picked to be used with.
 const RETRIBUTION = 'retribution';
 // How often a pet attacks, by vanilla's MeleeAttackGoal and by RangedBowAttackGoal as SummonEntity
@@ -320,6 +320,7 @@ function hitsOf(spell: RawSpell, stacks: Record<string, number>) {
   const hits: SkillHit[] = [];
   const marks: StatMod[] = [];
   const gives: Gift[] = [];
+  let spends = 0;
   // SimpleProjectileEntity.tryMoveTowardsTargets: a homing one turns to an enemy within the spell's tracking radius.
   const volley = (map: Raw, bought: boolean): Volley => ({
     n: map.proj_count,
@@ -358,6 +359,10 @@ function hitsOf(spell: RawSpell, stacks: Record<string, number>) {
         if (bought && act.type === 'exile_effect' && act.map.potion_action === 'GIVE_STACKS' && onEnemy) {
           marks.push(...casterEffects[act.map.exile_potion_id].stats.filter((s) => s.stat in taken).map(statMod));
         }
+        // Each entity of a volley takes its own. A step of the cast itself that waits for an entity to end never runs.
+        if (act.type === 'exile_effect' && act.map.potion_action === 'REMOVE_STACKS' && act.map.exile_potion_id === RETRIBUTION && (seen.length || when !== 'end')) {
+          spends += act.map.count * times * volleys.reduce((n, shot) => n * shot.n, 1);
+        }
         if (act.type === 'exile_effect' && act.map.potion_action === 'GIVE_STACKS' && part.targets.length && act.map.potion_dur !== AURA.forever) {
           const id: string = act.map.exile_potion_id;
           const dealt = script(id, foe, stacks).hits;
@@ -370,7 +375,7 @@ function hitsOf(spell: RawSpell, stacks: Record<string, number>) {
     }
   };
   walk(spell.attached.on_cast, 1, 0, [], []);
-  return { hits: hits.filter((hit) => hit.count > 0), marks, gives };
+  return { hits: hits.filter((hit) => hit.count > 0), marks, gives, spends };
 }
 
 function skill(spell: RawSpell): SkillDamage | null {
@@ -399,13 +404,13 @@ function skill(spell: RawSpell): SkillDamage | null {
   // States that come to the same hits are one form, named by the fewest effects that give it.
   const variants = new Map<string, SkillDamage['variants'][number]>();
   for (const state of states.sort((a, b) => Object.values(a).filter(Boolean).length - Object.values(b).filter(Boolean).length)) {
-    const { hits, marks, gives } = dealt.get(JSON.stringify(state))!;
+    const { hits, marks, gives, spends } = dealt.get(JSON.stringify(state))!;
     if (!(hits.length || gives.length) || idle.some((effect) => state[effect])) continue;
     const when = Object.fromEntries(Object.entries(state).filter(([, stacks]) => stacks));
     const needs = Object.entries(when).flatMap(([effect, stacks]) => (effect !== RETRIBUTION ? [stacks > 1 ? `${stacks} ${effectName(effect)}` : effectName(effect)] : []));
     const form = variants.get(keyOf(state));
     if (form) form.when.push(when);
-    else variants.set(keyOf(state), { needs, when: [when], hits, ...(state[RETRIBUTION] ? { retribution: true as const } : {}), ...(marks.length ? { marks } : {}), ...(gives.length ? { gives } : {}) });
+    else variants.set(keyOf(state), { needs, when: [when], hits, ...(state[RETRIBUTION] ? { retribution: spends } : {}), ...(marks.length ? { marks } : {}), ...(gives.length ? { gives } : {}) });
   }
   const { config } = spell;
   // SummonPetAction and PetAttackUTIL: a pet's attack runs the script of the skill's basic attack.
