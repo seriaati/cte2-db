@@ -23,6 +23,9 @@ interface Props {
   item: Item;
   rolls: boolean;
   maxLevel: number;
+  // The attributes it asks for at its level, and why the game takes it off when it does.
+  needs: string;
+  takenOff?: string;
   onChange: (item: Item) => void;
   onSwap: () => void;
   onRemove: () => void;
@@ -39,7 +42,7 @@ const TITLES = {
 };
 type Picking = { part: keyof typeof TITLES };
 
-export function ItemEditor({ data, item, rolls, maxLevel, onChange, onSwap, onRemove }: Props) {
+export function ItemEditor({ data, item, rolls, maxLevel, needs, takenOff, onChange, onSwap, onRemove }: Props) {
   const [picking, setPicking] = useState<Picking | null>(null);
   const parts = readItem(data, item)!;
   const { base, unique, rarity, tiers, implicit, kind, sockets, runeword, infusion, infusionRarity } = parts;
@@ -166,6 +169,7 @@ export function ItemEditor({ data, item, rolls, maxLevel, onChange, onSwap, onRe
             <div className="item-name rar">{nameOf(parts)}</div>
             <div className="cap">
               {rarity.name} {base.name} / Lv {level}
+              {needs && ` / Needs ${needs}`}
             </div>
           </div>
         </div>
@@ -178,6 +182,8 @@ export function ItemEditor({ data, item, rolls, maxLevel, onChange, onSwap, onRe
           </button>
         </div>
       </div>
+
+      {takenOff && <p className="note skipped">{takenOff}</p>}
 
       <div className="controls">
         {!unique && <RaritySwatches rarities={data.rarities} value={rarity.id} onChange={changeRarity} />}

@@ -97,7 +97,7 @@ const rawRarities = rarityData as Record<string, { type: string; item_tier: numb
 // The item a base is at each rarity, as a picture. The game picks among the base's items the
 // rarity is high enough for, each ten times likelier than the one before, so the last stands for it.
 const gearIcons = iconData as Record<string, string>;
-const rawBases = baseData as Record<string, { weapon_type: string; possible_items: { item_id: string; min_rar: string }[] }>;
+const rawBases = baseData as Record<string, { weapon_type: string; possible_items: { item_id: string; min_rar: string }[]; req: { scaling_req: Record<string, number> } }>;
 const weapons = weaponData as Record<string, { can_dual_wield: boolean }>;
 const sprites = (baseId: string) =>
   Object.fromEntries(
@@ -110,7 +110,14 @@ const rawUniques = uniqueData as Record<string, { force_item_id: string }>;
 
 const gear = {
   // A weapon that can be dual wielded also goes in the off hand; one that can't takes both hands.
-  bases: planBases.map((base) => ({ ...base, sprites: sprites(base.id), dualWield: weapons[rawBases[base.id].weapon_type].can_dual_wield })),
+  // Each base asks for attributes as shares of a curve that rises with the item's level.
+  bases: planBases.map((base) => ({
+    ...base,
+    sprites: sprites(base.id),
+    dualWield: weapons[rawBases[base.id].weapon_type].can_dual_wield,
+    needs: Object.entries(rawBases[base.id].req.scaling_req).map(([stat, factor]) => ({ stat, factor })),
+  })),
+  requirement: { base: balance.STAT_REQ_SCALING.base_scaling, perLevel: balance.STAT_REQ_SCALING.per_level_scaling },
   rarities: planRarities,
   uniqueRarity: planRarity(uniqueRarity),
   affixes: planAffixes,

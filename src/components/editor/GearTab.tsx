@@ -1,19 +1,25 @@
 import { useState, type CSSProperties } from 'react';
 import { nameOf, readItem } from '../../lib/buildCalc';
-import { GEAR_SLOTS, exactly, type GearSlot, type Item } from '../../lib/buildRules';
+import { GEAR_SLOTS, exactly, needsAt, type GearSlot, type Item } from '../../lib/buildRules';
 import { GearIcon } from '../controls';
 import { CodexEditor } from './CodexEditor';
 import { ItemEditor, spriteOf } from './ItemEditor';
 import { Loading, Picker, useSection, type Choice, type TabProps } from './shared';
+import { useTotals } from './totals';
 
 export default function GearTab({ core, build, change, rolls, reset }: TabProps) {
   const data = useSection('gear');
   const [slot, setSlot] = useState<GearSlot | 'codex'>('weapon');
   const [choosing, setChoosing] = useState(false);
+  const totals = useTotals(build);
   if (!data) return <Loading />;
 
   const place = GEAR_SLOTS.find((s) => s.id === slot);
   const item = place && build.gear[place.id];
+  const needs = (worn: Item) =>
+    needsAt(data.bases.find((b) => b.id === worn.base)?.needs ?? [], data.requirement, worn.level)
+      .map((n) => `${n.value} ${totals?.rules.defs[n.stat]?.name ?? n.stat}`)
+      .join(', ');
   const setItem = (next: Item | undefined) => {
     const { [slot as GearSlot]: _, ...others } = build.gear;
     change({ gear: next ? { ...others, [slot]: next } : others });
@@ -61,7 +67,11 @@ export default function GearTab({ core, build, change, rolls, reset }: TabProps)
                   )}
                   <span>
                     <span className="cap">{s.name}</span>
-                    {worn ? <strong style={{ color: worn.rarity.ink }}>{nameOf(worn)}</strong> : <span className="open">Empty</span>}
+                    {worn ? (
+                      <strong style={{ color: totals?.takenOff[s.id] ? '#ff6b5e' : worn.rarity.ink }}>{nameOf(worn)}</strong>
+                    ) : (
+                      <span className="open">Empty</span>
+                    )}
                   </span>
                 </button>
               </li>
@@ -86,7 +96,15 @@ export default function GearTab({ core, build, change, rolls, reset }: TabProps)
           {slot === 'codex' ? (
             <CodexEditor data={data} build={build} maxLevel={core.maxLevel} onChange={(codex) => change({ codex })} />
           ) : item && readItem(data, item) ? (
-            <ItemEditor key={slot} data={data} item={item} rolls={rolls} maxLevel={core.maxLevel} onChange={setItem} onSwap={() => setChoosing(true)} onRemove={() => setItem(undefined)} />
+            <ItemEditor
+              key={slot}
+              data={data}
+              item={item}
+              rolls={rolls}
+              maxLevel={core.maxLevel}
+              needs={needs(item)}
+              takenOff={totals?.takenOff[place!.id]}
+              onChange={setItem} onSwap={() => setChoosing(true)} onRemove={() => setItem(undefined)} />
           ) : (
             <div className="empty-part">
               <p>Nothing in the {place!.name.toLowerCase()} slot.</p>

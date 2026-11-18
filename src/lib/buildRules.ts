@@ -191,6 +191,11 @@ export const jewelAffixes = (affixCount: number) => 1 + Math.trunc(affixCount / 
 export const rollIn = (roll: number | undefined, window: { minPercent: number; maxPercent: number }) =>
   roll === undefined ? window.maxPercent : Math.min(window.maxPercent, Math.max(window.minPercent, roll));
 
+// StatRequirement.getScalingReq: what gear of a level asks of each attribute. The pack's
+// STAT_REQUIREMENTS_MULTIPLIER is 1 in ORIGINAL_MODE.
+export const needsAt = <T extends { factor: number }>(needs: T[], curve: { base: number; perLevel: number }, level: number) =>
+  needs.map((n) => ({ ...n, value: Math.floor(n.factor * (curve.base + curve.perLevel * (level - 1))) }));
+
 // A roll window that is a single point, for showing a part at its exact roll.
 export const exactly = (percent: number): Rarity => ({ id: '', name: '', color: '', ink: '', minPercent: percent, maxPercent: percent });
 

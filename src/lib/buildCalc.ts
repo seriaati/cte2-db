@@ -12,9 +12,11 @@ import {
   codexPercent,
   exactly,
   jewelAffixes,
+  needsAt,
   rollIn,
   type Build,
   type Codex,
+  type GearSlot,
   type Item,
   type Jewel,
   type Rolled,
@@ -222,6 +224,8 @@ export interface Totals {
   stats: Map<string, Total>;
   // Why parts of the build give nothing.
   skipped: string[];
+  // The gear the game takes off because the character falls short of the attributes it asks for.
+  takenOff: Partial<Record<GearSlot, string>>;
   // The base of the weapon held, and whether a second one is held beside it.
   weapon?: string;
   dualWield: boolean;
@@ -263,7 +267,7 @@ export const retributionHeld = (data: Pick<Data, 'skills'>, build: Build) => (bu
 // Everything that gives a character stats, as the game gathers it (StatCalculation.collectStatsWithCtx
 // and CachedPlayerStats). What it takes from a weapon in the off hand depends on a stat of the
 // character's own, so that is passed in. `extra` is what a skill adds for itself alone.
-function gather(data: Data, build: Build, dualWield: number, extra: Exact[]) {
+function gather(data: Data, build: Build, dualWield: number, extra: Exact[], off: Map<GearSlot, string>) {
   const { level } = build;
   const skipped: string[] = [];
   const others: Exact[] = [...extra, ...exact({ stats: data.stats.base, rolls: exactly(100), level }), ...newbieResists(level)];
@@ -274,7 +278,7 @@ function gather(data: Data, build: Build, dualWield: number, extra: Exact[]) {
   const worn = GEAR_SLOTS.flatMap((slot) => {
     const item = build.gear[slot.id];
     const parts = item && readItem(data.gear, item);
-    if (!parts) return [];
+    if (!parts || off.has(slot.id)) return [];
     if (item.level > level) {
       skipped.push(`${nameOf(parts)} is level ${item.level}, above the character's level.`);
       return [];
@@ -363,16 +367,41 @@ function gather(data: Data, build: Build, dualWield: number, extra: Exact[]) {
   };
 }
 
+// The attributes a worn item asks for that the character's stats fall short of.
+export function unmet(data: Data, item: Item, stats: Map<string, Total>) {
+  const base = data.gear.bases.find((b) => b.id === item.base);
+  return base ? needsAt(base.needs, data.gear.requirement, item.level).filter((n) => n.value > (stats.get(n.stat)?.value ?? 0)) : [];
+}
+
 // The stats of everything gathered, with what a skill or an effect adds on top.
 function settle(data: Data, build: Build, extra: Exact[]): Omit<Totals, 'effects' | 'under' | 'enemy'> {
-  // CachedEntityStats.afterStatCalc: the gear is gone over again until Dual Wield Effectiveness settles.
-  let dualWield = 0;
-  for (let pass = 0; ; pass++) {
-    const { sources, skipped, secondWeapon, weapon, shield } = gather(data, build, dualWield, extra);
-    const stats = totalStats(data.stats, sources);
-    const next = stats.get('dual_wield_effectiveness')?.value ?? 0;
-    if (!secondWeapon || Math.abs(next - dualWield) <= 0.01 || pass === 5) return { rules: data.stats, stats, skipped, weapon, dualWield: secondWeapon, shield };
-    dualWield = next;
+  // UnequipGear and GearItemData.canPlayerWear: gear whose attributes the character's stats don't
+  // reach is taken off, and the stats are worked out again without it, until all that is left is worn.
+  const off = new Map<GearSlot, string>();
+  for (;;) {
+    // CachedEntityStats.afterStatCalc: the gear is gone over again until Dual Wield Effectiveness settles.
+    let dualWield = 0;
+    let found;
+    for (let pass = 0; ; pass++) {
+      const { sources, skipped, secondWeapon, weapon, shield } = gather(data, build, dualWield, extra, off);
+      const stats = totalStats(data.stats, sources);
+      const next = stats.get('dual_wield_effectiveness')?.value ?? 0;
+      found = { rules: data.stats, stats, skipped: [...skipped, ...off.values()], weapon, dualWield: secondWeapon, shield, takenOff: Object.fromEntries(off) };
+      if (!secondWeapon || Math.abs(next - dualWield) <= 0.01 || pass === 5) break;
+      dualWield = next;
+    }
+    const short = GEAR_SLOTS.flatMap((slot) => {
+      const item = build.gear[slot.id];
+      const parts = item && !off.has(slot.id) && item.level <= build.level && readItem(data.gear, item);
+      const lacking = parts ? unmet(data, item, found.stats) : [];
+      const has = (stat: string) => Math.trunc(found.stats.get(stat)?.value ?? 0);
+      const name = (stat: string) => data.stats.defs[stat]?.name ?? stat;
+      return parts && lacking.length
+        ? [[slot.id, `${nameOf(parts)} needs ${lacking.map((n) => `${n.value} ${name(n.stat)}`).join(' and ')} at level ${item!.level}, but the build has ${lacking.map((n) => `${has(n.stat)} ${name(n.stat)}`).join(' and ')}, so the game takes it off.`] as const]
+        : [];
+    });
+    if (!short.length) return found;
+    for (const [slot, reason] of short) off.set(slot, reason);
   }
 }
 
