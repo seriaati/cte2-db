@@ -114,8 +114,9 @@ export interface Build {
   augments: Rolled[];
   jewels: Jewel[];
   // What damage is worked out for: a skill on the hotbar, or the basic attack when empty. The
-  // basic attacks a second are the weapon's own unless set.
-  damage: { skill: string; attacks?: number };
+  // basic attacks a second are the weapon's own unless set, and area and piercing hits land on
+  // TARGETS.standard enemies unless `targets` says how many.
+  damage: { skill: string; attacks?: number; targets?: number };
   // The enemy damage and defenses are worked out against: a mob of the character's own level
   // unless one is set, with its rarity and one affix or none for each it rolls.
   enemy: { level?: number; rarity: string; affixes: string[] };
@@ -148,6 +149,8 @@ const ENEMY = { rarity: 'common', affixes: [] };
 const MOB_HITS = { hit: 1000, rate: 2 };
 // The pack's effect that Crusader skills spend, and the class that gains it.
 export const RETRIBUTION = { effect: 'retribution', class: 'crusader' };
+// How many enemies area and piercing hits land on.
+export const TARGETS = { standard: 3, max: 20 };
 
 export interface Limits {
   maxLevel: number;
@@ -269,7 +272,11 @@ function readCodex(v: unknown, maxLevel: number): Codex | null {
 
 function readDamage(v: unknown): Build['damage'] {
   const damage = isObject(v) ? v : {};
-  return { skill: id(damage.skill), attacks: typeof damage.attacks === 'number' && damage.attacks > 0 ? Math.min(20, damage.attacks) : undefined };
+  return {
+    skill: id(damage.skill),
+    attacks: typeof damage.attacks === 'number' && damage.attacks > 0 ? Math.min(20, damage.attacks) : undefined,
+    targets: typeof damage.targets === 'number' ? int(damage.targets, 1, TARGETS.max) : undefined,
+  };
 }
 
 // A build saved before both tabs had the one enemy kept it with the Defense tab's settings, and

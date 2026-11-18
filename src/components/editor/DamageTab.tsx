@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { buildDamage, percent } from '../../lib/buildCalc';
-import { RESISTS, type Build } from '../../lib/buildRules';
+import { RESISTS, TARGETS, type Build } from '../../lib/buildRules';
 import { ELEMENTS, resistance, volleysMissed, type ByElement, type Resource, type SkillHit } from '../../lib/damageRules';
 import { Dropdown } from '../controls';
-import { AuraField, EffectsField, EnemyField, Info, Loading, RetributionField, useSection, type TabProps } from './shared';
+import { AuraField, EffectsField, EnemyField, Info, Loading, NumberField, RetributionField, useSection, type TabProps } from './shared';
 import { useData } from './totals';
 
 const show = (n: number) => (n >= 100 ? Math.round(n).toLocaleString('en') : `${+n.toFixed(1)}`);
@@ -31,7 +31,7 @@ export default function DamageTab({ core, build, change }: TabProps) {
   const found = useDamage(build);
   if (!found) return <Loading />;
 
-  const { rules, own, choices, chosen, form, forced, enemy, damage, aura, lasting, procs, dps, elements, stats, crit, retribution, resources } = found;
+  const { rules, own, choices, chosen, form, forced, enemy, damage, aura, lasting, procs, dps, elements, stats, crit, retribution, resources, targets } = found;
   // A summon skill is used by its pets, one attack at a time.
   const casts = chosen && damage.pets === undefined;
   const { defs } = own.rules;
@@ -48,8 +48,13 @@ export default function DamageTab({ core, build, change }: TabProps) {
         <h1>Damage</h1>
         <Info>
           <p>
-            What one skill deals a second to a single enemy when it is used over and over. What goes on over time lands every time. A summon skill deals what its pets do: as many as
-            it can keep out, all attacking that enemy without pause. Critical hits and other chances count as their average.
+            What one skill deals a second when it is used over and over. What goes on over time lands every time. A summon skill deals what its pets do: as many as it can keep out,
+            all attacking one enemy without pause. Critical hits and other chances count as their average.
+          </p>
+          <p>
+            A hit on an area, around the caster, around where it lands or in front, reaches each of the enemies set under Enemies hit, {TARGETS.standard} unless changed, and so does a
+            hit from a projectile that goes on through enemies. Other hits, basic attacks and pets' attacks land on one. The enemies are all alike, and the damage a second is what
+            they take together. Leech, restores and spells set off by hits count every enemy hit.
           </p>
           <p>
             Using the skill costs mana and energy, or blood for a blood user: what it costs at its level as the build's stats change that, every cast, or every pulse of a
@@ -62,8 +67,8 @@ export default function DamageTab({ core, build, change }: TabProps) {
           <p>
             Of projectiles shot together, the ones that hit are those that pass close enough to an enemy as big as a zombie 5 blocks away, aimed so that the most do. Fanned out or
             shot in a circle, as Projectile Nova does, they hit by their angle; with Projectile Barrage they fly side by side a block apart, so two can hit. A homing one hits if it
-            passes within its tracking range, two blocks. Every projectile a Retribution stack buys hits. Chains and piercing add no hits on one enemy: a projectile hits a mob
-            once, and a chain never goes back to the one it came from. Projectile speed and random spread change nothing.
+            passes within its tracking range, two blocks. Every projectile a Retribution stack buys hits. Chains add no hits on one enemy: a projectile hits a mob once, and a
+            chain never goes back to the one it came from. Projectile speed and random spread change nothing.
           </p>
           <p>
             Effects lists what the build can put on the character and on the enemy: what its skills give, and what its stats give on a hit, on a kill, when the character is hit or
@@ -119,6 +124,7 @@ export default function DamageTab({ core, build, change }: TabProps) {
           groups={[{ options: [{ value: '', label: 'Basic attack' }, ...choices.map((c) => ({ value: c.perk.id, label: c.spell.name, icon: c.perk.icon }))] }]}
           onChange={(skill) => set({ skill })}
         />
+        {targets.area && <NumberField label="Enemies hit" value={targets.count} min={1} max={TARGETS.max} onChange={(n) => set({ targets: n === TARGETS.standard ? undefined : n })} />}
         {retribution.spends && <RetributionField build={build} change={change} />}
         <AuraField build={build} change={change} />
         <EffectsField effects={own.effects} build={build} change={change} />
@@ -175,6 +181,7 @@ export default function DamageTab({ core, build, change }: TabProps) {
           {dry.resource === 'energy' && own.shield && ' Below 1 energy, a raised shield blocks nothing.'}
         </p>
       )}
+      {targets.area && targets.count > 1 && <p className="note">Area and piercing hits land on each of {targets.count} enemies, and the damage is what they take together.</p>}
       {form && form.needs.length > 0 && <p className="note">{forced ? `Worked out as used with ${form.needs.join(' and ')}, which the skill needs.` : `Used in the form it takes with ${form.needs.join(' and ')}.`}</p>}
       {damage.pets !== undefined && <p className="note">Worked out with {+damage.pets.toFixed(2)} pets out, the most the skill keeps up.</p>}
       {missed.length > 0 && (

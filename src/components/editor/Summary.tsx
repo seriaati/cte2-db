@@ -26,7 +26,7 @@ export default function Summary({ core, build }: { core: Core; build: Build }) {
   const defense = useDefense(build, attack);
   if (!attack || !defense) return <Loading />;
 
-  const { own, chosen, form, damage, aura, lasting, procs, dps, stats, crit, retribution, resources } = attack;
+  const { own, chosen, form, damage, aura, lasting, procs, dps, stats, crit, retribution, resources, targets } = attack;
   const named = (enemy: boolean) => own.effects.filter((effect) => effect.enemy === enemy && effect.stacks).map((effect) => (effect.stacks > 1 ? `${effect.stacks} ${effect.name}` : effect.name));
   const casts = chosen && damage.pets === undefined;
   const { totals, value, avoid, rows, weakest, shortest, held } = defense;
@@ -48,6 +48,7 @@ export default function Summary({ core, build }: { core: Core; build: Build }) {
           <Row label="Skill" value={chosen?.spell.name ?? 'Basic attack'} />
           {form && form.needs.length > 0 && <Row kind="sub" label="Used with" value={form.needs.join(' and ')} />}
           {retribution.spends && retribution.stacks > 0 && <Row kind="sub" label="Spends" value={retribution.name} />}
+          {targets.area && <Row kind="sub" label="Enemies hit" value={`${targets.count}`} />}
           {aura && <Row kind="sub" label="Aura" value={aura.name} />}
           {named(false).length > 0 && <Row kind="sub" label="Effects" value={named(false).join(', ')} />}
           {named(true).length > 0 && <Row kind="sub" label="On the enemy" value={named(true).join(', ')} />}

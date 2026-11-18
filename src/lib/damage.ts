@@ -277,6 +277,8 @@ const RETRIBUTION = 'retribution';
 const PET_ATTACK_TICKS = { melee: 20, ranged: 30 };
 // What makes the entities a spell's script goes on in; pets fight on their own and aren't counted.
 const SUMMONS = ['projectile', 'summon_at_sight', 'summon_block'];
+// The targets of a step that hits every enemy within its reach.
+const AREA = ['aoe', 'in_front'];
 // SummonProjectileAction: the degrees a volley fans out over where the spell doesn't say.
 const PROJECTILES_APART = 75;
 
@@ -301,7 +303,9 @@ function script(effect: string, enemy: boolean, stacks: Record<string, number> =
       if (!when || !to || !part.ifs.every((i) => i.type !== EFFECT_IF || holds(i, stacks))) continue;
       for (const act of part.acts) {
         // DamageEvent.stopFriendlyFire: its caster takes only what is let through to it.
-        if (act.type === 'damage' && (to === hits || act.map.allow_self_damage)) to.push({ calc: act.map.value_calculation, element: act.map.element, count: rate ? 20 / rate : 1, when });
+        if (act.type === 'damage' && (to === hits || act.map.allow_self_damage)) {
+          to.push({ calc: act.map.value_calculation, element: act.map.element, count: rate ? 20 / rate : 1, when, ...(to === hits && aimed('aoe') && { area: true as const }) });
+        }
       }
     }
   }
@@ -327,7 +331,9 @@ function hitsOf(spell: RawSpell, stacks: Record<string, number>) {
     ...(map.ignore_bonus_proj && { fixed: true }),
     ...(bought ? { all: true } : { apart: map.proj_apart ?? PROJECTILES_APART, ...(map.nova && { nova: true }), ...(map.tracks_enemies && { reach: spell.config.tracking_radius }) }),
   });
-  const walk = (parts: RawPart[], count: number, life: number, seen: string[], volleys: Volley[]) => {
+  // A step that hits every enemy around or in front reaches each of the enemies the skill is used
+  // on, and so does one that hits whatever a projectile that goes on through them touches.
+  const walk = (parts: RawPart[], count: number, life: number, seen: string[], volleys: Volley[], pierces: boolean) => {
     for (const part of parts) {
       const asks = part.ifs.filter((i) => i.type === EFFECT_IF);
       if (!asks.every((i) => holds(i, stacks))) continue;
@@ -354,7 +360,8 @@ function hitsOf(spell: RawSpell, stacks: Record<string, number>) {
       for (const act of part.acts) {
         const per: string | undefined = act.map.multiply_by_caster_effect_stacks;
         if (act.type === 'damage' && onEnemy && (!per || stacks[per])) {
-          hits.push({ calc: act.map.value_calculation, element: act.map.element, count: times, when, ...(per && { per }), ...shot });
+          const area = part.targets.some((t) => (AREA.includes(t.type) && t.map.en_predicate === 'enemies') || (pierces && t.type === 'target'));
+          hits.push({ calc: act.map.value_calculation, element: act.map.element, count: times, when, ...(per && { per }), ...(area && { area: true as const }), ...shot });
         }
         if (bought && act.type === 'exile_effect' && act.map.potion_action === 'GIVE_STACKS' && onEnemy) {
           marks.push(...casterEffects[act.map.exile_potion_id].stats.filter((s) => s.stat in taken).map(statMod));
@@ -370,11 +377,18 @@ function hitsOf(spell: RawSpell, stacks: Record<string, number>) {
         }
         const entity: string | undefined = act.map.entity_name;
         if (!entity || !SUMMONS.includes(act.type) || seen.includes(entity)) continue;
-        walk(spell.attached.entity_components[entity] ?? [], times, Math.max(1, act.map.life_ticks ?? 1), [...seen, entity], act.type === 'projectile' ? [...volleys, volley(act.map, bought)] : volleys);
+        walk(
+          spell.attached.entity_components[entity] ?? [],
+          times,
+          Math.max(1, act.map.life_ticks ?? 1),
+          [...seen, entity],
+          act.type === 'projectile' ? [...volleys, volley(act.map, bought)] : volleys,
+          act.type === 'projectile' && act.map.expire_on_en_hit === false,
+        );
       }
     }
   };
-  walk(spell.attached.on_cast, 1, 0, [], []);
+  walk(spell.attached.on_cast, 1, 0, [], [], false);
   return { hits: hits.filter((hit) => hit.count > 0), marks, gives, spends };
 }
 

@@ -7,6 +7,7 @@ import {
   OFFHAND_WEAPON_PERCENT,
   RETRIBUTION,
   SOLO_CLASS,
+  TARGETS,
   TREES,
   codexBonuses,
   codexPercent,
@@ -588,7 +589,7 @@ export function buildDamage(data: Data & Pick<Sections, 'damage'>, build: Build)
   // The enemy has a mob's stats, and what the skill, the aura and the effects that are on put on
   // it at their level (ExileEffect.getExactStats).
   const marks = [...(use ? (form!.marks ?? []).map((mark): Exact => ({ id: mark.id, type: mark.type, value: rolled(mark, use.percent, level) })) : []), ...own.enemy.marks];
-  const enemy = { level: own.enemy.level, stats: mobStats(data.defense, data.stats, own.enemy, marks), rules: rules.taken, effects: own.under.enemy };
+  const enemy = { level: own.enemy.level, stats: mobStats(data.defense, data.stats, own.enemy, marks), rules: rules.taken, effects: own.under.enemy, count: build.damage.targets ?? TARGETS.standard };
   // The skills its pets may cast, which no hotbar slot has to hold.
   const cast: Record<string, Used> = Object.fromEntries((use?.skill.pets?.spells ?? []).map((id) => [id, used(id)]));
   const damage = use ? skillDamage(rules, use, enemy, form!, cast) : attackDamage(rules, who, enemy, build.damage.attacks ?? attackRate(who));
@@ -646,7 +647,7 @@ export function buildDamage(data: Data & Pick<Sections, 'damage'>, build: Build)
   const slower = { ...damage, rate: damage.rate * sustained.pace, dps: damage.dps * sustained.pace };
   const kept = sustained.pace < 1 ? [slower, ...others, ...setOffBy(slower).map((proc) => proc.damage)].reduce((sum, dealt) => sum + dealt.dps, 0) : dps;
   const resources = { ...sustained, cost, petCost, spent, kept };
-  return { rules, own, choices, chosen, form, forced, enemy, damage, aura, lasting, procs, dps, elements, stats, crit, retribution: { stacks, spends, spent: perCast, name: skills.retribution.name }, resources };
+  return { rules, own, choices, chosen, form, forced, enemy, damage, aura, lasting, procs, dps, elements, stats, crit, retribution: { stacks, spends, spent: perCast, name: skills.retribution.name }, resources, targets: { count: enemy.count, area: [damage, aura?.damage, ...lasting.map((e) => e.damage), ...procs.map((p) => p.damage)].some((d) => d?.parts.some((part) => part.hit?.area)) } };
 }
 
 const HITS: Element[] = ['Physical', 'Fire', 'Cold', 'Nature', 'Shadow'];

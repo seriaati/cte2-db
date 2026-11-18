@@ -102,6 +102,9 @@ export interface SkillHit {
   // The effect the skill leaves whose script deals it.
   effect?: string;
   volleys?: Volley[];
+  // It hits an area, or comes from a projectile that goes on through enemies, so it lands on each
+  // of the enemies the skill is used on.
+  area?: true;
 }
 
 // An effect that a use of a skill leaves on its caster or on an enemy, whose own script deals
@@ -254,6 +257,8 @@ export interface Target {
   effects: Record<string, number>;
   // It is the one dealing the hit, which it then can't dodge (DamageEvent.canAvoidHit).
   self?: true;
+  // How many enemies like it a skill is used on, for the hits that land on each of them.
+  count?: number;
 }
 
 // What working out a hit takes of the rules.
@@ -639,8 +644,9 @@ const AIM = { distance: 5, reach: 0.6 / 2 + 0.3 };
 // add, and how many hit the target, aimed so that the most do. They fan out evenly, go around in
 // a circle with nova, or with barrage side by side a block apart, all the same way. One hits where
 // its path passes within reach of the target, a homing one where it comes within its tracking
-// radius. Random spread is left out, and so are chains and piercing: a projectile hits a mob once
-// (EntityData.alreadyHit), and a chain never goes back to the one it came from.
+// radius. Random spread is left out, and so are chains: a projectile hits a mob once
+// (EntityData.alreadyHit), and a chain never goes back to the one it came from. One that goes on
+// through enemies hits each of the others the skill is used on as well (SkillHit.area).
 function shots(rules: DamageRules, who: Fighter, skill: Pick<SkillDamage, 'style' | 'tags' | 'pets'>) {
   const { now, bools } = castData(rules, who, skill, {});
   const one = (v: Volley) => {
@@ -795,7 +801,7 @@ function strikes(rules: DamageRules, { who, rank, topRank }: Omit<Used, 'skill'>
     const effectiveness = leveled(calc.effectiveness, rank, topRank);
     const from: Hit = { amount, element: hit.element, bonus: false, depth: 0, style: as.style, tags: as.tags, basic: false, effectiveness, multis: [levelPenalty(who, target)], summon };
     const volley = fired && hit.volleys ? fired(hit.volleys) : undefined;
-    return { hit, count: hit.count * (volley?.hit ?? 1), from, by: who, volley };
+    return { hit, count: hit.count * (volley?.hit ?? 1) * (hit.area ? (target.count ?? 1) : 1), from, by: who, volley };
   });
 }
 
