@@ -20,6 +20,7 @@ import {
   type GearSlot,
   type Item,
   type Jewel,
+  type RarityType,
   type Rolled,
 } from './buildRules';
 import type { Core, Sections } from './builds';
@@ -135,14 +136,14 @@ export function itemParts(parts: NonNullable<ReturnType<typeof readItem>>, item:
 // OmenData.calcPiecesEquipped: a worn item counts toward its kind of rarity until the codex has
 // enough of that kind, unless the codex wants its slot to hold another kind.
 function piecesWorn(data: Gear, build: Build, codex: Codex) {
-  const counted: Record<string, number> = {};
+  const counted: Partial<Record<RarityType, number>> = {};
   for (const item of Object.values(build.gear)) {
     const base = data.bases.find((b) => b.id === item.base);
     const type = data.rarityTypes[item.unique ? data.uniqueRarity.id : item.rarity];
     if (!base || !type || codex.slots.some((req) => req.slot === base.slot && req.type !== type)) continue;
     if ((counted[type] ?? 0) < codex.pieces[type]) counted[type] = (counted[type] ?? 0) + 1;
   }
-  return Object.values(counted).reduce((sum, n) => sum + n, 0);
+  return counted;
 }
 
 // The build's codex as game data still knows it: what it gives, and how much of it the worn gear earns.
@@ -155,6 +156,7 @@ export function readCodex(data: Gear, build: Build) {
   const limits = data.codex.rarities[rarity.id];
   const slots = codex.slots.slice(0, limits.slots);
   const pool = data.codex.affixes.filter((a) => kind.affixTypes.includes(a.type));
+  const byKind = piecesWorn(data, build, codex);
   return {
     codex,
     kind,
@@ -164,7 +166,8 @@ export function readCodex(data: Gear, build: Build) {
     percent: codexPercent({ ...codex, slots }, limits.statMulti),
     pool,
     affixes: codex.affixes.flatMap((id) => pool.find((a) => a.id === id) ?? []).slice(0, limits.affixes),
-    worn: piecesWorn(data, build, codex),
+    worn: Object.values(byKind).reduce((sum, n) => sum + n, 0),
+    byKind,
   };
 }
 
@@ -647,7 +650,7 @@ export function buildDamage(data: Data & Pick<Sections, 'damage'>, build: Build)
   const slower = { ...damage, rate: damage.rate * sustained.pace, dps: damage.dps * sustained.pace };
   const kept = sustained.pace < 1 ? [slower, ...others, ...setOffBy(slower).map((proc) => proc.damage)].reduce((sum, dealt) => sum + dealt.dps, 0) : dps;
   const resources = { ...sustained, cost, petCost, spent, kept };
-  return { rules, own, choices, chosen, form, forced, enemy, damage, aura, lasting, procs, dps, elements, stats, crit, retribution: { stacks, spends, spent: perCast, name: skills.retribution.name }, resources, targets: { count: enemy.count, area: [damage, aura?.damage, ...lasting.map((e) => e.damage), ...procs.map((p) => p.damage)].some((d) => d?.parts.some((part) => part.hit?.area)) } };
+  return { rules, own, choices, chosen, form, forced, enemy, damage, aura, lasting, procs, dps, elements, stats, crit, retribution: { stacks, spends, spent: perCast, name: skills.retribution.name }, resources, rank: use && { rank: use.rank, learned: build.perks[chosen!.perk.id] ?? 0 }, targets: { count: enemy.count, area: [damage, aura?.damage, ...lasting.map((e) => e.damage), ...procs.map((p) => p.damage)].some((d) => d?.parts.some((part) => part.hit?.area)) } };
 }
 
 const HITS: Element[] = ['Physical', 'Fire', 'Cold', 'Nature', 'Shadow'];

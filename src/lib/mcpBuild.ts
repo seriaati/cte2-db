@@ -13,6 +13,7 @@ import {
   exactly,
   exportBuild,
   maxRank,
+  needsAt,
   pointsAt,
   readBuild,
   supportSlots,
@@ -25,6 +26,7 @@ import {
   type RarityType,
   type Rolled,
   type TreeId,
+  codexBonuses,
 } from './buildRules';
 import { core, sections } from './builds';
 import { ELEMENTS, resistance, volleysMissed, type Resource } from './damageRules';
@@ -73,7 +75,7 @@ export interface GivenBuild {
   codex?: GivenCodex | null;
   augments?: Given[];
   jewels?: { kind: string; rarity?: string; level?: number; affixes?: Given[]; corruption?: Given[] }[];
-  damage?: { skill?: string; attacks?: number };
+  damage?: { skill?: string; attacks?: number; targets?: number };
   enemy?: { level?: number; rarity?: string; affixes?: string[] };
   defense?: { hit?: number; rate?: number };
   retribution?: number;
@@ -257,7 +259,7 @@ const elementName = (id: string) => Object.values(ELEMENTS).find((element) => el
 // What a build comes to: its points, damage and defense as the build editor works them out, every
 // stat when `stats` is set, and the file the editor imports when `file` is. Throws, saying what is
 // wrong, for a build the game wouldn't allow.
-export function characterBuild(origin: string, given: GivenBuild, options: { connect?: boolean; stats?: boolean; file?: boolean } = {}): string {
+export function characterBuild(origin: string, given: GivenBuild, options: { connect?: boolean; allStats?: boolean; file?: boolean } = {}): string {
   const problems: string[] = [];
   // Problems of one part of the build, noted under that part's name.
   const within = <T>(where: string, read: (issues: string[]) => T) => {
@@ -451,10 +453,21 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
   const gearLines = GEAR_SLOTS.flatMap((slot) => {
     const item = build.gear[slot.id];
     const parts = item && readItem(gear, item);
-    return parts ? [`${slot.name}: ${nameOf(parts)}, ${parts.rarity.name} ${parts.base.name}, level ${item.level}${parts.runeword ? `, forms the runeword ${parts.runeword.name}` : ''}`] : [];
+    const needs = parts ? needsAt(parts.base.needs, gear.requirement, item.level) : [];
+    return parts
+      ? [
+          `${slot.name}: ${nameOf(parts)}, ${parts.rarity.name} ${parts.base.name}, level ${item.level}${parts.runeword ? `, forms the runeword ${parts.runeword.name}` : ''}${needs.length ? `, needs ${needs.map((n) => `${n.value} ${defs[n.stat].name}`).join(' and ')}` : ''}`,
+        ]
+      : [];
   });
   const book = readCodex(gear, build);
-  if (book) gearLines.push(`Codex: ${book.rarity.name} ${book.kind.name}, level ${book.codex.level}, ${book.worn} of the ${RARITY_TYPES.reduce((sum, type) => sum + book.codex.pieces[type], 0)} pieces it asks for are worn`);
+  if (book) {
+    const kinds = RARITY_TYPES.map((type) => ({ type, asked: book.codex.pieces[type], worn: book.byKind[type] ?? 0 }));
+    const steps = codexBonuses(book.codex, book.kind.mods, book.affixes).map((step) => `${step.pieces} for ${[...(step.affix ? [label(step.affix)] : []), ...(step.mods ? ['its own stats'] : [])].join(' and ')}${book.worn >= step.pieces ? ' (on)' : ''}`);
+    gearLines.push(
+      `Codex: ${book.rarity.name} ${book.kind.name}, level ${book.codex.level}. It asks for ${kinds.map((k) => `${k.asked} ${k.type}`).join(', ')} ${given.codex?.pieces ? '' : `(pieces was left out, so the fewest a ${book.rarity.name} codex can ask for) `}and counts ${kinds.map((k) => `${k.worn} ${k.type}`).join(', ')} worn: ${book.worn} in all. A worn item counts toward the kind of its rarity (a unique as unique, runeword gear as runed, every other rarity as normal), up to what is asked of that kind. Pieces it takes: ${steps.join('; ')}`,
+    );
+  }
 
   return [
     [`# ${build.name}`, `Level ${level}, ${classes.map((c) => c.name).join(' and ') || 'no class'}. Worked out for pack ${core.pack}.`],
@@ -462,7 +475,8 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
     ...(gearLines.length ? [['## Gear', ...gearLines]] : []),
     [
       '## Damage',
-      `Skill: ${chosen?.spell.name ?? 'Basic attack'}${attack.form?.needs.length ? `, used with ${attack.form.needs.join(' and ')}${attack.forced ? ', which it needs to do anything and is taken to have' : ''}` : ''}${attack.retribution.spends && held ? `, spending a ${retribution.name} stack every cast` : ''}`,
+      `Skill: ${chosen?.spell.name ?? 'Basic attack'}${attack.form?.needs.length ? `, used with ${attack.form.needs.join(' and ')}${attack.forced ? ', which it needs to do anything and is taken to have' : ''}` : ''}${attack.rank ? `, at level ${attack.rank.rank}${attack.rank.rank > attack.rank.learned ? ` (${attack.rank.learned} points and ${attack.rank.rank - attack.rank.learned} from stats that add skill levels)` : ''}` : ''}${attack.retribution.spends && held ? `, spending ${count(attack.retribution.spent, `${retribution.name} stack`)} every cast while any are held (taken to be gained back as fast, as from blocks)` : ''}`,
+      ...(attack.targets.area ? [`Enemies hit: ${attack.targets.count}${attack.targets.count > 1 ? '. Hits on an area and from projectiles that go on through enemies land on each, and every number below is what they take together' : ''}`] : []),
       ...(attack.aura ? [`Aura on: ${attack.aura.name}${attack.aura.damage ? `, which deals ${amount(attack.aura.damage.dps)} of the damage a second on its own` : ''}`] : []),
       ...(effectNames(false, true).length ? [`Effects on: ${effectNames(false, true).join(', ')}`] : []),
       ...(effectNames(true, true).length ? [`Effects on the enemy: ${effectNames(true, true).join(', ')}`] : []),
@@ -488,7 +502,11 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
       ...(dealt.lands < 1 ? [`Chance to hit: ${percent(dealt.lands)}, the enemy dodging the rest`] : []),
       ...(attack.elements.length ? [`By element: ${attack.elements.map(([element, n]) => `${ELEMENTS[element].name} ${amount(n)} a second (${Math.round((n / attack.dps) * 100)}%)`).join(', ')}`] : []),
       `Enemy: level ${enemy.level} ${enemy.rarity.name} mob${enemy.affixes.length ? ` (${enemy.affixes.map((a) => a.name).join(', ')})` : ''}, ${['armor', 'dodge', 'spell_dodge'].map((id) => `${amount(attack.enemy.stats.get(id)?.value ?? 0)} ${defs[id].name.toLowerCase()}`).join(', ')}, resistances ${RESISTS.map((id) => `${elementName(id)} ${resistance(attack.enemy.stats, id, 0)}%`).join(', ')}`,
-      ...(forms.length > 1 ? [`${chosen!.spell.name} takes a form of its own with each of: ${forms.map((v) => v.needs.join(' and ') || 'no effect').join(', ')}. The effects that are on pick it`] : []),
+      ...(forms.length > 1
+        ? [
+            `${chosen!.spell.name} takes a form of its own with each of: ${forms.map((v) => [...v.needs, ...(v.retribution ? [`${retribution.name} (spending ${v.retribution} a cast)`] : [])].join(' and ') || 'no effect').join(', ')}. The effects that are on${forms.some((v) => v.retribution) ? ` and the ${retribution.name} stacks held` : ''} pick it`,
+          ]
+        : []),
       ...(effectNames(false, false).length ? [`Effects the build can turn on: ${effectNames(false, false).join(', ')}`] : []),
       ...(effectNames(true, false).length ? [`Effects it can put on the enemy: ${effectNames(true, false).join(', ')}`] : []),
       ...(others.length ? [`Other skills on the hotbar that can be worked out: ${others.join(', ')}`] : []),
@@ -519,7 +537,7 @@ export function characterBuild(origin: string, given: GivenBuild, options: { con
       `Enemy: level ${enemy.level} ${enemy.rarity.name} mob${enemy.affixes.length ? ` (${enemy.affixes.map((a) => a.name).join(', ')})` : ''}${effectNames(true, true).length ? ` under ${effectNames(true, true).join(', ')}` : ''}, a common mob's hit being ${amount(enemy.hit)} before defenses, ${enemy.rate} hits a second`,
       ...leftOut(guard.rules.situational.filter((id) => value(id))),
     ],
-    ...(options.stats
+    ...(options.allStats
       ? statGroups(totals)
           .filter((group) => group.rows.length)
           .map((group) => [`## Stats: ${group.name}`, ...group.rows.map(show)])

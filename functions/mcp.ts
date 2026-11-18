@@ -1,7 +1,7 @@
 // Cloudflare Pages Function: serves the MCP endpoint at /mcp next to the static site.
 import { createMcpHandler, McpServer } from '@modelcontextprotocol/server';
 import * as z from 'zod/v4';
-import { AUGMENT_SLOTS, GEAR_SLOTS, HOTBAR_SLOTS, MAX_CLASSES, MAX_JEWELS, RARITY_TYPES } from '../src/lib/buildRules';
+import { AUGMENT_SLOTS, GEAR_SLOTS, HOTBAR_SLOTS, MAX_CLASSES, MAX_JEWELS, RARITY_TYPES, TARGETS } from '../src/lib/buildRules';
 import { CATEGORIES, gearPlanLink, maxLevel, PLAN_RARITIES, RARITIES, search, talentBuildLink, talentLinks } from '../src/lib/mcp';
 import { characterBuild } from '../src/lib/mcpBuild';
 
@@ -9,7 +9,14 @@ const level = z.number().int().min(1).max(maxLevel).optional().describe(`Item or
 
 // A build as the build editor's files hold it, with names taken wherever a file has an id.
 const top = RARITIES.at(-1);
-const roll = z.number().min(0).max(100).optional();
+const roll = z
+  .number()
+  .min(0)
+  .max(100)
+  .optional()
+  .describe(
+    "Where the value sits between the lowest the part can roll (0) and the highest (100), across every tier. Left out, it is the best the item's rarity allows. Each affix in game has a tier of its own, which can be below the item's rarity: give the roll of the value seen, e.g. 24 for a Truthful of 9.8% on a mythic hammer, as its range runs from 5% to 25%. A roll above the item rarity's best is lowered to it.",
+  );
 const part = z.union([z.string(), z.object({ id: z.string(), roll })]);
 const parts = z.array(part).optional();
 const points = z.number().int().min(0);
@@ -29,7 +36,9 @@ const item = z.object({
   sockets: z
     .array(z.union([z.string(), z.object({ kind: z.enum(['gem', 'rune']).optional(), id: z.string(), roll })]))
     .optional()
-    .describe('Gems and runes in socket order, e.g. ["Ano Rune", "Grand Ruby"]. The runes of a runeword, in its order, form it.'),
+    .describe(
+      'Gems and runes in socket order, e.g. ["Ano Rune", "Grand Ruby"]. The runes of a runeword, in its order, form it. An item has at most as many sockets as its rarity gives (a unique 0 or 1), plus what corruption adds; one it could still be given shows as [Locked Socket] in game and is simply left empty here.',
+    ),
   runewordRoll: roll,
   infusion: z.union([z.string(), z.object({ id: z.string(), rarity: z.enum(RARITIES).optional() })]).optional().describe('A stat the infusion gives, e.g. "Fire Damage".'),
   corruption: z.object({ kind: z.string().describe('Upgraded, Elevated or Ascended: how many affixes and sockets the corruption added.'), affixes: parts }).optional(),
@@ -58,13 +67,19 @@ const build = z.object({
       id: z.string().describe('e.g. "Codex of Flames".'),
       rarity: z.enum(RARITIES).optional(),
       level: own,
-      pieces: z.object(Object.fromEntries(RARITY_TYPES.map((type) => [type, points])) as Record<(typeof RARITY_TYPES)[number], typeof points>).partial().optional().describe('How many worn pieces of each kind of rarity it asks for. It gives its stats while they are worn.'),
+      pieces: z
+        .object(Object.fromEntries(RARITY_TYPES.map((type) => [type, points])) as Record<(typeof RARITY_TYPES)[number], typeof points>)
+        .partial()
+        .optional()
+        .describe(
+          'How many worn pieces of each kind of rarity it asks for, as the codex in game says: normal (any rarity but unique and runeword), unique, and runed (runeword gear). A kind left out is the fewest its rarity allows, which is at least 1 of each. The codexes category of the search has the limits of each rarity.',
+        ),
       slots: z.array(z.object({ slot: z.string(), type: z.enum(RARITY_TYPES) })).optional().describe('Kinds of gear it wants to be of one kind of rarity, e.g. {"slot": "Ring", "type": "unique"}.'),
-      affixes: z.array(z.string()).optional(),
+      affixes: z.array(z.string()).optional().describe('Its affixes, by the id or a stat the codexes category of the search gives.'),
     })
     .nullable()
     .optional(),
-  augments: z.array(part).max(AUGMENT_SLOTS).optional().describe('Each reserves augment capacity.'),
+  augments: z.array(part).max(AUGMENT_SLOTS).optional().describe('Each reserves augment capacity. By name or id; the ids differ from the names (Vitality Augment is "guardian"), and the search gives both.'),
   jewels: z
     .array(
       z.object({
@@ -82,6 +97,13 @@ const build = z.object({
     .object({
       skill: z.string().optional().describe('The spell on the hotbar whose damage is worked out. Left out, it is the basic attack.'),
       attacks: z.number().positive().max(20).optional().describe("Basic attacks a second, when not the weapon's own."),
+      targets: z
+        .number()
+        .int()
+        .min(1)
+        .max(TARGETS.max)
+        .optional()
+        .describe(`How many enemies, all alike, the skill is used on. Its hits on an area and from projectiles that go on through enemies land on each; other hits on one. Defaults to ${TARGETS.standard}.`),
     })
     .optional(),
   enemy: z
@@ -201,11 +223,16 @@ const handler = createMcpHandler(({ requestInfo }) => {
     {
       title: 'Work out a character build',
       description:
-        "Work out a whole Craft to Exile 2 character the way the site's build editor does: the points it spends and has, what one skill deals a second to an enemy mob, its effective health against that mob's hits, and every stat when asked. Use it to put a build together, to improve one, or to see what a change does; send the whole build each time. Things go by name as the search tool gives them, or by id. What has no name (passives, infusions, and the affixes of jewels, corruption and codexes) goes by the id the search gives or by a stat it gives. The build of a file exported from the editor works as it is. The build has to be one the game allows; when it isn't, the answer lists everything that is wrong, with the choices where there are few, instead of the numbers. Damage is one skill used over and over on one enemy, with chances and the enemy's dodges counted as their average, and of projectiles shot together those that would hit an enemy as big as a zombie 5 blocks away, aimed so that the most do, and for a summon skill what its pets deal attacking that enemy without pause; of buffs and debuffs only a Crusader's Retribution stacks, the one aura set to be on and the effects set to be on count, out of those the build's skills and stats give, each as if kept up the whole time; what an effect deals itself while it lasts counts, with the skill that leaves it or apart when it is set to be on; spells that stats set off on a hit count, as often as their chance and cooldown let them go off, but not those set off by a kill or by a hit the character takes; ailments are not counted. Damage a second is at full pace; the answer gives what the skill costs in mana, energy or blood and what comes back a second while fighting (regeneration and what its hits leech or restore, up to the leech cap), and where it costs more than comes back, how long the pool lasts and the damage a second that can be kept up after. Effective health counts no healing; the answer sets the health and magic shield that come back a second against the enemy's hits and says how long the character lasts. The editor opens builds from files, not links: set file for the file to hand to the user.",
+        `Work out a whole Craft to Exile 2 character the way the site's build editor does: the points it spends and has, what one skill deals a second to an enemy mob, its effective health against that mob's hits, and every stat when asked. Use it to put a build together, to improve one, or to see what a change does; send the whole build each time. Things go by name as the search tool gives them, or by id. What has no name (passives, infusions, and the affixes of jewels, corruption and codexes) goes by the id the search gives or by a stat it gives. The build of a file exported from the editor works as it is. The build has to be one the game allows, down to the level and attributes each piece of gear asks for; when it isn't, the answer lists everything that is wrong, with the choices where there are few, instead of the numbers. Damage is one skill used over and over on an enemy mob, at the level its points and stats that add skill levels (such as +1 to all skills) give it, with chances and the enemy's dodges counted as their average, and of projectiles shot together those that would hit an enemy as big as a zombie 5 blocks away, aimed so that the most do, and for a summon skill what its pets deal attacking that enemy without pause; its hits on an area and from projectiles that go on through enemies land on each of as many enemies as damage.targets says (${TARGETS.standard} unless given), all alike, and the damage a second is what they take together, while other hits, basic attacks and pets' attacks land on one; taunts and threat are left out; of buffs and debuffs only a Crusader's Retribution stacks, the one aura set to be on and the effects set to be on count (a Crusader skill that does more with Retribution spends as many stacks a cast as its script takes, Blessed Hammer one as each of its hammers ends, and they are taken to be held again by the next cast), out of those the build's skills and stats give, each as if kept up the whole time; what an effect deals itself while it lasts counts, with the skill that leaves it or apart when it is set to be on; spells that stats set off on a hit count, as often as their chance and cooldown let them go off, but not those set off by a kill or by a hit the character takes; ailments are not counted. Damage a second is at full pace; the answer gives what the skill costs in mana, energy or blood and what comes back a second while fighting (regeneration and what its hits leech or restore, up to the leech cap), and where it costs more than comes back, how long the pool lasts and the damage a second that can be kept up after. Effective health counts no healing; the answer sets the health and magic shield that come back a second against the enemy's hits and says how long the character lasts. The editor opens builds from files, not links: set file for the file to hand to the user.`,
       inputSchema: z.object({
         build,
-        connect: z.boolean().optional().describe('Add the nodes needed to join the given talents to an entry point and to each other, in each tree, as talent_build_link does. The answer lists what was added.'),
-        stats: z.boolean().optional().describe('Also list every stat the build comes to.'),
+        connect: z
+          .boolean()
+          .optional()
+          .describe(
+            'Add the nodes needed to join the given talents to an entry point and to each other, in each tree, as talent_build_link does. The answer lists what was added. Given nodes are always kept, but the added ones are worked out anew each time and can differ once a node is added, so to keep a route give every node of the last answer (or of the file) and only add to them. Routes are short, not picked for what their nodes give: give a node to steer one.',
+          ),
+        allStats: z.boolean().optional().describe('Also list every stat the build comes to. (Attribute points go in build.stats.)'),
         file: z.boolean().optional().describe('Also return the build as the file the build editor imports. Ask for it once the build is settled, and pass the text on unchanged.'),
       }),
       annotations: { readOnlyHint: true },
