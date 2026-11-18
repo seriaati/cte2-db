@@ -2,7 +2,7 @@
 // the site's own search index (pages/search.json.ts) borrows the stat lines.
 import { canRoll, formatRange, formatStat, rolled, type Affix, type Rarity, type StatMod } from './affix';
 import { auras } from './auras';
-import { baseGear, reqScaling } from './bases';
+import { baseGear, needsAt } from './bases';
 import { exactly } from './buildRules';
 import { sections } from './builds';
 import { affixes, bases, infusions, maxLevel, rarities, tagNames } from './gear';
@@ -11,6 +11,9 @@ import type { FamilyStats } from './items';
 import { planAffixes, planBases, planRarities } from './planner';
 import { encodePlan, formedRuneword, itemName, rollWindows, slotCount } from './plannerRules';
 import { runed, runes, runewords, slotNames } from './runes';
+import spellData from '../data/spells.json';
+import calcData from '../data/value_calc.json';
+import { effects } from './effects';
 import { calcText, cost } from './spellRules';
 import { stats } from './stats';
 import { encodeBuild, neighbours, rooted } from './talentRules';
@@ -18,7 +21,9 @@ import { ascendancy, atlas, talents, type Perk, type TalentTree } from './talent
 import { sources, uniqueRarity, uniques } from './uniques';
 
 export { maxLevel };
-export const CATEGORIES = ['affixes', 'infusions', 'bases', 'uniques', 'runes', 'runewords', 'gems', 'augments', 'spells', 'supports', 'jewels', 'talents', 'stats'] as const;
+export const CATEGORIES = ['affixes', 'infusions', 'bases', 'uniques', 'runes', 'runewords', 'gems', 'augments', 'spells', 'supports', 'jewels', 'effects', 'codexes', 'talents', 'stats'] as const;
+// The lists whose values change with the rarity searched at.
+const BY_RARITY: readonly Entry['category'][] = ['affixes', 'infusions', 'bases', 'augments', 'jewels'];
 export const RARITIES = rarities.map((r) => r.id);
 export const PLAN_RARITIES = planRarities.map((r) => r.id);
 
@@ -69,7 +74,30 @@ const perkLines = (perk: Perk, level: number) => [
   ...perkStats(perk, level),
 ];
 
-const { skills, sockets } = sections;
+const { skills, sockets, gear: gearData, damage } = sections;
+const rangeLines = (mods: StatMod[], level: number) => mods.map((s) => show(formatRange(s, rolled(s, 0, level), rolled(s, 100, level))));
+
+type RawPart = { acts: { type: string; map: Record<string, any> }[]; ifs: { type: string; map: Record<string, any> }[] };
+const rawSpells = spellData as unknown as Record<string, { attached: { on_cast: RawPart[]; entity_components: Record<string, RawPart[]> } }>;
+const rawCalcs = calcData as Record<string, { stat_scalings: { stat: string; multi: { min: number; max: number } }[] }>;
+const RETRIBUTION_IF = (part: RawPart) => part.ifs.some((i) => i.type === 'caster_has_mns_effect' && i.map.exile_potion_id === 'retribution' && !i.map.is_false);
+
+// AggroAction and ThreatData: what a skill's taunt does, which the damage worked out leaves out.
+function tauntLine(id: string) {
+  const parts = [...rawSpells[id].attached.on_cast, ...Object.values(rawSpells[id].attached.entity_components).flat()];
+  const part = parts.find((p) => p.acts.some((a) => a.type === 'aggro' && a.map.aggro === 'AGGRO'));
+  if (!part) return [];
+  const calc = rawCalcs[part.acts.find((a) => a.type === 'aggro')!.map.value_calculation];
+  const amount = calc.stat_scalings.map((s) => `${+(s.multi.min * 100).toFixed(1)}–${+(s.multi.max * 100).toFixed(1)}% of the caster's ${sections.stats.defs[s.stat]?.name ?? s.stat}`).join(' plus ');
+  return [
+    `Taunts${RETRIBUTION_IF(part) ? ` while a ${skills.retribution.name} stack is held` : ''}: each enemy it reaches gains threat toward the caster of ${amount}, from the skill's lowest to its highest level. Dealing damage to a mob and being hit by it add threat too, a mob's threat toward each one adds up, and it turns on whoever it holds the most threat toward.`,
+  ];
+}
+// What a Crusader skill does with Retribution stacks, as the damage worked out counts it.
+function retributionLine(id: string) {
+  const spent = damage.skills[id]?.variants.find((v) => v.retribution)?.retribution;
+  return spent ? [`Spends ${spent === 1 ? '1 stack' : `up to ${spent} stacks`} of ${skills.retribution.name} a cast while any are held, for its stronger form`] : [];
+}
 
 // A class's spells, described at the most points they take, and its passives. A passive has no
 // name in game, so what one level of it gives stands in for one.
@@ -90,6 +118,8 @@ function classEntries(level: number): Entry[] {
           fill(spell.desc),
           ...(spell.linked ? [`${spell.linked.name}: ${fill(spell.linked.desc)}`] : []),
           ...[...costs.filter(([, value]) => value > 0), ...spell.facts].map(([label, value]) => `${label}: ${value}`),
+          ...retributionLine(perk.id),
+          ...tauntLine(perk.id),
           `Tags: ${spell.tags.join(', ')}`,
           ...statLines(spell.stats, exactly(Math.trunc(Math.fround(spell.maxLevel / top) * 100)), level),
         ],
@@ -110,6 +140,44 @@ function jewelEntries(level: number, rarity: Rarity, whole: Rarity): Entry[] {
   ];
 }
 
+const uniqueSockets = (() => {
+  const { sockets: most, maxGems, maxRunes } = gearData.uniqueRarity;
+  return `0 to ${most} as on every unique, rolled per item, holding at most ${maxGems} gems and ${maxRunes} runes. One an item can still be given shows as [Locked Socket] in game`;
+})();
+
+// Codexes, the rules each rarity sets for one, and the affixes they draw from (OmenData, OmenSet).
+function codexEntries(level: number): Entry[] {
+  const { kinds, affixes, rarities: rules } = gearData.codex;
+  const tiers = gearData.rarities.filter((r) => !r.runewords);
+  const range = ({ min, max }: { min: number; max: number }) => (min === max ? `${min}` : `${min}–${max}`);
+  return [
+    {
+      category: 'codexes',
+      title: 'Codex rarities',
+      lines: [
+        'A codex asks for a number of worn pieces of each kind: normal (any rarity but unique and runeword), unique and runed (runeword gear). A worn item counts toward its kind up to what is asked of that kind, and a slot condition makes its slot count only with the kind it names. With every piece worn it gives its own stats; its affixes come one piece earlier each, the first at one piece short, never below two.',
+        "Its stats and affixes roll at (pieces asked for + slot conditions) × 10 × the rarity's multiplier percent of their ranges, which can pass 100%.",
+        ...tiers.map((r) => {
+          const rule = rules[r.id];
+          return `${r.name}: asks for ${range(rule.pieces.normal)} normal, ${range(rule.pieces.unique)} unique and ${range(rule.pieces.runed)} runed pieces; up to ${rule.affixes} affixes and ${rule.slots} slot conditions; multiplier ${rule.statMulti}`;
+        }),
+      ],
+    },
+    ...kinds.map((k): Entry => ({
+      category: 'codexes',
+      title: k.name,
+      lines: [`Id: ${k.id}`, `Its stats, from 0% to 100% of their range: ${rangeLines(k.mods, level).join(', ')}`, `Affixes: those of the codexes category that roll on ${k.name}`],
+    })),
+    ...affixes
+      .filter((a) => kinds.some((k) => k.affixTypes.includes(a.type)))
+      .map((a): Entry => ({
+        category: 'codexes',
+        title: rangeLines(a.stats, level).join(', '),
+        lines: [`Id: ${a.id}`, `A codex affix, from 0% to 100% of its range`, `Rolls on: ${kinds.filter((k) => k.affixTypes.includes(a.type)).map((k) => k.name).join(', ')}`],
+      })),
+  ];
+}
+
 export const rollsAt = (rarity: Rarity) => ({
   whole: { ...rarity, minPercent: 0, maxPercent: 100 },
   // GearInfusionData.getPercent: an infusion doesn't roll, it sits at the top of its rarity's range.
@@ -120,7 +188,6 @@ export const rollsAt = (rarity: Rarity) => ({
 // Each list is worked out the way its page on the site does it.
 function entries(level: number, rarity: Rarity): Entry[] {
   const { whole, top, base: baseRolls } = rollsAt(rarity);
-  const requirement = reqScaling.base + reqScaling.perLevel * (level - 1);
 
   return [
     ...affixes.map((a): Entry => ({
@@ -136,7 +203,7 @@ function entries(level: number, rarity: Rarity): Entry[] {
       lines: [
         `Slot: ${slotNames[b.slot]} (${b.family})`,
         `Tags: ${b.tags.map((t) => tagNames[t]).join(', ')}`,
-        ...(b.needs.length ? [`Requires: ${b.needs.map((n) => `${Math.floor(n.factor * requirement)} ${n.name}`).join(', ')}`] : []),
+        ...(b.needs.length ? [`Requires: ${needsAt(b, level).map((n) => `${n.value} ${n.name}`).join(', ')}`] : []),
         ...statLines(b.stats, baseRolls, level),
       ],
     })),
@@ -147,6 +214,7 @@ function entries(level: number, rarity: Rarity): Entry[] {
         `Base: ${bases.find((b) => b.id === u.base)!.name}`,
         `Source: ${sources.find((s) => s.id === u.source)!.name}`,
         `Drops from level ${u.minLevel} and map tier ${u.minMapTier}`,
+        `Sockets: ${uniqueSockets}`,
         ...statLines(u.stats, uniqueRarity, level),
       ],
     })),
@@ -165,7 +233,7 @@ function entries(level: number, rarity: Rarity): Entry[] {
     ...auras.map((a): Entry => ({
       category: 'augments',
       title: a.name,
-      lines: [`Style: ${a.style}`, `Needs level ${a.minLevel}`, `Reserves ${a.reserves} Augment Capacity`, ...statLines(a.stats, rarity, level)],
+      lines: [`Id: ${a.id}`, `Style: ${a.style}`, `Needs level ${a.minLevel}`, `Reserves ${a.reserves} Augment Capacity`, ...statLines(a.stats, rarity, level)],
     })),
     ...classEntries(level),
     ...skills.supports.map((s): Entry => ({
@@ -174,6 +242,20 @@ function entries(level: number, rarity: Rarity): Entry[] {
       lines: [`Style: ${s.style}`, `Needs level ${s.minLevel}`, `Its skill costs ${s.cost}% as much to cast`, ...(s.oneKind ? [`Only one ${s.oneKind} support per skill`] : []), ...statLines(s.stats, whole, level)],
     })),
     ...jewelEntries(level, rarity, whole),
+    ...effects.map((e): Entry => ({
+      category: 'effects',
+      title: e.name,
+      lines: [
+        `Id: ${e.id}`,
+        `${e.type === 'beneficial' ? 'Buff' : e.type === 'negative' ? 'Debuff' : e.type}${e.maxStacks > 1 ? `, up to ${e.maxStacks} stacks` : ''}${e.oneKind ? `, only one ${e.oneKind} effect at a time` : ''}`,
+        ...(e.desc ? [e.desc] : []),
+        ...(e.stats.length ? [`Each stack gives, from the lowest to the highest level of what gives it: ${rangeLines(e.stats, level).join(', ')}`] : []),
+        ...e.vanilla.map(show),
+        ...(e.tags.length ? [`Tags: ${e.tags.join(', ')}`] : []),
+        ...(e.from.length ? [`Given by: ${[...new Set(e.from.map((f) => f.name))].join(', ')}`] : []),
+      ],
+    })),
+    ...codexEntries(level),
     ...Object.entries(TREES).flatMap(([key, { name, tree }]) =>
       tree.perks.map((p, i): Entry => ({
         category: 'talents',
@@ -219,7 +301,7 @@ export function search({ query = '', category, level = maxLevel, rarity: rarityI
   if (!page.length) return found.length ? `Only ${found.length} entries match; offset ${offset} is past the end.` : 'Nothing matches.';
 
   return [
-    `Showing ${offset + 1}-${offset + page.length} of ${found.length} matching entries. Values are at level ${level}, ${rarity.name} rarity.`,
+    `Showing ${offset + 1}-${offset + page.length} of ${found.length} matching entries. Values are at level ${level}${page.some((e) => BY_RARITY.includes(e.category)) ? `, ${rarity.name} rarity for ${BY_RARITY.filter((c) => page.some((e) => e.category === c)).join(', ')}` : ''}.`,
     ...page.map((e) => [`## ${e.title} (${e.category})`, ...e.lines].join('\n')),
   ].join('\n\n');
 }
