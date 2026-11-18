@@ -129,6 +129,8 @@ export interface Build {
   // The effects taken to be on, of the ones the build's skills and stats can put on the
   // character or on the enemy, with the stacks of each.
   effects: Record<string, number>;
+  // Skills on the hotbar that heal and deal no damage, taken to be cast whenever they are ready.
+  defensive: string[];
 }
 
 // GemInventoryHelper in Mine and Slash 6.4.13.
@@ -177,6 +179,7 @@ export const emptyBuild = ({ maxLevel, points }: Limits, name = 'New build'): Bu
   retribution: 0,
   aura: '',
   effects: {},
+  defensive: [],
 });
 
 // SpellSchool.isLevelEnoughFor and isLevelEnoughForSpellLevelUp: a perk opens at its row's level,
@@ -337,6 +340,7 @@ export function readBuild(v: unknown, limits: Limits): Build | null {
     retribution: int(v.retribution, 0, 100),
     aura: id(v.aura),
     effects: record(v.effects, 100),
+    defensive: [...new Set(list(v.defensive, HOTBAR_SLOTS).map(id).filter(Boolean))],
   };
 }
 

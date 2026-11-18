@@ -1,8 +1,8 @@
 import { buildDefense, percent, resistText, show } from '../../lib/buildCalc';
 import type { Build } from '../../lib/buildRules';
-import { ELEMENTS } from '../../lib/damageRules';
+import { ELEMENTS, type ByResource, type Resource } from '../../lib/damageRules';
 import { useDamage } from './DamageTab';
-import { AuraField, EffectsField, EnemyField, Info, Loading, NumberField, RetributionField, useSection, type TabProps } from './shared';
+import { AuraField, EffectsField, EnemyField, Info, Loading, NumberField, Popover, RetributionField, useSection, type TabProps } from './shared';
 
 // How the build holds up against the enemy set for it while it uses what `attack` worked out, for
 // the tab and for the summary beside the editor. Null until the game data it draws on has arrived.
@@ -10,6 +10,27 @@ export function useDefense(build: Build, attack: ReturnType<typeof useDamage>) {
   const defense = useSection('defense');
   const damage = useSection('damage');
   return defense && damage && attack ? buildDefense({ damage, defense }, build, attack) : null;
+}
+
+// Which of the hotbar's skills that heal and deal no damage are cast whenever they are ready.
+function DefensiveField({ offered, build, change }: Pick<TabProps, 'build' | 'change'> & { offered: { id: string; name: string }[] }) {
+  if (!offered.length) return null;
+  const on = offered.filter((skill) => build.defensive.includes(skill.id)).length;
+  const flip = (id: string) => change({ defensive: build.defensive.includes(id) ? build.defensive.filter((other) => other !== id) : [...build.defensive, id] });
+  return (
+    <Popover wide label={on ? `Defensive skills (${on})` : 'Defensive skills'}>
+      <div className="effects">
+        <span className="cap">Cast whenever ready</span>
+        <div className="effect-list">
+          {offered.map((skill) => (
+            <button key={skill.id} className="btn" type="button" aria-pressed={build.defensive.includes(skill.id)} onClick={() => flip(skill.id)}>
+              {skill.name}
+            </button>
+          ))}
+        </div>
+      </div>
+    </Popover>
+  );
 }
 
 export default function DefenseTab({ core, build, change }: TabProps) {
@@ -20,6 +41,12 @@ export default function DefenseTab({ core, build, change }: TabProps) {
   const { rules, totals, value, enemy, avoid, rows, weakest, shortest, held, aura } = found;
   const { shield } = totals;
   const set = (patch: Partial<Build['defense']>) => change({ defense: { ...build.defense, ...patch } });
+  const { defensive } = attack!;
+  const healed = (by: ByResource, times: number) =>
+    (Object.entries(by) as [Resource, number][])
+      .filter(([, n]) => n > 0)
+      .map(([id, n]) => `${show(n * times)} ${totals.rules.defs[id].name.toLowerCase()}`)
+      .join(' and ') || 'Nothing';
   const left = rules.situational.filter((id) => value(id)).map((id) => totals.rules.defs[id].name.replace('[VAL1]', 'X'));
 
   return (
@@ -40,8 +67,15 @@ export default function DefenseTab({ core, build, change }: TabProps) {
           <p>
             Recovery is what comes back a second while fighting: regeneration, which the pack doesn't slow in combat, and what the hits of the skill picked on the Damage tab leech
             or restore on a hit, at the pace it can keep up and no more a second than the leech cap. Set against it are the enemy's hits a second at the pace set, after
-            defenses, dodges and blocks, and what the aura costs. Restores on a kill don't count, for the enemy never dies, and neither do heals, potions and food. Stats that restore
+            defenses, dodges and blocks, and what the aura costs. So do what the skill picked on the Damage tab heals its user with each use and what the skills set under Defensive
+            skills heal. Restores on a kill don't count, for the enemy never dies, and neither do potions and food. Stats that restore
             on block or on dodge do nothing here: in the game they go to the one whose hit is blocked or dodged, and a mob blocks nothing and gives nothing back.
+          </p>
+          <p>
+            Defensive skills lists the skills on the hotbar that heal and deal no damage. One that is on is cast whenever it is ready, at the level the character has it and with its
+            support gems, and heals as its stats and the character's make it: on the character, on allies around it or around a totem it puts down, and over time through an effect
+            it gives, which the next cast renews. What it costs is spent, and the time its cast and the recovery after it take comes off the Damage tab's skill or basic attack
+            where they leave it too little, which lowers the damage a second. Heals from a projectile land wherever it goes and are left out, as is what auras heal.
           </p>
         </Info>
       </div>
@@ -54,6 +88,7 @@ export default function DefenseTab({ core, build, change }: TabProps) {
         <RetributionField build={build} change={change} />
         <AuraField build={build} change={change} />
         <EffectsField effects={totals.effects} build={build} change={change} />
+        <DefensiveField offered={defensive.offered} build={build} change={change} />
       </div>
 
       <dl className="totals-main">
@@ -171,6 +206,25 @@ export default function DefenseTab({ core, build, change }: TabProps) {
               <span className="v">{percent(aura.cost / (value('health') + value('magic_shield')))}</span>
             </li>
           </ul>
+        </section>
+      )}
+
+      {defensive.used.length > 0 && (
+        <section className="group">
+          <div className="group-head">
+            <h2>Defensive skills</h2>
+          </div>
+          <ul className="totals one">
+            {defensive.used.map((skill) => (
+              <li key={skill.id}>
+                <span>
+                  {skill.name}, every {show(1 / skill.rate)} s
+                </span>
+                <span>{healed(skill.perUse, skill.rate)} a second</span>
+              </li>
+            ))}
+          </ul>
+          {defensive.pace < 1 && <p className="note">Casting them leaves the Damage tab's {attack!.chosen ? attack!.chosen.spell.name : 'basic attack'} {percent(defensive.pace)} of its full pace.</p>}
         </section>
       )}
 

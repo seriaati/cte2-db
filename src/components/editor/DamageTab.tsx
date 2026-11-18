@@ -31,7 +31,7 @@ export default function DamageTab({ core, build, change }: TabProps) {
   const found = useDamage(build);
   if (!found) return <Loading />;
 
-  const { rules, own, choices, chosen, form, forced, enemy, damage, aura, lasting, procs, dps, elements, stats, crit, retribution, resources, targets } = found;
+  const { rules, own, choices, chosen, form, forced, enemy, damage, aura, lasting, procs, dps, elements, stats, crit, retribution, resources, targets, defensive } = found;
   // A summon skill is used by its pets, one attack at a time.
   const casts = chosen && damage.pets === undefined;
   const { defs } = own.rules;
@@ -62,7 +62,8 @@ export default function DamageTab({ core, build, change }: TabProps) {
             trident, and always when unarmed. What comes back while fighting is regeneration, which the pack doesn't slow in combat, and what every hit counted here leeches or
             restores on a hit, no more a second than the leech cap. Where that is less than the skill costs, the damage a second is still what it deals at full pace, and a note
             says how long a full pool lasts and what can be kept up after, with the skill used only as often as what comes back pays for. Restores on a kill don't count, for the
-            enemy never dies.
+            enemy never dies. The skills set under Defensive skills on the Defense tab are cast whenever they are ready: what they cost is spent too, and the time they take
+            comes off this skill where it leaves too little room, so it is used less often.
           </p>
           <p>
             Of projectiles shot together, the ones that hit are those that pass close enough to an enemy as big as a zombie 5 blocks away, aimed so that the most do. Fanned out or
@@ -179,6 +180,12 @@ export default function DamageTab({ core, build, change }: TabProps) {
         <p className="note">
           At this pace {defs[dry.resource].name.toLowerCase()} runs out after {show(dry.after)} s; after that {show(kept)} damage a second can be kept up.
           {dry.resource === 'energy' && own.shield && ' Below 1 energy, a raised shield blocks nothing.'}
+        </p>
+      )}
+      {defensive.pace < 1 && (
+        <p className="note">
+          Casting {defensive.used.map((d) => d.name).join(' and ')} whenever ready, as set on the Defense tab, leaves {chosen ? chosen.spell.name : 'basic attacks'} {percent(defensive.pace)} of
+          its full pace.
         </p>
       )}
       {targets.area && targets.count > 1 && <p className="note">Area and piercing hits land on each of {targets.count} enemies, and the damage is what they take together.</p>}

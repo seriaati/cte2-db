@@ -159,9 +159,7 @@ export interface Cost {
   energy: Leveled;
 }
 
-export interface SkillDamage {
-  style: string;
-  tags: string[];
+export interface CastTimes {
   castTicks: number;
   recoveryTicks: number;
   cooldownTicks: number;
@@ -169,6 +167,11 @@ export interface SkillDamage {
   chargeTicks: number;
   times: number;
   channel: boolean;
+}
+
+export interface SkillDamage extends CastTimes {
+  style: string;
+  tags: string[];
   // The effects whose stacks on its caster change what the skill does, with the numbers of stacks
   // of each that its script tells apart.
   asks: Record<string, number[]>;
@@ -180,6 +183,25 @@ export interface SkillDamage {
   // leaves that deal damage themselves.
   variants: { needs: string[]; when: Record<string, number>[]; hits: SkillHit[]; retribution?: number; marks?: StatMod[]; gives?: Gift[] }[];
   pets?: Pets;
+}
+
+// A step of a skill's script that heals its caster (RestoreHealthAction, RestoreMagicShieldAction):
+// how many times it does each cast, and the effects the caster has to hold for it to run
+// (CasterHasMnsEffectCondition). One in the script of an effect the skill gives heals `count`
+// times a second while the effect lasts, `over` having the ticks it is given for and the stats of
+// its giver that make it last longer.
+export interface Heal {
+  calc: string;
+  resource: 'health' | 'magic_shield';
+  count: number;
+  ifs?: { effect: string; stacks: number; not?: true }[];
+  over?: { ticks: number; longer: string[] };
+}
+
+export interface HealSkill extends CastTimes {
+  style: string;
+  tags: string[];
+  heals: Heal[];
 }
 
 // A spell that stats set off (ProcSpellEffect).
@@ -213,6 +235,8 @@ export interface DamageRules {
   layers: Record<string, Layer>;
   calcs: Record<string, DamageCalc>;
   skills: Record<string, SkillDamage>;
+  // The class skills that heal their caster.
+  heals: Record<string, HealSkill>;
   procs: Record<string, ProcSpell>;
   auras: Record<string, AuraDamage>;
   // The same for the effects that can be set to be on, by the skills that give each.
@@ -621,8 +645,9 @@ function castData(rules: DamageRules, who: Fighter, skill: Pick<SkillDamage, 'st
 }
 
 // SpellStatsCalculationEvent and SpellCastingData: how many ticks one use of a skill takes when it
-// is used over and over, what its duration is multiplied by, and how many pets of its kind can be out.
-function castNumbers(rules: DamageRules, who: Fighter, skill: SkillDamage) {
+// is used over and over, of which `cast` and `recovery` keep its user from casting anything else,
+// what its duration is multiplied by, and how many pets of its kind can be out.
+function castNumbers(rules: DamageRules, who: Fighter, skill: Pick<SkillDamage, 'style' | 'tags' | 'pets'> & CastTimes) {
   const start: Record<string, number> = { cast_ticks: skill.castTicks, cast_speed_ticks: skill.recoveryTicks, cd_ticks: skill.cooldownTicks, charge_cd_ticks: skill.chargeTicks, duration_multi: 1 };
   const { now } = castData(rules, who, skill, start);
   const cooled = (id: string) => Math.trunc(clamp(now[id], start[id] * rules.minCooldown, 1000000));
@@ -633,7 +658,34 @@ function castNumbers(rules: DamageRules, who: Fighter, skill: SkillDamage) {
   // A channelled skill goes off again as soon as it is cast; any other waits out its cooldown, and
   // one with charges can't be used faster than they come back.
   const ticks = skill.channel ? cast : Math.max(cast + Math.max(cooled('cd_ticks'), recovery), skill.charges > 0 ? cooled('charge_cd_ticks') : 0);
-  return { ticks, duration: now.duration_multi, summons: Math.trunc(now.bonus_total_summons ?? 0) };
+  return { ticks, cast, recovery, duration: now.duration_multi, summons: Math.trunc(now.bonus_total_summons ?? 0) };
+}
+
+// The share of the time a skill used over and over keeps its user casting.
+export function busyShare(rules: DamageRules, who: Fighter, skill: SkillDamage) {
+  const { ticks, cast, recovery } = castNumbers(rules, who, skill);
+  return Math.min(1, (cast + recovery) / ticks);
+}
+
+// IncreaseNumberByPercentEffect: the ticks an effect given for `ticks` lasts.
+const lastsFor = (who: Fighter, ticks: number, longer: string[]) =>
+  Math.trunc(longer.reduce((sum, id) => (sum + (ticks * (who.unit.get(id)?.value ?? 0)) / 100) * (who.unit.get(id)?.more ?? 1), ticks));
+
+// A skill that heals its caster, used whenever it is ready: what each cast restores to the caster
+// after the stats of both sides of the heal act on it (RestoreResourceEvent of the heal type), how
+// many casts there are a second, and the share of the time casting it takes. An effect it gives
+// is renewed by the next cast, so one that lasts until then heals without pause, and one that
+// doesn't heals over its life and once more as it ends, as left() counts its hits.
+export function healing(rules: DamageRules, { who, rank, topRank }: Omit<Used, 'skill'>, skill: HealSkill) {
+  const { ticks, cast, recovery } = castNumbers(rules, who, skill);
+  const perUse: ByResource = {};
+  for (const heal of skill.heals) {
+    if (!(heal.ifs ?? []).every((cond) => (who.effects[cond.effect] ?? 0) >= cond.stacks !== !!cond.not)) continue;
+    const lasts = heal.over && lastsFor(who, heal.over.ticks, heal.over.longer);
+    const count = lasts === undefined ? heal.count : (heal.count / 20) * (lasts >= ticks ? ticks : lasts + 1);
+    addTo(perUse, restore(rules, who, heal.resource, 'heal', calcValue(rules, rules.calcs[heal.calc], who, rank, topRank), skill.tags), count);
+  }
+  return { perUse, rate: 20 / ticks, busy: Math.min(1, (cast + recovery) / ticks) };
 }
 
 // Hand-picked: the target is a zombie, 0.6 blocks wide, 5 blocks away. ProjectileUtil.getEntityHitResult
@@ -817,8 +869,7 @@ function left(rules: DamageRules, used: Used, target: Target, variant: SkillDama
   const fired = shots(rules, who, used.skill);
   return (variant.gives ?? []).flatMap((gift) => {
     if ((gift.enemy ? target : who).effects[gift.effect]) return [];
-    // IncreaseNumberByPercentEffect, on the ticks the effect is given for.
-    const lasts = Math.trunc(gift.longer.reduce((ticks, id) => (ticks + (gift.ticks * (who.unit.get(id)?.value ?? 0)) / 100) * (who.unit.get(id)?.more ?? 1), gift.ticks));
+    const lasts = lastsFor(who, gift.ticks, gift.longer);
     const kept = lasts >= gap;
     const hits = gift.hits.flatMap((hit): SkillHit[] => {
       const count = hit.when === 'aura' ? (hit.count / 20) * (kept ? gap : lasts + 1) : hit.when === 'end' && !kept ? hit.count : 0;
@@ -951,7 +1002,7 @@ function settle(rules: HitRules, who: Fighter, on: 'spend' | 'restore', number: 
 // anything but energy is multiplied by the pack's in_combat_regen_multi. MagicShieldHeal and
 // HealthRestorationToBloodEffect restore a share of health, before what stats add to it, as magic
 // shield and, where no spell does it, as blood.
-export function restore(rules: HitRules, who: Fighter, resource: Resource, type: 'regen' | 'leech', amount: number, tags?: string[]): ByResource {
+export function restore(rules: HitRules, who: Fighter, resource: Resource, type: 'regen' | 'leech' | 'heal', amount: number, tags?: string[]): ByResource {
   const one = (to: Resource, n: number, spell?: string[]) => settle(rules, who, 'restore', n, { resource_type: to, restore_type: type }, [], spell) * (type === 'regen' && to !== 'energy' ? IN_COMBAT_REGEN : 1);
   const share = (id: string) => (amount * (who.unit.get(id)?.value ?? 0)) / 100;
   if (resource !== 'health') return { [resource]: one(resource, amount, tags) };

@@ -32,8 +32,10 @@ import {
   attackCost,
   attackDamage,
   attackRate,
+  busyShare,
   effectDamage,
   formOf,
+  healing,
   procDamage,
   regenerated,
   resistance,
@@ -595,7 +597,23 @@ export function buildDamage(data: Data & Pick<Sections, 'damage'>, build: Build)
   const enemy = { level: own.enemy.level, stats: mobStats(data.defense, data.stats, own.enemy, marks), rules: rules.taken, effects: own.under.enemy, count: build.damage.targets ?? TARGETS.standard };
   // The skills its pets may cast, which no hotbar slot has to hold.
   const cast: Record<string, Used> = Object.fromEntries((use?.skill.pets?.spells ?? []).map((id) => [id, used(id)]));
-  const damage = use ? skillDamage(rules, use, enemy, form!, cast) : attackDamage(rules, who, enemy, build.damage.attacks ?? attackRate(who));
+  const full = use ? skillDamage(rules, use, enemy, form!, cast) : attackDamage(rules, who, enemy, build.damage.attacks ?? attackRate(who));
+
+  // Skills on the hotbar that heal and deal no damage can be set to be cast whenever they are
+  // ready. The time they take to cast and recover from is taken from the skill or the basic
+  // attack used, where that would otherwise leave no room for them; pets attack on their own.
+  const healers = perks.filter((p) => p.spell && build.perks[p.id] > 0 && rules.heals[p.id] && !rules.skills[p.id] && build.hotbar.some((slot) => slot?.spell === p.id));
+  const defensive = healers
+    .filter((perk) => build.defensive.includes(perk.id))
+    .map((perk) => {
+      const at = used(perk.id);
+      const heal = rules.heals[perk.id];
+      return { id: perk.id, name: perk.spell!.name, ...healing(rules, at, heal), cost: useCost(rules, skills.costScaling, at, heal, perk.spell!, heal.channel) };
+    });
+  const busy = use ? (use.skill.pets ? 0 : busyShare(rules, use.who, use.skill)) : 1;
+  const free = Math.max(0, 1 - defensive.reduce((sum, d) => sum + d.busy, 0));
+  const pace = busy > free ? free / busy : 1;
+  const damage = pace < 1 ? { ...full, rate: full.rate * pace, dps: full.dps * pace } : full;
   // An aura that is on deals what it does beside whatever is used, as a spell of its own skill.
   const hits = own.aura ? rules.auras[own.aura.id].hits : [];
   const aura = own.aura && { name: own.aura.name, damage: hits.length ? effectDamage(rules, rules.auras[own.aura.id], hits, used(own.aura.id), enemy) : undefined };
@@ -638,6 +656,13 @@ export function buildDamage(data: Data & Pick<Sections, 'damage'>, build: Build)
   const spent: ByResource = {};
   addTo(spent, cost, damage.casts ?? damage.rate);
   if (petCost) addTo(spent, petCost, damage.rate);
+  for (const d of defensive) addTo(spent, d.cost, d.rate);
+  // What those heal a second, and what the skill used heals its user with each use.
+  const healed: ByResource = {};
+  for (const d of defensive) addTo(healed, d.perUse, d.rate);
+  if (use && rules.heals[chosen!.perk.id]) addTo(healed, healing(rules, use, rules.heals[chosen!.perk.id]).perUse, damage.rate);
+  const back = regenerated(rules, fighter(own.stats));
+  addTo(back, healed);
   // What comes back while fighting: what is regenerated, and what hits leech, those that come
   // whatever is used apart from those that come with its uses.
   const leech = (list: Damage[]) => {
@@ -645,12 +670,12 @@ export function buildDamage(data: Data & Pick<Sections, 'damage'>, build: Build)
     for (const { restores, rate } of list) addTo(out, restores, rate);
     return out;
   };
-  const sustained = sustain(own.stats, spent, regenerated(rules, fighter(own.stats)), leech(others), leech([damage, ...procs.map((proc) => proc.damage)]));
+  const sustained = sustain(own.stats, spent, back, leech(others), leech([damage, ...procs.map((proc) => proc.damage)]));
   // What is kept up once the first pool to run out is empty: the skill used as often as what comes back pays for.
   const slower = { ...damage, rate: damage.rate * sustained.pace, dps: damage.dps * sustained.pace };
   const kept = sustained.pace < 1 ? [slower, ...others, ...setOffBy(slower).map((proc) => proc.damage)].reduce((sum, dealt) => sum + dealt.dps, 0) : dps;
   const resources = { ...sustained, cost, petCost, spent, kept };
-  return { rules, own, choices, chosen, form, forced, enemy, damage, aura, lasting, procs, dps, elements, stats, crit, retribution: { stacks, spends, spent: perCast, name: skills.retribution.name }, resources, rank: use && { rank: use.rank, learned: build.perks[chosen!.perk.id] ?? 0 }, targets: { count: enemy.count, area: [damage, aura?.damage, ...lasting.map((e) => e.damage), ...procs.map((p) => p.damage)].some((d) => d?.parts.some((part) => part.hit?.area)) } };
+  return { rules, own, choices, chosen, form, forced, enemy, damage, aura, lasting, procs, dps, elements, stats, crit, retribution: { stacks, spends, spent: perCast, name: skills.retribution.name }, resources, defensive: { offered: healers.map((p) => ({ id: p.id, name: p.spell!.name, icon: p.icon })), used: defensive, pace, healed }, rank: use && { rank: use.rank, learned: build.perks[chosen!.perk.id] ?? 0 }, targets: { count: enemy.count, area: [damage, aura?.damage, ...lasting.map((e) => e.damage), ...procs.map((p) => p.damage)].some((d) => d?.parts.some((part) => part.hit?.area)) } };
 }
 
 const HITS: Element[] = ['Physical', 'Fire', 'Cold', 'Nature', 'Shadow'];

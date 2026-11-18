@@ -14,7 +14,7 @@ import calcData from '../data/value_calc.json';
 import weaponData from '../data/weapon_type.json';
 import type { StatMod } from './affix';
 import { transfers } from './builtinStats';
-import { AILMENTS, type Act, type AuraDamage, type Cond, type DamageCalc, type DamageRules, type Element, type Gift, type Layer, type ProcSpell, type Rule, type SkillDamage, type SkillHit, type Volley, type Weapon } from './damageRules';
+import { AILMENTS, type Act, type AuraDamage, type Cond, type DamageCalc, type CastTimes, type DamageRules, type Element, type Gift, type Heal, type HealSkill, type Layer, type ProcSpell, type Rule, type SkillDamage, type SkillHit, type Volley, type Weapon } from './damageRules';
 import { statMod, text } from './gear';
 import type { Leveled } from './spellRules';
 
@@ -392,6 +392,16 @@ function hitsOf(spell: RawSpell, stacks: Record<string, number>) {
   return { hits: hits.filter((hit) => hit.count > 0), marks, gives, spends };
 }
 
+const castTimes = (config: RawSpell['config']): CastTimes => ({
+  castTicks: config.cast_time_ticks,
+  recoveryTicks: config.cast_speed_ticks,
+  cooldownTicks: config.cooldown_ticks,
+  charges: config.charges,
+  chargeTicks: config.charge_regen,
+  times: config.times_to_cast,
+  channel: config.channel_skill,
+});
+
 function skill(spell: RawSpell): SkillDamage | null {
   // Each effect the script asks about, and the numbers of stacks it tells apart.
   const asked = new Map<string, Set<number>>();
@@ -441,13 +451,7 @@ function skill(spell: RawSpell): SkillDamage | null {
   return {
     style: config.style,
     tags: config.tags.tags,
-    castTicks: config.cast_time_ticks,
-    recoveryTicks: config.cast_speed_ticks,
-    cooldownTicks: config.cooldown_ticks,
-    charges: config.charges,
-    chargeTicks: config.charge_regen,
-    times: config.times_to_cast,
-    channel: config.channel_skill,
+    ...castTimes(config),
     asks: Object.fromEntries([...asked].map(([effect, levels]) => [effect, [...levels]])),
     variants: [...variants.values()],
     ...(basic && {
@@ -474,6 +478,54 @@ const skills: Record<string, SkillDamage> = Object.fromEntries(
   classSpells.flatMap((id) => {
     const damage = skill(rawSpells[id]);
     return damage ? [[id, damage] as const] : [];
+  }),
+);
+
+const RESTORES: Record<string, Heal['resource']> = { restore_health: 'health', restore_magic_shield: 'magic_shield' };
+// The steps of a skill's script that heal its caster each cast: those on itself, and those on
+// allies around the cast or around what it puts down, such as a totem, where the caster is taken
+// to stand. One that a projectile runs heals around wherever the projectile is, so it is left
+// out. So are the heals in the script of an effect the skill gives its caster or allies, which
+// come every so many ticks while it lasts.
+function healsOf(spell: RawSpell) {
+  const heals: Heal[] = [];
+  const walk = (parts: RawPart[], count: number, life: number, seen: string[], asks: NonNullable<Heal['ifs']>, flying: boolean) => {
+    for (const part of parts) {
+      const ifs = [
+        ...asks,
+        ...part.ifs.filter((i) => i.type === EFFECT_IF).map((i) => ({ effect: i.map.exile_potion_id as string, stacks: (i.map.effect_stacks ?? 1) as number, ...(i.map.is_false && { not: true as const }) })),
+      ];
+      const asked = ifs.length ? { ifs } : {};
+      const tick = part.ifs.find((i) => i.type === 'x_ticks_condition');
+      const once = part.ifs.some((i) => i.type === 'is_first_cast' || i.type === 'is_last_cast');
+      const times = (life ? (tick ? ticks(life, tick.map) : 1) : once ? 1 : spell.config.times_to_cast) * count;
+      const reaches = part.targets.some((t) => t.type === 'self') || (!flying && part.targets.some((t) => t.map.en_predicate === 'allies'));
+      for (const act of part.acts) {
+        if (reaches && RESTORES[act.type]) heals.push({ calc: act.map.value_calculation, resource: RESTORES[act.type], count: times, ...asked });
+        if (reaches && act.type === 'exile_effect' && act.map.potion_action === 'GIVE_STACKS' && act.map.potion_dur !== AURA.forever) {
+          const effect = casterEffects[act.map.exile_potion_id];
+          for (const step of effect?.spell?.entity_components.default_entity_name ?? []) {
+            const rate = step.ifs.find((i) => i.type === 'x_ticks_condition')?.map.tick_rate;
+            if (!rate || !step.targets.some((t) => t.type === 'target')) continue;
+            for (const done of step.acts) {
+              if (RESTORES[done.type]) heals.push({ calc: done.map.value_calculation, resource: RESTORES[done.type], count: 20 / rate, over: { ticks: act.map.potion_dur, longer: strength(effect.tags.tags, 'Source', 'increase_number') }, ...asked });
+            }
+          }
+        }
+        const entity: string | undefined = act.map.entity_name;
+        if (!entity || !SUMMONS.includes(act.type) || seen.includes(entity)) continue;
+        walk(spell.attached.entity_components[entity] ?? [], times, Math.max(1, act.map.life_ticks ?? 1), [...seen, entity], ifs, flying || act.type === 'projectile');
+      }
+    }
+  };
+  walk(spell.attached.on_cast, 1, 0, [], [], false);
+  return heals.filter((heal) => heal.count > 0);
+}
+const heals: Record<string, HealSkill> = Object.fromEntries(
+  classSpells.flatMap((id) => {
+    const found = healsOf(rawSpells[id]);
+    const { config } = rawSpells[id];
+    return found.length ? [[id, { style: config.style, tags: config.tags.tags, ...castTimes(config), heals: found }] as const] : [];
   }),
 );
 
@@ -654,6 +706,7 @@ const usedCalcs = [
   ...new Set([
     ...[...Object.values(skills), ...Object.values(procs).flatMap((proc) => proc.skill ?? [])].flatMap((s) => s.variants.flatMap((v) => [...v.hits, ...(v.gives ?? []).flatMap((gift) => gift.hits)].map((hit) => hit.calc))),
     ...[...found.map((a) => a.damage), ...Object.values(lasting).flatMap((by) => Object.values(by))].flatMap((dealt) => [...dealt.hits, ...dealt.self].map((hit) => hit.calc)),
+    ...Object.values(heals).flatMap((skill) => skill.heals.map((heal) => heal.calc)),
   ]),
 ];
 
@@ -687,6 +740,7 @@ export const damage: DamageRules = {
   layers,
   calcs: Object.fromEntries(usedCalcs.map((id) => [id, calc(id)])),
   skills,
+  heals,
   procs,
   auras: Object.fromEntries(found.map((a) => [a.id, a.damage])),
   lasting,
